@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'GOOGLE_CLOUD_STORAGE_GET'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : null,
+            "PARAM_NAME" : "#P_GOOGLE_CLOUD_STORAGE_PATH#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "GOOGLE_CLOUD_STORAGE_GET"
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "GOOGLE_CLOUD_STORAGE_GET",
+            "PARAM_NAME" : "#P_LOCAL_DESTINATION_FOLDER#"
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : "get",
+            "TEMPLATE_NAME" : "GOOGLE_CLOUD_STORAGE_GET",
+            "PARAM_NAME" : "#P_OPERATION#"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Download a file from Google Cloud Storage",
+            "TEMPLATE_NAME" : "GOOGLE_CLOUD_STORAGE_GET",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Download from Google Cloud Storage [#P_GOOGLE_CLOUD_STORAGE_PATH#] to local path [#P_LOCAL_DESTINATION_FOLDER#]",
+            "CLASS" : "GoogleCloudStorage"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'GOOGLE_CLOUD_STORAGE_GET'"
+      ]
+   }
+}

@@ -1,0 +1,22 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_CLONE_TABLE_STRUCTURE'"
+      ],
+      "data" : null
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "Clone BigQuery table #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# to #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_DESC" : "Clone the structure of a BigQuery table to an empty copy",
+            "TEMPLATE_NAME" : "BIGQUERY_CLONE_TABLE_STRUCTURE"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_CLONE_TABLE_STRUCTURE'"
+      ]
+   }
+}

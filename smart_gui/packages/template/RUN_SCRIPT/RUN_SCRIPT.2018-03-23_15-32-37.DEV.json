@@ -1,0 +1,35 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'RUN_SCRIPT'"
+      ],
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_ARGS_JSON#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "RUN_SCRIPT",
+            "PARAM_DESC" : "A JSON-encoded array of args - these will be passed, one at a time, in the order provided"
+         },
+         {
+            "PARAM_NAME" : "#P_COMMAND#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "RUN_SCRIPT",
+            "PARAM_DESC" : "The command to run. Include full path if not in $PATH"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Run an external script",
+            "TEMPLATE_NAME" : "RUN_SCRIPT",
+            "TEMPLATE_TEXT" : "Run external script: #P_COMMAND#\nwith args:\n\n#P_ARGS_JSON#\n\n-------------------------------------------",
+            "REPOSITORY" : "core",
+            "CLASS" : "RunScript"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'RUN_SCRIPT'"
+      ]
+   }
+}

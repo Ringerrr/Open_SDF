@@ -1,0 +1,65 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_FILENAME#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SFTP_PUT",
+            "PARAM_DESC" : "The path to the file to upload"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_PASSWORD#",
+            "TEMPLATE_NAME" : "SFTP_PUT",
+            "PARAM_DESC" : "The password ( if not using public key authentication )"
+         },
+         {
+            "PARAM_DESC" : "The target port",
+            "PARAM_NAME" : "#P_PORT#",
+            "PARAM_DEFAULT" : "22",
+            "TEMPLATE_NAME" : "SFTP_PUT"
+         },
+         {
+            "PARAM_DESC" : "The path to a public key to use ( no value will use the default key in ~/.ssh )",
+            "TEMPLATE_NAME" : "SFTP_PUT",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_PUBLIC_KEY_PATH#"
+         },
+         {
+            "PARAM_DESC" : "The target directory to upload to",
+            "PARAM_NAME" : "#P_TARGET_DIRECTORY#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SFTP_PUT"
+         },
+         {
+            "PARAM_DESC" : "The target host",
+            "PARAM_NAME" : "#P_TARGET_HOST#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SFTP_PUT"
+         },
+         {
+            "PARAM_DESC" : "The target ( remote ) username",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SFTP_PUT",
+            "PARAM_NAME" : "#P_USERNAME#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SFTP_PUT'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_TEXT" : "Target Host:       #P_TARGET_HOST#\nTarget Port:       #P_PORT#\nTarget Directory:  #P_TARGET_DIRECTORY#\nUsername:          #P_USERNAME#\nPassword:          #P_PASSWORD#\nPublic Key Path:   #P_PUBLIC_KEY_PATH#\nFilename:          #P_FILENAME#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SFTP2",
+            "TEMPLATE_DESC" : "Transfer a via via SFTP",
+            "TEMPLATE_NAME" : "SFTP_PUT"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SFTP_PUT'"
+      ]
+   }
+}

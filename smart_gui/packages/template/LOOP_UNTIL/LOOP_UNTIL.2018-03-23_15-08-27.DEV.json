@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_COMPARISON_OPERATOR#",
+            "PARAM_DEFAULT" : "==",
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "PARAM_DESC" : "The comparison operator:\n ==    numeric equal\n !=    numeric not equal\n eq    string equal\n ne    string not equal\n <     less than\n >     greater than"
+         },
+         {
+            "PARAM_DESC" : "The first comparison value",
+            "PARAM_NAME" : "#P_COMPARISON_VAR_1#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "LOOP_UNTIL"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "PARAM_NAME" : "#P_COMPARISON_VAR_2#",
+            "PARAM_DESC" : "The second comparison value"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ITERATOR_NAME#",
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "PARAM_DESC" : "The name of the Iterator to append an iteration to"
+         },
+         {
+            "PARAM_DESC" : "The maximum number of iterations allowed",
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_MAX_ITERATIONS#"
+         },
+         {
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_WAIT_SECONDS#",
+            "PARAM_DESC" : "The number of seconds to wait before continuing"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'LOOP_UNTIL'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Causes an iterator to continue looping by appending to it, until a particular condition is met",
+            "TEMPLATE_NAME" : "LOOP_UNTIL",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "This template provide looping control inside Smart Frameworks.\nTo use it, you should start a loop by instantiating an iterator with a single record.\nYou can do this by running a query against the in-memory database ( eg selecting the date ),\nor alternatively you can create a string iterator with a single record. Place your steps to\nbe looped underneath this instantiation step. Then at the point where program logic should\nloop back, place a LOOP_UNTIL step, and set up your comparison variables and operator.\nLooping will occur until the comparison returns TRUE, up to the defined max number of iterations.\n\n-------------------------------------------------------------------------------------------------\n\nLoop iterator #P_ITERATOR_NAME# to a maximum of [#P_MAX_ITERATIONS#], or until the condition:\n #P_COMPARISON_VAR_1# #P_COMPARISON_OPERATOR# #P_COMPARISON_VAR_2#\n  ... and wait #P_WAIT_SECONDS# in between iterations\n",
+            "CLASS" : "LoopUntil"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'LOOP_UNTIL'"
+      ]
+   }
+}

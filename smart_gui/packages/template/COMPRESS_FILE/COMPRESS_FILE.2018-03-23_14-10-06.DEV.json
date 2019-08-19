@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'COMPRESS_FILE'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "One of [ gzip , bzip2 , zip ]",
+            "PARAM_DEFAULT" : "gzip",
+            "PARAM_NAME" : "#P_COMPRESSION_TYPE#",
+            "TEMPLATE_NAME" : "COMPRESS_FILE"
+         },
+         {
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "COMPRESS_FILE",
+            "PARAM_NAME" : "#P_DELETE_ORIGINAL#",
+            "PARAM_DESC" : "Boolean - whether to delete the original file after compression. Note that for some types, the compression binary will automatically remove the original."
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILENAME#",
+            "TEMPLATE_NAME" : "COMPRESS_FILE",
+            "PARAM_DESC" : "The file to compress"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "CompressFile",
+            "TEMPLATE_TEXT" : "Compress        => #P_FILENAME#\nType            => #P_COMPRESSION_TYPE#\nDelete Original => #P_DELETE_ORIGINAL#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "COMPRESS_FILE",
+            "TEMPLATE_DESC" : "Compress a file"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'COMPRESS_FILE'"
+      ]
+   }
+}

@@ -1,0 +1,2 @@
+select 1 -- this DML is no longer in use
+;

@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'GENERIC_SQL'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "The SQL to be executed. Can contain parameters ...",
+            "PARAM_NAME" : "#P_SQL#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "GENERIC_SQL"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "GENERIC_SQL",
+            "TEMPLATE_DESC" : "Some generic SQL. Go crazy ...",
+            "CLASS" : "SQL",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "#P_SQL#"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'GENERIC_SQL'"
+      ]
+   }
+}

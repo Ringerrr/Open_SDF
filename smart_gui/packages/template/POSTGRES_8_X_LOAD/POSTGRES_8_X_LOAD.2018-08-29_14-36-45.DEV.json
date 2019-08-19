@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD",
+            "PARAM_DESC" : "Postgres datestyle. Choose from DMY, MDY, YMD",
+            "PARAM_DEFAULT" : "YMD",
+            "PARAM_NAME" : "#P_DATESTYLE#"
+         },
+         {
+            "PARAM_NAME" : "#P_DELIMITER#",
+            "PARAM_DEFAULT" : ",",
+            "PARAM_DESC" : "The column delimiter",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD"
+         },
+         {
+            "PARAM_DESC" : "The escape character",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD",
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#",
+            "PARAM_DEFAULT" : "\\\\"
+         },
+         {
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD",
+            "PARAM_DESC" : "The full path to the source file",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILE_NAME#"
+         },
+         {
+            "PARAM_NAME" : "#P_HEADER#",
+            "PARAM_DEFAULT" : null,
+            "PARAM_DESC" : "The HEADER directory. Set to 'header' if there is a CSV header, and leave blank if there is none.",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD"
+         },
+         {
+            "PARAM_NAME" : "#P_QUOTE_CHAR#",
+            "PARAM_DEFAULT" : "\"",
+            "PARAM_DESC" : "The quote character",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_8_X_LOAD'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_8_X_LOAD'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "POSTGRES_8_X_LOAD",
+            "TEMPLATE_DESC" : "Load data into Postgres",
+            "TEMPLATE_TEXT" : "-- This is Postgres 8.x / Greenplum COPY syntax\n\nset DATESTYLE = ISO, '#P_DATESTYLE#';\n\ncopy   #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom   '#P_FILE_NAME#'\n\nwith\n    delimiter as E'#P_DELIMITER#'\n    #P_HEADER#\n    csv quote as E'#P_QUOTE_CHAR#'\n    escape    as E'#P_ESCAPE_CHAR#'\n;\n\nset DATESTYLE = 'ISO, YMD';",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL"
+         }
+      ]
+   }
+}

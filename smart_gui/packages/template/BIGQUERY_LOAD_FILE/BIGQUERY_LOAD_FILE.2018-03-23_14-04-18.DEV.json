@@ -1,0 +1,113 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "TEMPLATE_DESC" : "Load a file ( CSV, JSON, others ) into BigQuery",
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "$big_query->load(\n    project_id          => <taken from credentials database>\n  , dataset_id          => #CONFIG_TARGET_DB_NAME#\n  , table_id            => #CONFIG_TARGET_TABLE_NAME#\n  , data                => #P_LOCAL_CSV_PATH#\n  , allowJaggedRows     => #P_ALLOW_JAGGED_ROWS#\n  , allowQuotedNewlines => #P_ALLOW_QUOTED_NEW_LINES#\n  , createDisposition   => #P_CREATE_DISPOSITION#\n  , encoding            => #P_ENCODING#\n  , fieldDelimiter      => #P_FIELD_DELIMITER#\n  , ignoreUnknownValues => #P_IGNORE_UNKNOWN_VALUES#\n  , maxBadRecords       => #P_MAX_BAD_RECORDS#\n  , quote               => #P_QUOTE#\n  , schema              => #P_SCHEMA#\n  , skipLeadingRows     => #P_SKIP_LEADING_ROWS#\n  , sourceFormat        => #P_SOURCE_FORMAT#\n  , writeDisposition    => #P_WRITE_DISPOSITION#\n);",
+            "REPOSITORY" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_LOAD_FILE'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_ALLOW_JAGGED_ROWS#",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DESC" : "Boolean - Allow records with truncated columns"
+         },
+         {
+            "PARAM_DESC" : "Boolean - whether to allow newline characters inside quotes",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_ALLOW_QUOTED_NEW_LINES#"
+         },
+         {
+            "PARAM_DESC" : "The Google Cloud Storage bucket id to upload the file to",
+            "PARAM_NAME" : "#P_BUCKET_ID#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "PARAM_DESC" : "CREATE_NEVER or CREATE_IF_NEEDED",
+            "PARAM_DEFAULT" : "CREATE_IF_NEEDED",
+            "PARAM_NAME" : "#P_CREATE_DISPOSITION#",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "PARAM_DESC" : "UTF-8 or ISO-8859-1",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DEFAULT" : "UTF-8",
+            "PARAM_NAME" : "#P_ENCODING#"
+         },
+         {
+            "PARAM_DESC" : "The field delimiter character",
+            "PARAM_DEFAULT" : ",",
+            "PARAM_NAME" : "#P_FIELD_DELIMITER#",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_IGNORE_UNKNOWN_VALUES#",
+            "PARAM_DESC" : "Boolean - whether to ignore extra values not defined in the table schema"
+         },
+         {
+            "PARAM_NAME" : "#P_LOCAL_CSV_PATH#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DESC" : "The local path of the data, *or* a Google Cloud Storage URI"
+         },
+         {
+            "PARAM_DESC" : "The maximum bad records before a load gets failed",
+            "PARAM_NAME" : "#P_MAX_BAD_RECORDS#",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "PARAM_DEFAULT" : "\"",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_NAME" : "#P_QUOTE#",
+            "PARAM_DESC" : "The quote character"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_NAME" : "#P_SCHEMA#",
+            "PARAM_DESC" : "Schema definition - typically we'd *not* supply this"
+         },
+         {
+            "PARAM_DESC" : "Number of leading rows to skip",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_NAME" : "#P_SKIP_LEADING_ROWS#"
+         },
+         {
+            "PARAM_DESC" : "CSV, GOOGLE_SHEETS, NEWLINE_DELIMITED_JSON, AVRO, DATASTORE_BACKUP or BIGTABLE ( BIGTABLE is experimental )",
+            "PARAM_DEFAULT" : "CSV",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_NAME" : "#P_SOURCE_FORMAT#"
+         },
+         {
+            "PARAM_NAME" : "#P_SOURCE_TABLE_STRUCTURE_NAME#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DESC" : "The name of the #Q_ param that holds a table definition structure. Optional."
+         },
+         {
+            "PARAM_DEFAULT" : "WRITE_EMPTY",
+            "PARAM_NAME" : "#P_WRITE_DISPOSITION#",
+            "TEMPLATE_NAME" : "BIGQUERY_LOAD_FILE",
+            "PARAM_DESC" : "WRITE_TRUNCATE, WRITE_APPEND or WRITE_EMPTY"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_LOAD_FILE'"
+      ]
+   }
+}

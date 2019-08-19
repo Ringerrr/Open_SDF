@@ -1,0 +1,8 @@
+CREATE TABLE PARAM_VALUE (
+    PROCESSING_GROUP_NAME    CHARACTER VARYING(200)    not null
+  , SEQUENCE_ORDER           INTEGER                   not null
+  , PARAM_NAME               CHARACTER VARYING(50)     not null
+  , PARAM_VALUE              CHARACTER VARYING(64000)
+
+  , primary key ( PROCESSING_GROUP_NAME , SEQUENCE_ORDER , PARAM_NAME )
+);

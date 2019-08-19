@@ -1,0 +1,101 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL::CSV_Writer",
+            "TEMPLATE_DESC" : "Write the results of some SQL to CSV",
+            "TEMPLATE_NAME" : "SQL_TO_CSV"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SQL_TO_CSV'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "Use Text::CSV binary mode",
+            "PARAM_NAME" : "#P_BINARY_MODE#",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "SQL_TO_CSV"
+         },
+         {
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_NAME" : "#P_COLUMN_HEADERS#",
+            "PARAM_DESC" : "Whether to output column headers or not"
+         },
+         {
+            "PARAM_NAME" : "#P_COLUMN_SEPARATOR#",
+            "PARAM_DESC" : "The character used to separate columns",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : ","
+         },
+         {
+            "PARAM_DESC" : "This is the PERL encoding directive",
+            "PARAM_NAME" : "#P_ENCODING#",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "utf8"
+         },
+         {
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "\\",
+            "PARAM_DESC" : "The CSV escape character",
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#"
+         },
+         {
+            "PARAM_NAME" : "#P_FILE_PATH#",
+            "PARAM_DESC" : "The path to the file to create",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SQL_TO_CSV"
+         },
+         {
+            "PARAM_DESC" : "Map undef / NULL values to this string",
+            "PARAM_NAME" : "#P_NULL_VALUE#",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "\\N"
+         },
+         {
+            "PARAM_NAME" : "#P_PAGE_SIZE#",
+            "PARAM_DESC" : "The number of records to fetch and process at a time",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "10000"
+         },
+         {
+            "PARAM_DEFAULT" : "\"",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DESC" : "The character used to quote values",
+            "PARAM_NAME" : "#P_QUOTE_CHARACTER#"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DESC" : "The SQL to execute",
+            "PARAM_NAME" : "#P_SQL#"
+         },
+         {
+            "PARAM_NAME" : "#P_USE_TEXT_CSV_XS#",
+            "PARAM_DESC" : "Use Text::CSV_XS to write the CSV file ( fast, but you MUST NOT escape quotes or the escape character )",
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "1"
+         },
+         {
+            "PARAM_DESC" : "Boolean - whether to quote all values or not",
+            "PARAM_NAME" : "#P_ZZ_ALWAYS_QUOTE#",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "SQL_TO_CSV"
+         },
+         {
+            "TEMPLATE_NAME" : "SQL_TO_CSV",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_ZZ_SKIP_SOURCE_FORMATTING#",
+            "PARAM_DESC" : "Source formatting attempts to use the source DB's string manipulation functions to mangle data into a 'standard' format"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SQL_TO_CSV'"
+      ]
+   }
+}

@@ -1,0 +1,29 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Rebuild a target table ( if necessary ), merging in new columns from the source table",
+            "TEMPLATE_NAME" : "BIGQUERY_MERGE_NEW_COLUMNS",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Merge new columns from #CONFIG_SOURCE_TABLE_NAME# into #CONFIG_TARGET_TABLE_NAME#",
+            "CLASS" : "SQL::DatabaseMethod"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_MERGE_NEW_COLUMNS'"
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_MERGE_NEW_COLUMNS'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_MERGE_NEW_COLUMNS",
+            "PARAM_DEFAULT" : "#Q_KEYS#",
+            "PARAM_NAME" : "#P_KEYS#",
+            "PARAM_DESC" : "To create the new table, we do a left join, and need a key to join on"
+         }
+      ]
+   }
+}

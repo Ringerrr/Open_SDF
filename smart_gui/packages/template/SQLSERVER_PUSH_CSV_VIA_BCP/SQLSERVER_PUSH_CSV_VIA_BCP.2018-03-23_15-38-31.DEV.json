@@ -1,0 +1,59 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SQLSERVER_PUSH_CSV_VIA_BCP'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP",
+            "TEMPLATE_DESC" : "Load a CSV into SQLServer via BCP",
+            "CLASS" : "SQL::BCP_Reader",
+            "TEMPLATE_TEXT" : "",
+            "REPOSITORY" : "core"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQLSERVER_PUSH_CSV_VIA_BCP'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "The name ( preferably full path ) of the bcp / freebcp utility",
+            "PARAM_DEFAULT" : "freebcp",
+            "PARAM_NAME" : "#P_BCP_PATH#",
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP"
+         },
+         {
+            "PARAM_DESC" : "The delimiter",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_COLUMN_SEPARATOR#",
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP"
+         },
+         {
+            "PARAM_DESC" : "Disables FIFO logic",
+            "PARAM_NAME" : "#P_DISABLE_FIFO#",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP"
+         },
+         {
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FIFO_TIMEOUT#",
+            "PARAM_DESC" : "The time to wait for a sibling process to signal to us before quitting"
+         },
+         {
+            "PARAM_DESC" : "The path to the file to load via BCP",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILE_PATH#",
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP"
+         },
+         {
+            "PARAM_NAME" : "#P_FIRST_ROW#",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP",
+            "PARAM_DESC" : "The 1st row of the input file to be considered a part of the data to load"
+         }
+      ]
+   }
+}

@@ -1,0 +1,35 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "TEMPLATE_DESC" : "Execute some SQL via BigQuery's REST API ( because Google don't support queries sent over ODBC )",
+            "TEMPLATE_NAME" : "BIGQUERY_EXECUTE_SQL"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_EXECUTE_SQL'"
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_EXECUTE_SQL'"
+      ],
+      "data" : [
+         {
+            "PARAM_DEFAULT" : "2",
+            "PARAM_NAME" : "#P_MAX_BILLING_TIER#",
+            "TEMPLATE_NAME" : "BIGQUERY_EXECUTE_SQL",
+            "PARAM_DESC" : "The maxBillingTier. Be careful - this multiplies costs."
+         },
+         {
+            "PARAM_DESC" : "The SQL. Go crazy ( beneath maxBillingTier ).",
+            "PARAM_NAME" : "#P_SQL#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_EXECUTE_SQL"
+         }
+      ]
+   }
+}

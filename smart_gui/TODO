@@ -1,0 +1,18 @@
+
+data loader ==> harvest job ... copy DATESTYLE setting into Postgres template(s)?
+
+We should probably redo the data loader to trigger an ETL job ( ie a seed job ) to perform the load. This screen is getting a bit hacky ...
+
+--------
+
+DB Browser:
+
+Threads!
+
+When executing some SQL ...
+
+ - create a new SQLite in-memory DB
+ - create a new target DB connection
+ - spawn a new thread, and execute the SQL there
+ - fetch results into in-memory DB
+ - return a signal to the main thread, which should then create a new datasheet on the in-memory DB

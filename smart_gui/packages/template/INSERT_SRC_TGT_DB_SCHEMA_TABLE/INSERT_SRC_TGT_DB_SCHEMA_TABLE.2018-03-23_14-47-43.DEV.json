@@ -1,0 +1,65 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ENCRYPT_COLUMNS#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "PARAM_DESC" : "A new-line-separated list of columns to encrypt"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_EXTRA_SOURCE_COLUMNS#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "PARAM_DESC" : "Expression for extra source columns"
+         },
+         {
+            "PARAM_DESC" : "Expression for extra target columns",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_EXTRA_TARGET_COLUMNS#"
+         },
+         {
+            "PARAM_DESC" : "An optional filter ( where ) clause",
+            "PARAM_NAME" : "#P_OPTIONAL_FILTER#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE"
+         },
+         {
+            "PARAM_DESC" : "This flag causes #COMPLEX_COLUMNS_FROM_SOURCE# to skip our normal formatting rules, and just return a list of columns",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "PARAM_NAME" : "#P_SKIP_SOURCE_FORMATTING#"
+         },
+         {
+            "PARAM_DESC" : "The source columns list",
+            "PARAM_NAME" : "#P_SOURCE_COLUMNS#",
+            "PARAM_DEFAULT" : "#COMPLEX_COLUMNS_FROM_SOURCE#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE"
+         },
+         {
+            "PARAM_DESC" : "The target columns list",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "PARAM_DEFAULT" : "#COMPLEX_COLUMNS_FROM_SOURCE#",
+            "PARAM_NAME" : "#P_TARGET_COLUMNS#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'INSERT_SRC_TGT_DB_SCHEMA_TABLE'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'INSERT_SRC_TGT_DB_SCHEMA_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Generic source ==> target copy, with JOB_ID stamped in target",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "INSERT INTO #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\n(\n#P_TARGET_COLUMNS#\n#P_EXTRA_TARGET_COLUMNS#\n)\nSELECT\n#P_SOURCE_COLUMNS#\n#P_EXTRA_SOURCE_COLUMNS#\nFROM\n   #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_SCHEMA_NAME#.#CONFIG_SOURCE_TABLE_NAME#\n#P_OPTIONAL_FILTER#",
+            "REPOSITORY" : "core"
+         }
+      ]
+   }
+}

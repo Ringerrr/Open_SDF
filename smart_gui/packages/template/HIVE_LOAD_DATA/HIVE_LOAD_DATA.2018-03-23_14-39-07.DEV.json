@@ -1,0 +1,22 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'HIVE_LOAD_DATA'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "load data local inpath\r\n'#ENV_HARVEST_PATH#'\r\ninto table #CONFIG_TARGET_TABLE_NAME#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "HIVE_LOAD_DATA",
+            "TEMPLATE_DESC" : "Load data via Hive's LOAD DATA INFILE syntax"
+         }
+      ]
+   },
+   "param" : {
+      "data" : null,
+      "pre" : [
+         "delete from param where template_name = 'HIVE_LOAD_DATA'"
+      ]
+   }
+}

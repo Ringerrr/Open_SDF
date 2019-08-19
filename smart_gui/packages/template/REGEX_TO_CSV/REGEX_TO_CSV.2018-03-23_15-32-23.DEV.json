@@ -1,0 +1,71 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Parse file [#P_FILENAME#] to CSV [#P_FILENAME].csv using regular expression:\n\n#P_REGEX#\n\n",
+            "CLASS" : "RegexToCSV",
+            "TEMPLATE_DESC" : "Parse a complex file ( eg an HAProxy log file ), using regular expressions, and create a CSV from the results ( each new capture group will be a new column )",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'REGEX_TO_CSV'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ERROR_STATE_REGEX#",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_DESC" : "This regex is used to detect non-standard 'error' lines that we don't want in the final output, BUT we also don't want to trigger a parser error"
+         },
+         {
+            "PARAM_DESC" : "The escape character in the CSV we encode",
+            "PARAM_DEFAULT" : "\\",
+            "PARAM_NAME" : "#P_ESCAPE_CHARACTER#",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV"
+         },
+         {
+            "PARAM_DESC" : "The filename to parse",
+            "PARAM_DEFAULT" : "#ENV_HARVEST_PATH#",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_NAME" : "#P_FILENAME#"
+         },
+         {
+            "PARAM_DESC" : "The encoding of the input file",
+            "PARAM_DEFAULT" : "utf8",
+            "PARAM_NAME" : "#P_INPUT_ENCODING#",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV"
+         },
+         {
+            "PARAM_DESC" : "The maximum number of parse errors allowed before we trigger a job failure",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_NAME" : "#P_MAX_PARSE_ERRORS#"
+         },
+         {
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_DEFAULT" : "utf8",
+            "PARAM_NAME" : "#P_OUTPUT_ENCODING#",
+            "PARAM_DESC" : "The encoding of the output file"
+         },
+         {
+            "PARAM_NAME" : "#P_REGEX#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_DESC" : "The regular expression used to parse this file's records into columns"
+         },
+         {
+            "PARAM_DESC" : "This is just to store some comments on the regular expression",
+            "TEMPLATE_NAME" : "REGEX_TO_CSV",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_REGEX_DOCS#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'REGEX_TO_CSV'"
+      ]
+   }
+}

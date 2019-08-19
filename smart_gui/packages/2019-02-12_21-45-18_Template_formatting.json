@@ -1,0 +1,18 @@
+{
+   "release" : {
+      "RELEASE_NAME" : "2019-02-12_21-45-18_Template_formatting",
+      "RELEASE_BASE" : null,
+      "RELEASE_OPEN" : 0,
+      "PACKAGE_DATETIME" : "2019-02-15 01:30:29.00252",
+      "REPOSITORY" : "core"
+   },
+   "release_packages" : [
+      {
+         "RELEASE_NAME" : "2019-02-12_21-45-18_Template_formatting",
+         "RELEASE_PACKAGE" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE.2019-02-12_21-45-49.dkasak.json",
+         "OBJECT_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "template"
+      }
+   ]
+}

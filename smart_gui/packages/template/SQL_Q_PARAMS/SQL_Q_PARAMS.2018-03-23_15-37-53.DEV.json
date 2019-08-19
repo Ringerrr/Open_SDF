@@ -1,0 +1,35 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SQL_Q_PARAMS'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL::Q_Params",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "TEMPLATE_DESC" : "First row of query results are available as #Q_# parameters to subsequent steps",
+            "TEMPLATE_NAME" : "SQL_Q_PARAMS"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQL_Q_PARAMS'"
+      ],
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SQL_Q_PARAMS",
+            "PARAM_NAME" : "#P_SQL#",
+            "PARAM_DESC" : null
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ZZ_SKIP_SOURCE_FORMATTING#",
+            "TEMPLATE_NAME" : "SQL_Q_PARAMS"
+         }
+      ]
+   }
+}

@@ -1,0 +1,53 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SCD1_INSERT_NEW_RECORDS_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_KEYS#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_DESC" : "Comma-separated list of keys"
+         },
+         {
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_DEFAULT" : "#CONFIG_TARGET_TABLE_NAME#_sk",
+            "PARAM_NAME" : "#P_SURROGATE_KEY#",
+            "PARAM_DESC" : "Single-column surrogate key"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ZZ_EXTRA_SOURCE_COLUMNS#",
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_DESC" : null
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_NAME" : "#P_ZZ_EXTRA_TARGET_COLUMNS#"
+         },
+         {
+            "PARAM_DESC" : "A comma-separated list of columns to ignore when constructing the list of source / target columns",
+            "PARAM_DEFAULT" : "#P_SURROGATE_KEY#",
+            "PARAM_NAME" : "#P_ZZ_IGNORE_COLUMNS#",
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE"
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SCD1_INSERT_NEW_RECORDS_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE",
+            "TEMPLATE_DESC" : "Insert new records into an SCD1 table ( db.table version )",
+            "CLASS" : "SQL",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "insert into #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\n(\n    #P_SURROGATE_KEY#\n  , #COMPLEX_COLUMNS_FROM_TARGET#\n#P_ZZ_EXTRA_TARGET_COLUMNS#\n)\nselect\n    ( row_number() over () ) + #Q_MAX_SK# as #P_SURROGATE_KEY#\n  , #COMPLEX_SOURCE_PREFIXED_COLUMNS_FROM_TARGET#\n#P_ZZ_EXTRA_SOURCE_COLUMNS#\nfrom\n            #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# SOURCE\nleft join   #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME# TARGET\non\n    #COMPLEX_JOIN_ON_KEYS#\nwhere\n    #COMPLEX_TARGET_KEY_IS_NULL#"
+         }
+      ]
+   }
+}

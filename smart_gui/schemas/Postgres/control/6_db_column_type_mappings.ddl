@@ -1,0 +1,8 @@
+CREATE TABLE DB_COLUMN_TYPE_MAPPINGS (
+    SOURCE_DB_TYPE               CHARACTER VARYING(20)    not null
+  , SOURCE_COLUMN_TYPE           CHARACTER VARYING(50)    not null
+  , TARGET_DB_TYPE               CHARACTER VARYING(20)    not null
+  , TARGET_COLUMN_TYPE           CHARACTER VARYING(50)    not null
+
+  , primary key ( SOURCE_DB_TYPE , SOURCE_COLUMN_TYPE , TARGET_DB_TYPE )
+);

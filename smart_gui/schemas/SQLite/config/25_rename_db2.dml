@@ -1,0 +1,4 @@
+update connections
+set DatabaseType = 'DB2'
+where DatabaseType = 'DB2::ODBC'
+;

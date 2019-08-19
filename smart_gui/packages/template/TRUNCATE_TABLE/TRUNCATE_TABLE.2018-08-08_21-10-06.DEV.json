@@ -1,0 +1,22 @@
+{
+   "param" : {
+      "data" : null,
+      "pre" : [
+         "delete from param where template_name = 'TRUNCATE_TABLE'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'TRUNCATE_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "TRUNCATE_TABLE",
+            "TEMPLATE_DESC" : "Truncate a target table",
+            "TEMPLATE_TEXT" : "truncate table #COMPLEX_DB_SCHEMA_TABLE#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL"
+         }
+      ]
+   }
+}

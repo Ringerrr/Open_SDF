@@ -1,0 +1,7 @@
+insert into ignore_drivers
+(
+    driver
+) values (
+    'DB2'
+);
+

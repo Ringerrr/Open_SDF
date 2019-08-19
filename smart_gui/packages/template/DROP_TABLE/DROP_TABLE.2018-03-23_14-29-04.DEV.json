@@ -1,0 +1,22 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'DROP_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_TEXT" : "drop table #COMPLEX_DB_SCHEMA_TABLE#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL",
+            "TEMPLATE_DESC" : "Drops a table ...",
+            "TEMPLATE_NAME" : "DROP_TABLE"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'DROP_TABLE'"
+      ],
+      "data" : null
+   }
+}

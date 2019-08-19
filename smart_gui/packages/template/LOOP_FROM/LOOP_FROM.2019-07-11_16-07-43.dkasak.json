@@ -1,0 +1,29 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'LOOP_FROM'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_TEXT" : "This template provides looping control inside Smart Frameworks.\n\nPlace a step of type LOOP_FROM at the start of a set of steps to be looped over.\nThen at the point where program logic should loop back, place a LOOP_UNTIL step,\nand set up your comparison variables and operator.\n\nLooping will occur until the comparison returns TRUE, up to the defined max number of iterations.\n\n-----------------------------------------------------------\n\nLoop: [#P_LOOP#] starting ...",
+            "TEMPLATE_NAME" : "LOOP_FROM",
+            "TEMPLATE_DESC" : "Defines the start of a loop",
+            "REPOSITORY" : "core",
+            "CLASS" : "LoopFrom"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'LOOP_FROM'"
+      ],
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_LOOP#",
+            "PARAM_DESC" : "The name of the loop to begin",
+            "TEMPLATE_NAME" : "LOOP_FROM"
+         }
+      ]
+   }
+}

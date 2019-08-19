@@ -1,0 +1,340 @@
+{
+   "release_packages" : [
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 1,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SQL_TO_CSV",
+         "RELEASE_PACKAGE" : "SQL_TO_CSV.2018-07-05_16-10-11.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_CLONE_TABLE_STRUCTURE.2018-03-23_13-57-54.DEV.json",
+         "OBJECT_NAME" : "BIGQUERY_CLONE_TABLE_STRUCTURE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS.2018-03-23_14-02-03.DEV.json",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_DROP_TABLE.2018-03-23_14-02-23.DEV.json",
+         "OBJECT_NAME" : "BIGQUERY_DROP_TABLE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "BIGQUERY_EXECUTE_SQL",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "BIGQUERY_EXECUTE_SQL.2018-03-23_14-02-32.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_LOAD_FILE.2018-03-23_14-04-18.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_LOAD_FILE"
+      },
+      {
+         "OBJECT_NAME" : "BIGQUERY_MERGE_NEW_COLUMNS",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "BIGQUERY_MERGE_NEW_COLUMNS.2018-03-23_14-04-48.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS.2018-03-23_14-05-04.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE.2018-03-23_14-05-14.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_TABLE_CLEANUP.2018-03-23_14-05-35.DEV.json",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_TABLE_CLEANUP",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_TABLE_FROM_COLUMN_HEADINGS",
+         "RELEASE_PACKAGE" : "BIGQUERY_TABLE_FROM_COLUMN_HEADINGS.2018-03-23_14-08-56.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_TABLE_FROM_SQL.2018-03-23_14-09-15.DEV.json",
+         "OBJECT_NAME" : "BIGQUERY_TABLE_FROM_SQL",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "RELEASE_PACKAGE" : "BIGQUERY_TABLE_TO_CSV.2018-03-23_14-09-54.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "BIGQUERY_TABLE_TO_CSV"
+      },
+      {
+         "RELEASE_PACKAGE" : "COMPRESS_FILE.2018-03-23_14-10-06.DEV.json",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "COMPRESS_FILE"
+      },
+      {
+         "OBJECT_NAME" : "CSV_SANITISER",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_PACKAGE" : "CSV_SANITISER.2018-03-23_14-10-25.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "DATACOP.2018-03-23_14-10-35.DEV.json",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_NAME" : "DATACOP",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes"
+      },
+      {
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "DELETE_FILE",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "DELETE_FILE.2018-03-23_14-10-47.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "DELETE_FROM_TABLE.2018-03-23_14-21-55.DEV.json",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_NAME" : "DELETE_FROM_TABLE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes"
+      },
+      {
+         "RELEASE_PACKAGE" : "DROP_TABLE.2018-03-23_14-29-04.DEV.json",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_NAME" : "DROP_TABLE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes"
+      },
+      {
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "GENERIC_SQL",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "GENERIC_SQL.2018-03-23_14-36-04.DEV.json"
+      },
+      {
+         "OBJECT_NAME" : "GOOGLE_CLOUD_STORAGE_GET",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "GOOGLE_CLOUD_STORAGE_GET.2018-03-23_14-37-30.DEV.json"
+      },
+      {
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "HIVE_LOAD_DATA",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "HIVE_LOAD_DATA.2018-03-23_14-39-07.DEV.json"
+      },
+      {
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "HIVE_TABLE_FROM_COLUMN_HEADINGS",
+         "RELEASE_PACKAGE" : "HIVE_TABLE_FROM_COLUMN_HEADINGS.2018-03-23_14-43-04.DEV.json"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE.2018-03-23_14-47-43.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "INSERT_SRC_TGT_DB_TABLE.2018-03-23_15-08-14.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "INSERT_SRC_TGT_DB_TABLE"
+      },
+      {
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_NAME" : "LOOP_UNTIL",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "LOOP_UNTIL.2018-03-23_15-08-27.DEV.json"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "POSTGRES_8_X_EXPORT",
+         "RELEASE_PACKAGE" : "POSTGRES_8_X_EXPORT.2018-03-23_15-12-19.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "POSTGRES_8_X_LOAD.2018-03-23_15-12-26.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "POSTGRES_8_X_LOAD",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes"
+      },
+      {
+         "RELEASE_PACKAGE" : "POSTGRES_9_X_EXPORT.2018-03-23_15-12-33.DEV.json",
+         "OBJECT_NAME" : "POSTGRES_9_X_EXPORT",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template"
+      },
+      {
+         "OBJECT_NAME" : "POSTGRES_9_X_LOAD",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "POSTGRES_9_X_LOAD.2018-03-23_15-12-39.DEV.json"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+         "RELEASE_PACKAGE" : "POSTGRES_9_X_LOAD_REMOTE.2018-03-23_15-12-57.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "REGEX_TO_CSV.2018-03-23_15-32-23.DEV.json",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "REGEX_TO_CSV",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "RELEASE_PACKAGE" : "RUN_SCRIPT.2018-03-23_15-32-37.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "RUN_SCRIPT"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM.2018-03-23_15-33-01.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE.2018-03-23_15-34-48.DEV.json",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SCD1_INSERT_NEW_RECORDS_DB_TABLE"
+      },
+      {
+         "RELEASE_PACKAGE" : "SCD2_CLOSE_RECORDS_DB_TABLE.2018-03-23_15-36-09.DEV.json",
+         "OBJECT_NAME" : "SCD2_CLOSE_RECORDS_DB_TABLE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "SCD2_CLOSE_RECORDS_NOT_IN_SOURCE.2018-03-23_15-36-50.DEV.json"
+      },
+      {
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_PACKAGE" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE.2018-03-23_15-37-03.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "SFTP_PUT.2018-03-23_15-37-16.DEV.json",
+         "OBJECT_NAME" : "SFTP_PUT",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template"
+      },
+      {
+         "RELEASE_PACKAGE" : "SMTP.2018-03-23_15-37-29.DEV.json",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SMTP",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "RELEASE_PACKAGE" : "SQL_ITERATOR.2018-03-23_15-37-42.DEV.json",
+         "OBJECT_NAME" : "SQL_ITERATOR",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SQL_Q_PARAMS",
+         "RELEASE_PACKAGE" : "SQL_Q_PARAMS.2018-03-23_15-37-53.DEV.json"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SQLSERVER_PUSH_CSV_VIA_BCP",
+         "RELEASE_PACKAGE" : "SQLSERVER_PUSH_CSV_VIA_BCP.2018-03-23_15-38-31.DEV.json"
+      },
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "OBJECT_NAME" : "SQLSERVER_SQL_TO_BCP",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "RELEASE_PACKAGE" : "SQLSERVER_SQL_TO_BCP.2018-03-23_15-39-10.DEV.json"
+      },
+      {
+         "RELEASE_PACKAGE" : "SQL_TO_JSON.2018-03-23_15-41-45.DEV.json",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "SQL_TO_JSON",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0
+      },
+      {
+         "OBJECT_CHANGED" : 0,
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "OBJECT_NAME" : "STRING_ITERATOR",
+         "RELEASE_PACKAGE" : "STRING_ITERATOR.2018-03-23_15-41-58.DEV.json"
+      },
+      {
+         "OBJECT_NAME" : "WWW_MECHANIZE",
+         "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 0,
+         "RELEASE_PACKAGE" : "WWW_MECHANIZE.2018-03-23_15-45-15.DEV.json"
+      }
+   ],
+   "release" : {
+      "RELEASE_OPEN" : 0,
+      "PACKAGE_DATETIME" : null,
+      "REPOSITORY" : "core",
+      "RELEASE_BASE" : null,
+      "RELEASE_NAME" : "2018-07-05_16-07-58_core_NULL_encoding_fixes"
+   }
+}

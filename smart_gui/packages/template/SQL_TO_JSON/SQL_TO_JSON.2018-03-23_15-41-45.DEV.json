@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQL_TO_JSON'"
+      ],
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_FILE_PATH#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SQL_TO_JSON",
+            "PARAM_DESC" : "The path to the file to generate"
+         },
+         {
+            "PARAM_DESC" : "NOTE IN USE: TODO: implement :) The number of records to pull from the source database in a single operation",
+            "PARAM_DEFAULT" : "10000",
+            "PARAM_NAME" : "#P_PAGE_SIZE#",
+            "TEMPLATE_NAME" : "SQL_TO_JSON"
+         },
+         {
+            "PARAM_DESC" : "The SQL to execute. You know what to do.",
+            "TEMPLATE_NAME" : "SQL_TO_JSON",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_SQL#"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Write the results of some SQL to JSON - suitable for bulk-loading into Google BigQuery. The file is actually new-line-seperated JSON records.",
+            "TEMPLATE_NAME" : "SQL_TO_JSON",
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL::JSON_Writer"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SQL_TO_JSON'"
+      ]
+   }
+}

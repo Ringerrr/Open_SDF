@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.4 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkWindow" id="1st_run_wizard">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="window_position">center</property>
+    <property name="default_width">1200</property>
+    <property name="icon">sa_icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="on_1st_run_wizard_destroy" after="yes" swapped="no"/>
+    <child>
+      <object class="GtkNotebook" id="wizard_notebook">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Welcome to the 1st-run wizard. This process writes configuration data to SDF's SQLite-based configuration database.
+
+You can run this wizard later, by opening the &lt;b&gt;Configuration&lt;/b&gt; window - there's a button to launch it on the 1st page.
+
+ The SQLite configuration database is for storing user settings, mainly related to SDF's GUI. It also stores all your
+ database connection information. For this reason, you should be careful who has access to the database.
+ Later 2 further databases will be configured, that store the rest of SDF's metadata and logging data. These 2
+ can be shared across a development team, and contain all the jobs and related metadata you create, as well as
+ ETL logs and performance metrics.
+
+The SQLite database is stored in a hidden directory in your home directory ( ~/.smart_config ), and then in a subdirectory
+ based on &lt;i&gt;either&lt;/i&gt; your username ( this is the default behaviour ), &lt;i&gt;or&lt;/i&gt; the value of the &lt;b&gt;SDF_USER_PROFILE&lt;/b&gt;
+ environment variable. This allows you to have multiple configurations inside your home directory,
+ pointing to different environments. Note that if you're running SDF as a &lt;i&gt;Flatpak&lt;/i&gt; application, then SDF will
+ &lt;b&gt;&lt;i&gt;not&lt;/i&gt;&lt;/b&gt; have access to your home folder, as it runs in a sandbox. However SDF's SQLite-based configuration
+ database &lt;b&gt;&lt;i&gt;will&lt;/i&gt;&lt;/b&gt; be persisted, even after you've upgraded SDF ( ie 'flatpak update' ).
+
+All the settings this wizard creates are accessible in the &lt;b&gt;SQLite Simple Config&lt;/b&gt; page of the Configuration window.
+ You can open this window by selecting it from the menu item: &lt;b&gt;&lt;i&gt;SDF core utilities ==&gt; Configuration&lt;/i&gt;&lt;/b&gt;.
+ You can change these settings at any time, but should think about the consequences of such changes 1st, of course.
+
+The 1st step is to define an &lt;b&gt;SDF_DB_PREFIX&lt;/b&gt; setting.  This is used to determine the names of 2 databases that
+ SDF will use ( and optionally also create later ) - a config and log database. 
+ The default below: &lt;b&gt;SDF&lt;/b&gt; will produce:
+
+   config database: &lt;b&gt;SDF_CONFIG&lt;/b&gt;
+   log database:      &lt;b&gt;SDF_LOG&lt;/b&gt;.
+
+The use of a prefix helps you keep different environments separated, but still hosted on the same database instance.
+
+If you just want to use the Database Browser, and not deal with ETL jobs at the moment, just accept the default ...</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="spacing">10</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkAlignment">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkEntry" id="SDF_DB_PREFIX">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;b&gt;SDF_DB_PREFIX&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="SDF_DB_PREFIX_save">
+                    <property name="label" translatable="yes">Save and Continue</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_SDF_DB_PREFIX_save_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel" id="label24">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Intro</property>
+          </object>
+          <packing>
+            <property name="tab_fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">This step configures your local connection to the main config and logging databases.
+ These would generally be hosted on &lt;b&gt;Postgres&lt;/b&gt;, though Netezza support also exists.
+
+For both of these databases, SDF uses a specially-named &lt;b&gt;&lt;i&gt;METADATA&lt;/i&gt;&lt;/b&gt;
+ connection.
+
+You can configure this connection by clicking the &lt;b&gt;&lt;i&gt;Configure Metadata Connection&lt;/i&gt;&lt;/b&gt;
+ button at the bottom of this page. This will open the &lt;b&gt;&lt;i&gt;Connections&lt;/i&gt;&lt;/b&gt; page
+ of the &lt;b&gt;&lt;i&gt;Configuration&lt;/i&gt;&lt;/b&gt; window, and begin a configuration for you.
+
+After &lt;b&gt;&lt;i&gt;applying&lt;/i&gt;&lt;/b&gt; the settings, test the connection. Once sucessful,
+ you can, if required, also create the target databases. If you're connecting to an existing
+ environment, these databases will already exist.
+
+This step is only required if you want to immediately make use of the ETL functionality in SDF.
+ If you just want to use the DB Browser, you can skip this step.
+
+When you've finished setting up your &lt;b&gt;METADATA&lt;/b&gt; connection, return to this wizard
+ ( you can close the configuration screen or just switch back here ).</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="Configure_METADATA">
+                <property name="label" translatable="yes">Configure Metadata Connection</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_Configure_METADATA_clicked" after="yes" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Metadata DB config</property>
+          </object>
+          <packing>
+            <property name="position">1</property>
+            <property name="tab_fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Overlays are plugins to SDF that add new functionality, additional database drivers, etc.
+
+Smart Associates license commerical overlays to their customers for advanced use-cases
+ like &lt;i&gt;anything-to-anything&lt;/i&gt; database migrations, data validations, and other functionality
+ customers request us to build into SDF.
+
+As SDF is split across 2 distinct codebases ( the GUI and the ETL execution framework ),
+ we support overlays for both codebases.
+
+The ETL &lt;b&gt;template&lt;/b&gt; and &lt;b&gt;job&lt;/b&gt; snapshotting ( ie for exporting your work to
+ different environments, or just backing things up ) creates JSON files, which are typically
+ stored in a GUI overlay folder. So even if you don't plan on writing plugins to SDF, having a
+ GUI overlay per project you work on is still a nice way to keep your work separate.
+
+When you add ( or remove ) an overlay, you should restart the GUI for changes to take effect.
+
+The button below will take you to the overlay page of the configuration window. Click it now
+ if you want to see where it is, or you have overlays to add.</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="Open_Overlays">
+                <property name="label" translatable="yes">Open Overlay Configuration</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_Open_Overlays_clicked" after="yes" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Configure Overlays</property>
+          </object>
+          <packing>
+            <property name="position">2</property>
+            <property name="tab_fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">The release manager window imports and exports ETL templates and jobs from
+ one environment to another ( or to / from git etc ).
+
+When developers snapshot their work, it gets saved into an &lt;b&gt;open&lt;/b&gt; release
+ ( if there is more than 1 open release, they'll get asked which release to add it to ).
+ All metadata is dumped to JSON files in the &lt;b&gt;overlay&lt;/b&gt; corresponding to the
+ object being saved. When a release is ready for packaging and deployment,
+ someone will open the release manager and &lt;b&gt;package&lt;/b&gt; the release.
+ This will create an additional JSON file that describes the entire package, and close
+ off the release. At this point, all new objects in the overlay directory can be added
+ to git.
+
+To deploy into another environment, pull the overlay repository, and open the release
+ manager. The new release package will be detected, and you'll be asked whether you
+ want to apply the release.
+
+SDF comes with a collection of &lt;b&gt;templates&lt;/b&gt; that are packaged as releases.
+ Click the button below to open the &lt;b&gt;release manager&lt;/b&gt;, and apply the release(s)
+ ( depending  on the state of development, there can be multiple ) to import all the default
+ templates.</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="Open_ReleaseManager">
+                <property name="label" translatable="yes">Open Release Manager</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_Open_ReleaseManager_clicked" after="yes" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Release Manager</property>
+          </object>
+          <packing>
+            <property name="position">3</property>
+            <property name="tab_fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">&lt;big&gt;You've completed the 1st-run / configuration tour.
+
+You can re-run this wizard any time by selecting its menu entry.
+
+Click the button below to indicate that you don't wish this window to appear
+ the next time you launch the SDF GUI.&lt;/big&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="FirstRunComplete">
+                <property name="label" translatable="yes">Complete 1st-run wizard / configuration tour</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_FirstRunComplete_clicked" after="yes" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child type="tab">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Complete Wizard</property>
+          </object>
+          <packing>
+            <property name="position">4</property>
+            <property name="tab_fill">False</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar" id="HeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="title">1st Run Wizard / Configuration tour</property>
+        <property name="has_subtitle">False</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-about</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

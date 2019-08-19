@@ -1,0 +1,50 @@
+{
+  "name": "SDF core utilities",
+  "items": [
+    {
+      "text":   "DB Browser",
+      "image":  "web-browser",
+      "window": "window::browser"
+    }
+ ,  {
+      "text":   "ELT Builder",
+      "image":  "document-page-setup",
+      "window": "window::main"
+    }
+ ,  {
+      "text":   "Configuration",
+      "image":  "document-properties",
+      "window": "window::configuration"
+    }
+  , {
+      "text":   "ELT Monitor",
+      "image":  "video-display",
+      "window": "window::etl_monitor"
+    }
+  , {
+      "text":   "Data Loader",
+      "image":  "edit-copy",
+      "window": "window::data_loader"
+    }
+ ,  {
+      "text":   "Release Manager"
+    , "image":  "network-wired"
+    , "window": "window::release_manager"
+    }
+ ,  {
+      "text":   "1st Run Wizard"
+    , "image":  "gtk-about"
+    , "window": "window::1st_run_wizard"
+    }
+ ,  {
+      "text":   "MySQL Dashboard"
+    , "image":  "gtk-select-color"
+    , "window": "window::dashboard_mysql"
+    }
+ ,  {
+      "text":   "Flatpak Package Builder"
+    , "image":  "gtk-media-record"
+    , "window": "window::flatpak_package_builder"
+    }
+  ]
+}

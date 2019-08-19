@@ -1,0 +1,25 @@
+{
+   "release" : {
+      "RELEASE_NAME" : "2019-07-11_16-07-13_Loop_Template_Cleanup",
+      "RELEASE_BASE" : null,
+      "PACKAGE_DATETIME" : "2019-07-11 16:08:09.940003",
+      "RELEASE_OPEN" : 0,
+      "REPOSITORY" : "core"
+   },
+   "release_packages" : [
+      {
+         "RELEASE_NAME" : "2019-07-11_16-07-13_Loop_Template_Cleanup",
+         "RELEASE_PACKAGE" : "LOOP_FROM.2019-07-11_16-07-43.dkasak.json",
+         "OBJECT_NAME" : "LOOP_FROM",
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "template"
+      },
+      {
+         "OBJECT_NAME" : "LOOP_UNTIL",
+         "RELEASE_NAME" : "2019-07-11_16-07-13_Loop_Template_Cleanup",
+         "RELEASE_PACKAGE" : "LOOP_UNTIL.2019-07-11_16-07-55.dkasak.json",
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "template"
+      }
+   ]
+}

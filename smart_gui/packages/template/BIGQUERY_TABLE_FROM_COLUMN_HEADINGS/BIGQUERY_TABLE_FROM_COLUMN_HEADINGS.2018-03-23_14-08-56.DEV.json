@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DEFAULT" : "{}",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_FROM_COLUMN_HEADINGS",
+            "PARAM_NAME" : "#P_COLUMN_TYPE_MAP#",
+            "PARAM_DESC" : "A JSON-encoded map of column names-to-types. Any columns not found in the map will default to STRING"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_TABLE_FROM_COLUMN_HEADINGS'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_TABLE_FROM_COLUMN_HEADINGS'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_FROM_COLUMN_HEADINGS",
+            "TEMPLATE_DESC" : "Parse a column headings file and create a BigQuery table to match",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Create BigQuery temporary table from column headings file [#ENV_HARVEST_PATH#.headers]",
+            "CLASS" : "SQL::DatabaseMethod"
+         }
+      ]
+   }
+}

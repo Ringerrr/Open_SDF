@@ -1,0 +1,3 @@
+delete from simple_config
+where key = 'gui_overlay_paths'
+;

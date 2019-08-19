@@ -1,0 +1,113 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "This template fetches column metadata from a target table,\nand then validates all columns + fields in a CSV. Validated\ndata goes into a 'good' stream, and everything else into a\n'bad' stream. Both get a header record. At the end, a summary\nis inserted into the DATACOP table.",
+            "CLASS" : "DataCop",
+            "TEMPLATE_DESC" : "Split a CSV into 'good' and 'bad' streams, based on a target table to load into",
+            "TEMPLATE_NAME" : "DATACOP"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'DATACOP'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "Whether to allow broken CSVs wrt quotes",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_ALLOW_LOOSE_QUOTES#",
+            "TEMPLATE_NAME" : "DATACOP"
+         },
+         {
+            "PARAM_DESC" : "Set the 'allow unquoted escape' flag in Text::CSV",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DEFAULT" : "1",
+            "PARAM_NAME" : "#P_ALLOW_UNQUOTED_ESCAPE#"
+         },
+         {
+            "PARAM_DESC" : "The column delimiter",
+            "PARAM_DEFAULT" : ",",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_NAME" : "#P_DELIMITER#"
+         },
+         {
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DEFAULT" : "\\",
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#",
+            "PARAM_DESC" : "The escape character"
+         },
+         {
+            "PARAM_NAME" : "#P_FILE_NAME#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DESC" : "The input file name"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_GLOBAL_SUB_REPLACE#",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DESC" : "Global Replace: regex to replace with"
+         },
+         {
+            "PARAM_DESC" : "Global Replace: regex to search for",
+            "PARAM_NAME" : "#P_GLOBAL_SUB_SEARCH#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "DATACOP"
+         },
+         {
+            "PARAM_DESC" : "Whether the source file has a header or or not",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_NAME" : "#P_INCLUDES_HEADERS#"
+         },
+         {
+            "PARAM_DESC" : "Whether the CSV should be read in binary mode ( required for loose quotes )",
+            "PARAM_NAME" : "#P_INPUT_BINARY#",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "DATACOP"
+         },
+         {
+            "PARAM_DESC" : "The ( perl ) input encoding",
+            "PARAM_DEFAULT" : "latin9",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_NAME" : "#P_INPUT_ENCODING#"
+         },
+         {
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DEFAULT" : "\\n",
+            "PARAM_NAME" : "#P_INPUT_EOL_CHARACTER#",
+            "PARAM_DESC" : "The end-of-line character"
+         },
+         {
+            "PARAM_DESC" : "Whether to strip off excess columns ( excess according to the database )",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_NAME" : "#P_MANGLE_COLUMN_COUNT#"
+         },
+         {
+            "PARAM_DESC" : "The column delimiter of the output file",
+            "PARAM_NAME" : "#P_OUTPUT_DELIMITER#",
+            "PARAM_DEFAULT" : "#P_DELIMITER#",
+            "TEMPLATE_NAME" : "DATACOP"
+         },
+         {
+            "PARAM_DESC" : "The ( perl ) output encoding",
+            "PARAM_DEFAULT" : "latin9",
+            "PARAM_NAME" : "#P_OUTPUT_ENCODING#",
+            "TEMPLATE_NAME" : "DATACOP"
+         },
+         {
+            "TEMPLATE_NAME" : "DATACOP",
+            "PARAM_DEFAULT" : "\"",
+            "PARAM_NAME" : "#P_QUOTE_CHARACTER#",
+            "PARAM_DESC" : "The quote character"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'DATACOP'"
+      ]
+   }
+}

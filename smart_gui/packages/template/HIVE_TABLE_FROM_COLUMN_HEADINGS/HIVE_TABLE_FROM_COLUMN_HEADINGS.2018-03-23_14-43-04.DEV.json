@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "A JSON-encoded map of column names-to-types. Any columns not found in the map will default to STRING",
+            "PARAM_DEFAULT" : "{}",
+            "TEMPLATE_NAME" : "HIVE_TABLE_FROM_COLUMN_HEADINGS",
+            "PARAM_NAME" : "#P_COLUMN_TYPE_MAP#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'HIVE_TABLE_FROM_COLUMN_HEADINGS'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'HIVE_TABLE_FROM_COLUMN_HEADINGS'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Create Hive external table from headings file [#ENV_HARVEST_PATH#.headers]",
+            "TEMPLATE_NAME" : "HIVE_TABLE_FROM_COLUMN_HEADINGS",
+            "TEMPLATE_DESC" : "Parse an omniture column headings file and create a Hive table to match"
+         }
+      ]
+   }
+}

@@ -1,0 +1,8 @@
+insert into simple_config
+(
+    key , value
+) values (
+    'ssh_key_path'
+  , NULL
+);
+

@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "The column separator ( delimiter )",
+            "PARAM_DEFAULT" : ",",
+            "PARAM_NAME" : "#P_DELIMITER#",
+            "TEMPLATE_NAME" : "STRING_ITERATOR"
+         },
+         {
+            "PARAM_DESC" : "The name of the iterator",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "STRING_ITERATOR",
+            "PARAM_NAME" : "#P_ITERATOR#"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "STRING_ITERATOR",
+            "PARAM_NAME" : "#P_STRING#",
+            "PARAM_DESC" : "The CSV data ( including headers ) to parse"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'STRING_ITERATOR'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'STRING_ITERATOR'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "StringIterator",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "This template creates an iterator out of the contents of #P_STRING#,\nparsing it by separating on the #P_DELIMITER# value.\n\nIt expects a row of column headings, followed by CSV data.\n\nLeading and trailing spaces get trimmed from column headings and data.\n\nThe parsed records are stored in the iterator indicated by the name:\n#P_ITERATOR#.\n\nYou would use this kind of iterator to quickly loop over a list of\nvalues or records, without haveing to go to the trouble of creating\na table to store them.",
+            "TEMPLATE_DESC" : "Iterate over items in a CSV stored as a string literal",
+            "TEMPLATE_NAME" : "STRING_ITERATOR"
+         }
+      ]
+   }
+}

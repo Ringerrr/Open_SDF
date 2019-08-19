@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS'"
+      ],
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_SOURCE_TABLE_STRUCTURE_NAME#",
+            "TEMPLATE_NAME" : "BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS",
+            "PARAM_DESC" : null
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS",
+            "TEMPLATE_DESC" : null,
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "Create target table: #CONFIG_TARGET_TABLE_NAME# if not exists, using #CONFIG_SOURCE_TABLE_NAME# as a template",
+            "REPOSITORY" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS'"
+      ]
+   }
+}

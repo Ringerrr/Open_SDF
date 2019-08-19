@@ -1,0 +1,18 @@
+{
+   "release_packages" : [
+      {
+         "PACKAGE_TYPE" : "template",
+         "RELEASE_PACKAGE" : "DATACOP.2019-07-05_16-15-20.dkasak.json",
+         "OBJECT_CHANGED" : 1,
+         "RELEASE_NAME" : "2019-07-05_16-12-56_demo_release",
+         "OBJECT_NAME" : "DATACOP"
+      }
+   ],
+   "release" : {
+      "RELEASE_BASE" : null,
+      "RELEASE_OPEN" : 0,
+      "REPOSITORY" : "core",
+      "PACKAGE_DATETIME" : "2019-07-05 16:16:31.728852",
+      "RELEASE_NAME" : "2019-07-05_16-12-56_demo_release"
+   }
+}

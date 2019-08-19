@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Interact with web services using Perl's WWW::Mechanize",
+            "TEMPLATE_NAME" : "WWW_MECHANIZE",
+            "CLASS" : "WWWMechanize",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Fetch the web page:          #P_URL#\nStore the output content in: #P_OUTPUT_FILENAME#\nUse the cookie jar named:    #P_COOKIE_JAR_NAME#"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'WWW_MECHANIZE'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_COOKIE_JAR_NAME#",
+            "TEMPLATE_NAME" : "WWW_MECHANIZE",
+            "PARAM_DESC" : "The name of a cookie jar to use. Use different names for different sessions."
+         },
+         {
+            "PARAM_NAME" : "#P_FORM_FIELDS_JSON#",
+            "PARAM_DEFAULT" : "{}",
+            "TEMPLATE_NAME" : "WWW_MECHANIZE",
+            "PARAM_DESC" : "A JSON string with key/value pairs of field values to set"
+         },
+         {
+            "PARAM_NAME" : "#P_OUTPUT_FILENAME#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "WWW_MECHANIZE",
+            "PARAM_DESC" : "The full path to the output file to create"
+         },
+         {
+            "PARAM_DESC" : "The URL to fetch",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "WWW_MECHANIZE",
+            "PARAM_NAME" : "#P_URL#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'WWW_MECHANIZE'"
+      ]
+   }
+}

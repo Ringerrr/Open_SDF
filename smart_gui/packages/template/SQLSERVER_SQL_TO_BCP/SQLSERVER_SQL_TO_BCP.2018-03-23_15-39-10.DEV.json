@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SQLSERVER_SQL_TO_BCP'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Export the results of some SQL to a file via BCP",
+            "TEMPLATE_NAME" : "SQLSERVER_SQL_TO_BCP",
+            "CLASS" : "SQL::BCP_Writer",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "#P_SQL#"
+         }
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "The character used to separate columns",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_COLUMN_SEPARATOR#",
+            "TEMPLATE_NAME" : "SQLSERVER_SQL_TO_BCP"
+         },
+         {
+            "PARAM_DESC" : "The number of seconds to wait for a .ready file, created by a sibling process",
+            "PARAM_DEFAULT" : "180",
+            "PARAM_NAME" : "#P_FIFO_TIMEOUT#",
+            "TEMPLATE_NAME" : "SQLSERVER_SQL_TO_BCP"
+         },
+         {
+            "TEMPLATE_NAME" : "SQLSERVER_SQL_TO_BCP",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILE_PATH#",
+            "PARAM_DESC" : "The path to the CSV to be created"
+         },
+         {
+            "PARAM_DESC" : "The SQL to execute",
+            "TEMPLATE_NAME" : "SQLSERVER_SQL_TO_BCP",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_SQL#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SQLSERVER_SQL_TO_BCP'"
+      ]
+   }
+}

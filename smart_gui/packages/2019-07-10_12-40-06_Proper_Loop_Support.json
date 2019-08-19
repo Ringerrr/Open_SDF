@@ -1,0 +1,25 @@
+{
+   "release_packages" : [
+      {
+         "OBJECT_NAME" : "LOOP_FROM",
+         "RELEASE_NAME" : "2019-07-10_12-40-06_Proper_Loop_Support",
+         "RELEASE_PACKAGE" : "LOOP_FROM.2019-07-10_12-40-39.dkasak.json",
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "template"
+      },
+      {
+         "OBJECT_NAME" : "LOOP_UNTIL",
+         "RELEASE_NAME" : "2019-07-10_12-40-06_Proper_Loop_Support",
+         "RELEASE_PACKAGE" : "LOOP_UNTIL.2019-07-10_12-40-45.dkasak.json",
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "template"
+      }
+   ],
+   "release" : {
+      "PACKAGE_DATETIME" : "2019-07-10 12:41:00.305428",
+      "RELEASE_NAME" : "2019-07-10_12-40-06_Proper_Loop_Support",
+      "RELEASE_BASE" : null,
+      "REPOSITORY" : "core",
+      "RELEASE_OPEN" : 0
+   }
+}

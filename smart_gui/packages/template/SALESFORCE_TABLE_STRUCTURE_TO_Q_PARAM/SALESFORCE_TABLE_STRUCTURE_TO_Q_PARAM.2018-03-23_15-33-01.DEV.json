@@ -1,0 +1,35 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_KEYS_NAME#",
+            "PARAM_DEFAULT" : "KEYS",
+            "TEMPLATE_NAME" : "SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM",
+            "PARAM_DESC" : "The name of the #Q_ param to populate with the primary keys string ( comma separated )"
+         },
+         {
+            "PARAM_NAME" : "#P_STRUCTURE_NAME#",
+            "PARAM_DEFAULT" : "SALESFORCE_TABLE_STRUCTURE",
+            "TEMPLATE_NAME" : "SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM",
+            "PARAM_DESC" : "The name of the #Q_ param to populate with the table structure"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "Fetch table structure for #CONFIG_SOURCE_TABLE_NAME#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM",
+            "TEMPLATE_DESC" : "Fetches a table structure from Salesforce and stores in a #Q_ param"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SALESFORCE_TABLE_STRUCTURE_TO_Q_PARAM'"
+      ]
+   }
+}

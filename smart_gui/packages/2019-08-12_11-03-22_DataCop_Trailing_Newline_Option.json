@@ -1,0 +1,18 @@
+{
+   "release_packages" : [
+      {
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_NAME" : "DATACOP",
+         "RELEASE_NAME" : "2019-08-12_11-03-22_DataCop_Trailing_Newline_Option",
+         "RELEASE_PACKAGE" : "DATACOP.2019-08-12_11-04-03.dkasak.json",
+         "OBJECT_CHANGED" : 1
+      }
+   ],
+   "release" : {
+      "PACKAGE_DATETIME" : "2019-08-12 11:04:29.107248",
+      "RELEASE_BASE" : null,
+      "RELEASE_NAME" : "2019-08-12_11-03-22_DataCop_Trailing_Newline_Option",
+      "REPOSITORY" : "core",
+      "RELEASE_OPEN" : 0
+   }
+}

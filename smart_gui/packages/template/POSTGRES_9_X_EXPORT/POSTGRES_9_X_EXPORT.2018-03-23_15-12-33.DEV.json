@@ -1,0 +1,65 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "The column delimiter",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_DEFAULT" : ",",
+            "PARAM_NAME" : "#P_DELIMITER#"
+         },
+         {
+            "PARAM_DESC" : "The encoding of the source file",
+            "PARAM_DEFAULT" : "latin9",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_NAME" : "#P_ENCODING#"
+         },
+         {
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#",
+            "PARAM_DEFAULT" : "\\\\",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_DESC" : "The escape character"
+         },
+         {
+            "PARAM_DESC" : "A max event count value",
+            "PARAM_DEFAULT" : "1000",
+            "PARAM_NAME" : "#P_EVENT_COUNT_LIMIT#",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT"
+         },
+         {
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_DEFAULT" : "/opt/dql/export",
+            "PARAM_NAME" : "#P_EXPORT_DIRECTORY#",
+            "PARAM_DESC" : "The directory to export to"
+         },
+         {
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_NAME" : "#P_INCLUDES_HEADER#",
+            "PARAM_DESC" : "A boolean, indicating whether the target file should contain a header row"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "PARAM_NAME" : "#P_SQL#",
+            "PARAM_DESC" : "The SQL to export"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_9_X_EXPORT'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "POSTGRES_9_X_EXPORT",
+            "TEMPLATE_DESC" : null,
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "copy (\n#P_SQL#\n) to '#P_EXPORT_DIRECTORY#/#CONFIG_TARGET_TABLE_NAME#.csv'\nwith (\n    format    'csv'\n  , delimiter E'#P_DELIMITER#'\n  , header    #P_INCLUDES_HEADER#\n  , encoding  #P_ENCODING#\n  , escape    '#P_ESCAPE_CHAR#'\n);\n",
+            "REPOSITORY" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_9_X_EXPORT'"
+      ]
+   }
+}

@@ -1,0 +1,53 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_KEYS#",
+            "PARAM_DESC" : "Comma-separated list of business keys"
+         },
+         {
+            "PARAM_DESC" : "Single-column surrogate key",
+            "PARAM_DEFAULT" : "#CONFIG_TARGET_TABLE_NAME#_sk",
+            "PARAM_NAME" : "#P_SURROGATE_KEY#",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS"
+         },
+         {
+            "PARAM_DESC" : "The database class method that implements this logic ( if different from the template name )",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS",
+            "PARAM_DEFAULT" : "BIGQUERY_TABLE_FROM_SQL",
+            "PARAM_NAME" : "#P_ZZ_DATABASE_CLASS_METHOD#"
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS",
+            "PARAM_NAME" : "#P_ZZ_EXTRA_SOURCE_COLUMNS#",
+            "PARAM_DESC" : null
+         },
+         {
+            "PARAM_DESC" : "Comma-separated list of columns to ignore",
+            "PARAM_DEFAULT" : "#P_SURROGATE_KEY#",
+            "PARAM_NAME" : "#P_ZZ_IGNORE_COLUMNS#",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "select\n    TARGET.#P_SURROGATE_KEY# as #P_SURROGATE_KEY#\n  , #COMPLEX_BIGQUERY_SCD1_MERGE_COLUMNS_FROM_SOURCE_IF_EXISTS#\n#P_ZZ_EXTRA_SOURCE_COLUMNS#\nfrom\n            #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME# TARGET\nleft join   #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# SOURCE\non\n    #COMPLEX_JOIN_ON_KEYS#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS",
+            "TEMPLATE_DESC" : "Rewrite and SCD1 table, using attribute values from a staging table, and retaining surrogate keys"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_SCD1_REWRITE_CHANGED_RECORDS'"
+      ]
+   }
+}

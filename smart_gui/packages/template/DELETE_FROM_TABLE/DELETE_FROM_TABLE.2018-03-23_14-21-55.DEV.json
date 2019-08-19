@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : "where 1=1",
+            "PARAM_NAME" : "#P_OPTIONAL_FILTER#",
+            "TEMPLATE_NAME" : "DELETE_FROM_TABLE"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'DELETE_FROM_TABLE'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "DELETE_FROM_TABLE",
+            "TEMPLATE_DESC" : "Delete from a table ( with a dynamically generated db.table or db.schema.table reference, based on the database connection in use )",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "delete from #COMPLEX_DB_SCHEMA_TABLE#\n#P_OPTIONAL_FILTER#",
+            "CLASS" : "SQL"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'DELETE_FROM_TABLE'"
+      ]
+   }
+}

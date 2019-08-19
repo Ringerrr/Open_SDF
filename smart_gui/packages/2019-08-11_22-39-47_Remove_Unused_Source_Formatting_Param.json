@@ -1,0 +1,18 @@
+{
+   "release" : {
+      "PACKAGE_DATETIME" : "2019-08-12 11:04:22.449599",
+      "RELEASE_OPEN" : 0,
+      "REPOSITORY" : "core",
+      "RELEASE_NAME" : "2019-08-11_22-39-47_Remove_Unused_Source_Formatting_Param",
+      "RELEASE_BASE" : null
+   },
+   "release_packages" : [
+      {
+         "RELEASE_PACKAGE" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE.2019-08-11_22-41-23.dkasak.json",
+         "OBJECT_CHANGED" : 1,
+         "RELEASE_NAME" : "2019-08-11_22-39-47_Remove_Unused_Source_Formatting_Param",
+         "OBJECT_NAME" : "INSERT_SRC_TGT_DB_SCHEMA_TABLE",
+         "PACKAGE_TYPE" : "template"
+      }
+   ]
+}

@@ -1,0 +1,22 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_DROP_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Drop a BigQuery table",
+            "TEMPLATE_NAME" : "BIGQUERY_DROP_TABLE",
+            "CLASS" : "SQL::DatabaseMethod",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "Delete table #CONFIG_TARGET_TABLE_NAME# in database #CONFIG_TARGET_DB_NAME#"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_DROP_TABLE'"
+      ],
+      "data" : null
+   }
+}

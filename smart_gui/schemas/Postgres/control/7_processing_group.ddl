@@ -1,0 +1,9 @@
+CREATE TABLE PROCESSING_GROUP (
+    PROCESSING_GROUP_NAME           CHARACTER VARYING(200)
+  , PROCESSING_GROUP_DESCRIPTION    CHARACTER VARYING(300)
+  , TAGS                            CHARACTER VARYING(200)
+  , NOTES                           CHARACTER VARYING(60000)
+  , DISABLE_FLAG                    SMALLINT                     not null
+
+  , primary key ( PROCESSING_GROUP_NAME )
+);

@@ -1,0 +1,8 @@
+insert into simple_config
+(
+    key , value
+) values (
+    'gui_overlay_paths'
+  , NULL
+);
+

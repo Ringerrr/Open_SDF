@@ -1,0 +1,18 @@
+{
+   "release" : {
+      "RELEASE_NAME" : "2019-08-16_10-37-10_NULL_handling_cleanup",
+      "REPOSITORY" : "core",
+      "RELEASE_OPEN" : 0,
+      "RELEASE_BASE" : null,
+      "PACKAGE_DATETIME" : "2019-08-16 11:42:35.608402"
+   },
+   "release_packages" : [
+      {
+         "RELEASE_PACKAGE" : "SQL_TO_CSV.2019-08-16_10-40-03.dkasak.json",
+         "RELEASE_NAME" : "2019-08-16_10-37-10_NULL_handling_cleanup",
+         "PACKAGE_TYPE" : "template",
+         "OBJECT_CHANGED" : 1,
+         "OBJECT_NAME" : "SQL_TO_CSV"
+      }
+   ]
+}

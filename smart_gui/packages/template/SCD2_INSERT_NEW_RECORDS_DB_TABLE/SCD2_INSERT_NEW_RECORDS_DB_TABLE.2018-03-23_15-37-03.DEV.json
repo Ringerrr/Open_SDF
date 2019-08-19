@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SCD2_INSERT_NEW_RECORDS_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "insert into #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\n(\n    #COMPLEX_COLUMNS_FROM_TARGET#\n  , open_date\n  , close_date\n#P_ZZ_EXTRA_TARGET_COLUMNS#\n)\nselect\n    #COMPLEX_SOURCE_PREFIXED_COLUMNS_FROM_TARGET#\n  , cast( '#ENV_EXTRACT_DATE#' as date )\n  , cast( '#ENV_HIGH_DATE#' as date )\n#P_ZZ_EXTRA_SOURCE_COLUMNS#\nfrom\n            #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# SOURCE\nleft join   (\n                select\n                        #P_KEYS#\n                from\n                        #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\n                where\n                        close_date = '#ENV_HIGH_DATE#'\n            ) TARGET\non\n    #COMPLEX_JOIN_ON_KEYS#\nwhere\n    #COMPLEX_TARGET_KEY_IS_NULL#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_DESC" : "Insert new / changed records into an SCD2 table ( db.table version )",
+            "TEMPLATE_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SCD2_INSERT_NEW_RECORDS_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "A comma-separted list of keys, used to construct the join clause",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_NAME" : "#P_KEYS#"
+         },
+         {
+            "PARAM_DESC" : "Any extra source columns ( must start with a comma )",
+            "PARAM_NAME" : "#P_ZZ_EXTRA_SOURCE_COLUMNS#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE"
+         },
+         {
+            "TEMPLATE_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_ZZ_EXTRA_TARGET_COLUMNS#",
+            "PARAM_DESC" : "Any extra target columns ( must start with a comma )"
+         },
+         {
+            "PARAM_DESC" : "A comma-separated list of columns to ignore when constructing the list of source / target columns",
+            "PARAM_NAME" : "#P_ZZ_IGNORE_COLUMNS#",
+            "PARAM_DEFAULT" : "open_date , close_date",
+            "TEMPLATE_NAME" : "SCD2_INSERT_NEW_RECORDS_DB_TABLE"
+         }
+      ]
+   }
+}

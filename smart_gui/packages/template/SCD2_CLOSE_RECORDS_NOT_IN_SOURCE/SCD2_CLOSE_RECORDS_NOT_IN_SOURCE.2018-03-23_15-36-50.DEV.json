@@ -1,0 +1,22 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SCD2_CLOSE_RECORDS_NOT_IN_SOURCE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Close records in a target table where the corresponding record in the source has been deleted",
+            "TEMPLATE_NAME" : "SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "update\n        #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\nset\n        close_date = date_sub( cast( \"#ENV_EXTRACT_DATE#\" as date ), interval 1 day )\nwhere\n        close_date = '#ENV_HIGH_DATE#'\nand     #P_KEYS# in\n        (\n            select\n                        #COMPLEX_SOURCE_KEYS#\n            from        #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# TARGET\n            left join   #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME# SOURCE\n            on          #COMPLEX_JOIN_ON_KEYS#\n            and         TARGET.close_date = '#ENV_HIGH_DATE#'\n            where\n      #COMPLEX_SOURCE_KEY_IS_NULL#\n        )",
+            "CLASS" : "SQL"
+         }
+      ]
+   },
+   "param" : {
+      "data" : null,
+      "pre" : [
+         "delete from param where template_name = 'SCD2_CLOSE_RECORDS_NOT_IN_SOURCE'"
+      ]
+   }
+}

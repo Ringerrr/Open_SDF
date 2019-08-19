@@ -1,0 +1,8 @@
+insert into simple_config
+(
+    key , value
+) values (
+    'remote_etl_username'
+  , 'sfn'
+);
+

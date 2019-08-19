@@ -1,0 +1,41 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "update\n        #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\nset\n        close_date = date_sub( cast( \"#ENV_EXTRACT_DATE#\" as date ), interval 1 day )\nwhere\n        close_date = '#ENV_HIGH_DATE#'\nand     #P_KEYS# in\n        (\n            select\n                        #COMPLEX_SOURCE_KEYS#\n            from        #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# SOURCE\n            inner join  #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME# TARGET\n            on          #COMPLEX_JOIN_ON_KEYS#\n            and         TARGET.close_date = '#ENV_HIGH_DATE#'\n            where\n      #COMPLEX_SCD2_ATTRIBUTE_CHANGED#\n        )",
+            "REPOSITORY" : "core",
+            "TEMPLATE_DESC" : "Close changed records in an SCD2 table ( db.table version )",
+            "TEMPLATE_NAME" : "SCD2_CLOSE_RECORDS_DB_TABLE"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SCD2_CLOSE_RECORDS_DB_TABLE'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "A comma-separated list of keys, used to construct the join clause",
+            "TEMPLATE_NAME" : "SCD2_CLOSE_RECORDS_DB_TABLE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_KEYS#"
+         },
+         {
+            "PARAM_NAME" : "#P_ZZ_CASE_INSENSITIVE_VERSIONING#",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "SCD2_CLOSE_RECORDS_DB_TABLE",
+            "PARAM_DESC" : "A boolean that activates case INSENSITIVE versioning logic"
+         },
+         {
+            "PARAM_DESC" : "A comma-separated list of columns to ignore in the versioning comparison",
+            "PARAM_DEFAULT" : "open_date , close_date",
+            "TEMPLATE_NAME" : "SCD2_CLOSE_RECORDS_DB_TABLE",
+            "PARAM_NAME" : "#P_ZZ_IGNORE_COLUMNS#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SCD2_CLOSE_RECORDS_DB_TABLE'"
+      ]
+   }
+}

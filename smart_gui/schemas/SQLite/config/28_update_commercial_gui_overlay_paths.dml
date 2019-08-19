@@ -1,0 +1,3 @@
+update gui_overlays
+set OverlayPath = replace( OverlayPath , 'smart_gui' , 'SDF_commercial_-_smart_gui' );
+

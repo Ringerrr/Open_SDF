@@ -1,0 +1,47 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DEFAULT" : "freebcp",
+            "PARAM_DESC" : "The path to the bcp executable. We MUST use our patched version of freebcp for proper NULL handling.",
+            "PARAM_NAME" : "#P_BCP_PATH#",
+            "TEMPLATE_NAME" : "SQLSERVER_BCP_WRITER"
+         },
+         {
+            "PARAM_DESC" : "The character used to separate columns",
+            "PARAM_DEFAULT" : ",",
+            "TEMPLATE_NAME" : "SQLSERVER_BCP_WRITER",
+            "PARAM_NAME" : "#P_COLUMN_SEPARATOR#"
+         },
+         {
+            "PARAM_DESC" : "The path to the CSV to be created",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILE_PATH#",
+            "TEMPLATE_NAME" : "SQLSERVER_BCP_WRITER"
+         },
+         {
+            "PARAM_NAME" : "#P_SQL#",
+            "TEMPLATE_NAME" : "SQLSERVER_BCP_WRITER",
+            "PARAM_DEFAULT" : null,
+            "PARAM_DESC" : "The SQL to execute"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'SQLSERVER_BCP_WRITER'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SQLSERVER_BCP_WRITER'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL::BCP_Writer",
+            "TEMPLATE_NAME" : "SQLSERVER_BCP_WRITER",
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_DESC" : "Export the results of some SQL to a file via BCP"
+         }
+      ]
+   }
+}

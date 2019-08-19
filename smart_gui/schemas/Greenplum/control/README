@@ -1,0 +1,14 @@
+We have, at one point, been able to host the 'control' and 'log' databases
+on Greenplum. This support has *not* been kept maintained, as there is
+very little benefit, and it's additional work to keep it maintained and tested.
+
+I have *not* deleted any code ( in particular, there is code in the ETL framework
+for Greenplum metadata hosting ).
+
+To ressurect support for hosting metadata on Greenplum, the easiest way is to:
+
+a) Commercial use? Use SDF's migration wizard to generate DDL from an existing
+   Postgres metadata installation.
+
+b) Open source use // no access to SDF migration wizard? Dump the metadata
+   database using pg_dump and modify it by hand to execute on Greenplum.

@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_DESC" : "A comma-separated list of keys to join on",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_KEYS#"
+         },
+         {
+            "PARAM_DEFAULT" : "2",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+            "PARAM_NAME" : "#P_MAX_BILLING_TIER#",
+            "PARAM_DESC" : "The max billing tier is a Google charge multiplier. Use with care."
+         },
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE",
+            "PARAM_DEFAULT" : "BIGQUERY_EXECUTE_SQL",
+            "PARAM_NAME" : "#P_ZZ_DATABASE_CLASS_METHOD#",
+            "PARAM_DESC" : "DB class method to use to execute this template"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "update\r\n        #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\r\nset\r\n        close_date = date_sub( cast( \"#ENV_EXTRACT_DATE#\" as date ), interval 1 day )\r\nwhere\r\n        close_date = '#ENV_HIGH_DATE#'\r\nand     #P_KEYS# in\r\n        (\r\n            select\r\n                        #COMPLEX_SOURCE_KEYS#\r\n            from        #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME# TARGET\r\n            left join   #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME# SOURCE\r\n            on          #COMPLEX_JOIN_ON_KEYS#\r\n            and         TARGET.close_date = '#ENV_HIGH_DATE#'\r\n            where\r\n      #COMPLEX_SOURCE_KEY_IS_NULL#\r\n        )",
+            "TEMPLATE_DESC" : "BigQuery-specific version of SCD2_CLOSE_RECORDS_NOT_IN_SOURCE, uses REST API for less buck-passing from Google",
+            "TEMPLATE_NAME" : "BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_SCD2_CLOSE_RECORDS_NOT_IN_SOURCE'"
+      ]
+   }
+}

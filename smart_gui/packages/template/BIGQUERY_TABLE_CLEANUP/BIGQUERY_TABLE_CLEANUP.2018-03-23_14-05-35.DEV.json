@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_TABLE_CLEANUP'"
+      ],
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_REGEX_PATTERN#",
+            "PARAM_DEFAULT" : "DROP_THIS_TABLE",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_CLEANUP",
+            "PARAM_DESC" : "Any tables matching this pattern will be DROPPED"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_TEXT" : "Delete all tables matching regex pattern:\n#P_REGEX_PATTERN#",
+            "REPOSITORY" : "core",
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_CLEANUP",
+            "TEMPLATE_DESC" : "Clean up temporary tables"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_TABLE_CLEANUP'"
+      ]
+   }
+}

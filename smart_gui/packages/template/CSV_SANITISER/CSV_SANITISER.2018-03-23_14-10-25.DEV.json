@@ -1,0 +1,113 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'CSV_SANITISER'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "Whether to allow parsing of 'loose' quotes ( unescaped quotes )",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_NAME" : "#P_ALLOW_LOOSE_QUOTES#"
+         },
+         {
+            "PARAM_NAME" : "#P_ALLOW_WHITESPACE#",
+            "PARAM_DEFAULT" : "0",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DESC" : "Whether to strip surrounding whitespace from values"
+         },
+         {
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DEFAULT" : "0",
+            "PARAM_NAME" : "#P_ALWAYS_QUOTE#",
+            "PARAM_DESC" : "Whether to quote every column"
+         },
+         {
+            "PARAM_DEFAULT" : ",",
+            "PARAM_NAME" : "#P_INPUT_DELIMITER#",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DESC" : null
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : "",
+            "PARAM_NAME" : "#P_INPUT_ENCODING#",
+            "TEMPLATE_NAME" : "CSV_SANITISER"
+         },
+         {
+            "PARAM_DESC" : "The EOL character of the input file",
+            "PARAM_NAME" : "#P_INPUT_EOL_CHARACTER#",
+            "PARAM_DEFAULT" : "\\n",
+            "TEMPLATE_NAME" : "CSV_SANITISER"
+         },
+         {
+            "PARAM_DESC" : null,
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DEFAULT" : "\"",
+            "PARAM_NAME" : "#P_INPUT_ESCAPE_CHARACTER#"
+         },
+         {
+            "PARAM_DESC" : "The input file - the one that needs sanitising",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_NAME" : "#P_INPUT_FILENAME#"
+         },
+         {
+            "PARAM_DEFAULT" : "\"",
+            "PARAM_NAME" : "#P_INPUT_QUOTE_CHARACTER#",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DESC" : null
+         },
+         {
+            "PARAM_DESC" : "Whether to mangle EOLs embedded in column values",
+            "PARAM_DEFAULT" : null,
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_NAME" : "#P_MANGLE_MY_EOLS#"
+         },
+         {
+            "PARAM_DESC" : null,
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DEFAULT" : ",",
+            "PARAM_NAME" : "#P_OUTPUT_DELIMITER#"
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : "utf8",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_NAME" : "#P_OUTPUT_ENCODING#"
+         },
+         {
+            "PARAM_DEFAULT" : "\"",
+            "PARAM_NAME" : "#P_OUTPUT_ESCAPE_CHARACTER#",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DESC" : null
+         },
+         {
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_OUTPUT_FILENAME#",
+            "PARAM_DESC" : "The output file"
+         },
+         {
+            "PARAM_DESC" : null,
+            "PARAM_DEFAULT" : "",
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "PARAM_NAME" : "#P_OUTPUT_QUOTE_CHARACTER#"
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'CSV_SANITISER'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "CSV_SANITISER",
+            "TEMPLATE_DESC" : "Reads a CSV, and writes a CSV. Ho hum ...",
+            "CLASS" : "CSVSanitiser",
+            "TEMPLATE_TEXT" : "Read csv: [#P_INPUT_FILENAME#] and write [#P_OUTPUT_FILENAME#]",
+            "REPOSITORY" : "core"
+         }
+      ]
+   }
+}

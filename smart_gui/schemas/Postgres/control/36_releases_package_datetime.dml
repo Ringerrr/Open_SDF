@@ -1,0 +1,3 @@
+update RELEASES
+set package_datetime = now()
+where package_datetime is null;

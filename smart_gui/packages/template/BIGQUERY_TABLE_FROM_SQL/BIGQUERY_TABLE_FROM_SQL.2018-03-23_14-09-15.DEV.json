@@ -1,0 +1,35 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "#P_SQL#",
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_DESC" : null,
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_FROM_SQL"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_TABLE_FROM_SQL'"
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_FROM_SQL",
+            "PARAM_DEFAULT" : "2",
+            "PARAM_NAME" : "#P_MAX_BILLING_TIER#",
+            "PARAM_DESC" : "The maxBillingTier. Be careful - this multiplies costs."
+         },
+         {
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_SQL#",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_FROM_SQL",
+            "PARAM_DESC" : "The SQL. Go crazy ( beneath maxBillingTier )."
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_TABLE_FROM_SQL'"
+      ]
+   }
+}

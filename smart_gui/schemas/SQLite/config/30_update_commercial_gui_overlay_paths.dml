@@ -1,0 +1,3 @@
+update gui_overlays
+set OverlayPath = replace( OverlayPath , 'sdf-commercial' , 'SDF_commercial' );
+

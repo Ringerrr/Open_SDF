@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_TABLE_TO_CSV'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "Whether to enable compression",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV",
+            "PARAM_NAME" : "#P_COMPRESSION#"
+         },
+         {
+            "PARAM_NAME" : "#P_DELIMITER#",
+            "PARAM_DEFAULT" : ",",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV",
+            "PARAM_DESC" : "The delimiter"
+         },
+         {
+            "PARAM_DESC" : "The destination format - CSV currently tested",
+            "PARAM_NAME" : "#P_DESTINATION_FORMAT#",
+            "PARAM_DEFAULT" : "CSV",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV"
+         },
+         {
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_GOOGLE_CLOUD_STORAGE_BUCKET#",
+            "PARAM_DESC" : "The name of a Google Cloud Storage bucket to write files into"
+         },
+         {
+            "PARAM_DESC" : "The name of the iterator to store a list of Google Cloud Storage location in",
+            "PARAM_DEFAULT" : "",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV",
+            "PARAM_NAME" : "#P_ITERATOR#"
+         },
+         {
+            "PARAM_NAME" : "#P_PRINT_HEADER#",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV",
+            "PARAM_DESC" : "Whether to output a header row"
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_TABLE_TO_CSV'"
+      ],
+      "data" : [
+         {
+            "CLASS" : "SQL::DatabaseMethod",
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "$big_query->extract(\r\n    project_id          => <taken from credentials database>\n  , dataset_id          => #CONFIG_TARGET_DB_NAME#\n  , table_id            => #CONFIG_TARGET_TABLE_NAME#\r\n  , gcs_bucket          => #P_GOOGLE_CLOUD_STORAGE_BUCKET#\r\n  , compression         => #P_COMPRESSION#\r\n  , destinationFormat   => #P_DESTINATION_FORMAT#\r\n  , fieldDelimiter      => #P_DELIMITER#\r\n  , printHeader         => #P_PRINT_HEADER#\r\n);",
+            "TEMPLATE_DESC" : "Dumps a full table to CSV in Google Cloud Storage. Can't do partial dumps ...",
+            "TEMPLATE_NAME" : "BIGQUERY_TABLE_TO_CSV"
+         }
+      ]
+   }
+}

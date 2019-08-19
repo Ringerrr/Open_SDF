@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "PARAM_NAME" : "#P_DATESTYLE#",
+            "PARAM_DESC" : "The date style",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT",
+            "PARAM_DEFAULT" : "YMD"
+         },
+         {
+            "PARAM_DESC" : "The CSV delimiter",
+            "PARAM_NAME" : "#P_DELIMITER#",
+            "PARAM_DEFAULT" : ",",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT"
+         },
+         {
+            "PARAM_DESC" : "The escape character",
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#",
+            "PARAM_DEFAULT" : "\\\\",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT"
+         },
+         {
+            "PARAM_NAME" : "#P_FILE_NAME#",
+            "PARAM_DESC" : "The target file to export to",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT",
+            "PARAM_DEFAULT" : null
+         },
+         {
+            "PARAM_NAME" : "#P_HEADER_STRING#",
+            "PARAM_DESC" : "Set to string [ HEADER ] or leave blank if no CSV header record",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT",
+            "PARAM_DEFAULT" : null
+         },
+         {
+            "PARAM_NAME" : "#P_QUOTE_CHAR#",
+            "PARAM_DESC" : "The quote character",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT",
+            "PARAM_DEFAULT" : "\""
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_8_X_EXPORT'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_8_X_EXPORT'"
+      ],
+      "data" : [
+         {
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "POSTGRES_8_X_EXPORT",
+            "CLASS" : "SQL",
+            "TEMPLATE_TEXT" : "-- This is Postgres 8.x / Greenplum COPY syntax\n\nset DATESTYLE = ISO, '#P_DATESTYLE#';\n\ncopy   #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nto   '#P_FILE_NAME#'\n\nwith    \n    delimiter as E'#P_DELIMITER#'\n    #P_HEADER_STRING#\n    csv quote as E'#P_QUOTE_CHAR#'\n    escape    as E'#P_ESCAPE_CHAR#'\n;\n\nset DATESTYLE = 'ISO, YMD';",
+            "TEMPLATE_DESC" : "Export from Postgres 8.x / Greenplum"
+         }
+      ]
+   }
+}

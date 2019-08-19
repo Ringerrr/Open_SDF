@@ -1,0 +1,29 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'DELETE_FILE'"
+      ],
+      "data" : [
+         {
+            "PARAM_DESC" : "This file will be deleted",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILENAME#",
+            "TEMPLATE_NAME" : "DELETE_FILE"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "CLASS" : "DeleteFile",
+            "TEMPLATE_TEXT" : "Delete the file: #P_FILENAME#",
+            "REPOSITORY" : "core",
+            "TEMPLATE_NAME" : "DELETE_FILE",
+            "TEMPLATE_DESC" : "Deletes a file"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'DELETE_FILE'"
+      ]
+   }
+}

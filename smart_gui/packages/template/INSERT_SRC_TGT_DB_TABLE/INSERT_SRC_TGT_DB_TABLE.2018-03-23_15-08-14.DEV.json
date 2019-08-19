@@ -1,0 +1,53 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'INSERT_SRC_TGT_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "REPOSITORY" : "core",
+            "TEMPLATE_TEXT" : "INSERT INTO #CONFIG_TARGET_DB_NAME#.#CONFIG_TARGET_TABLE_NAME#\n(\n    #P_TARGET_COLUMNS#\n#P_EXTRA_TARGET_COLUMNS#\n)\nSELECT\n    #P_SOURCE_COLUMNS#\n#P_EXTRA_SOURCE_COLUMNS#\nFROM\n   #CONFIG_SOURCE_DB_NAME#.#CONFIG_SOURCE_TABLE_NAME#\n#P_OPTIONAL_FILTER#",
+            "CLASS" : "SQL",
+            "TEMPLATE_DESC" : null,
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'INSERT_SRC_TGT_DB_TABLE'"
+      ],
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_EXTRA_SOURCE_COLUMNS#",
+            "PARAM_DESC" : "Expression for extra source columns"
+         },
+         {
+            "PARAM_DESC" : "Expression for extra target columns",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_EXTRA_TARGET_COLUMNS#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE"
+         },
+         {
+            "PARAM_DESC" : "An optional filter ( where ) clause",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_OPTIONAL_FILTER#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE"
+         },
+         {
+            "PARAM_DEFAULT" : "#COMPLEX_COLUMNS_FROM_SOURCE#",
+            "PARAM_NAME" : "#P_SOURCE_COLUMNS#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE",
+            "PARAM_DESC" : "The source columns list"
+         },
+         {
+            "PARAM_DESC" : "The target columns list",
+            "PARAM_DEFAULT" : "#COMPLEX_COLUMNS_FROM_SOURCE#",
+            "PARAM_NAME" : "#P_TARGET_COLUMNS#",
+            "TEMPLATE_NAME" : "INSERT_SRC_TGT_DB_TABLE"
+         }
+      ]
+   }
+}

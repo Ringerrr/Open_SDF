@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+            "PARAM_DEFAULT" : "YMD",
+            "PARAM_NAME" : "#P_DATESTYLE#",
+            "PARAM_DESC" : "The Postgres datestyle, eg YMD, DMY ..."
+         },
+         {
+            "PARAM_DESC" : "The column delimiter",
+            "PARAM_NAME" : "#P_DELIMITER#",
+            "PARAM_DEFAULT" : ",",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE"
+         },
+         {
+            "PARAM_NAME" : "#P_ENCODING#",
+            "PARAM_DEFAULT" : "latin9",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+            "PARAM_DESC" : "The encoding of the source file"
+         },
+         {
+            "PARAM_DESC" : "The escape character",
+            "PARAM_NAME" : "#P_ESCAPE_CHAR#",
+            "PARAM_DEFAULT" : "\\",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE"
+         },
+         {
+            "PARAM_DESC" : "The full path to the source file",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+            "PARAM_DEFAULT" : null,
+            "PARAM_NAME" : "#P_FILE_NAME#"
+         },
+         {
+            "PARAM_DESC" : "A boolean, indicating whether the source file contains a header row",
+            "PARAM_DEFAULT" : "1",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+            "PARAM_NAME" : "#P_INCLUDES_HEADER#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_9_X_LOAD_REMOTE'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "TEMPLATE_DESC" : "Load remote ( in relation to the DB server ) CSV to a Postgres 9.x database",
+            "TEMPLATE_NAME" : "POSTGRES_9_X_LOAD_REMOTE",
+            "CLASS" : "SQL::DatabaseMethod",
+            "TEMPLATE_TEXT" : "set DATESTYLE = ISO, '#P_DATESTYLE#';\n\ncopy   #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom   STDIN\nwith (\n    format    'csv'\n  , delimiter E'#P_DELIMITER#'\n  , header    #P_INCLUDES_HEADER#\n  , encoding  #P_ENCODING#\n  , escape    '#P_ESCAPE_CHAR#'\n);\n\nset DATESTYLE = 'ISO, YMD';",
+            "REPOSITORY" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_9_X_LOAD_REMOTE'"
+      ]
+   }
+}
