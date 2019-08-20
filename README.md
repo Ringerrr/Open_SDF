@@ -1,6 +1,6 @@
 Welcome to Smart Data Frameworks ( SDF ) , a mature, industry-hardened ETL/ELT ( extract, load, transform ) framework.
 
-![alt text](https://tesla.duckdns.org/sdf.png)
+![alt text](https://tesla.duckdns.org/sdf_step_editor.png)
 
 SDF consists broadly of 2 codebases:
  - smart_etl - a console-based execution framework
