@@ -1,0 +1,17 @@
+{
+    "name": "perl-Encode-Locale",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/G/GA/GAAS/Encode-Locale-1.05.tar.gz",
+            "sha256": "176fa02771f542a4efb1dbc2a4c928e8f4391bf4078473bd6040d8f11adb0ec1"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

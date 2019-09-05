@@ -1,0 +1,19 @@
+{
+    "name": "perl-DBD-MySQL",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "git",
+            "url": "https://github.com/perl5-dbi/DBD-mysql.git"
+        },
+        {
+            "type": "file",
+            "path": "../perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "find /app/lib/perl5 -type f -exec chmod u+w {} \\;"
+    ]
+}

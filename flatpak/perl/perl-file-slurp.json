@@ -1,0 +1,16 @@
+{
+    "name": "perl-file-slurp",
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://search.cpan.org/CPAN/authors/id/U/UR/URI/File-Slurp-9999.19.tar.gz",
+            "sha256": "ce29ebe995097ebd6e9bc03284714cdfa0c46dc94f6b14a56980747ea3253643"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

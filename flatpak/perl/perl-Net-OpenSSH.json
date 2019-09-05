@@ -1,0 +1,17 @@
+{
+    "name": "perl-Net-OpenSSH",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/S/SA/SALVA/Net-OpenSSH-0.78.tar.gz",
+            "sha256": "8f10844542a2824389decdb8edec7561d8199dc5f0250e849a0bb56f7aee880c"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

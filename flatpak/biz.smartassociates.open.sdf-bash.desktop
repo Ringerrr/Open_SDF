@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Open SDF Bash
+Comment=Open SDF Bash session
+Exec=/app/bin/bash
+Icon=biz.smartassociates.sdf-bash
+Terminal=true
+Type=Application
+Categories=X-Programming,X-ETL,X-Databases;

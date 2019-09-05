@@ -1,0 +1,26 @@
+{
+    "name": "MySQL",
+    "build-options": {
+        "build-args": [ "--share=network" ]
+    },
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "buildsystem": "simple",
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.13.tar.gz",
+            "sha256": "d85eb7f98b6aa3e2c6fe38263bf40b22acb444a4ce1f4668473e9e59fb98d62e"
+        },
+        {
+            "type": "file",
+            "path": "mysql_config"
+        }
+    ],
+    "build-commands": [
+        "cmake -DWITHOUT_SERVER=ON -DDOWNLOAD_BOOST=1 -DWITH_BOOST=boost -DCMAKE_INSTALL_PREFIX=/app/mysql",
+        "make",
+        "make install",
+        "cp mysql_config /app/bin"
+    ]
+}

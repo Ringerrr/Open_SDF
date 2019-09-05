@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "sha256" : "685d1ee76e7f0e9006942923bf7df8b11c107132992917593dcf7397d417d39a",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/C/CH/CHROMATIC/SUPER-1.20190531.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-SUPER",
+   "no-autogen" : true
+}

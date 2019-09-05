@@ -1,0 +1,17 @@
+{
+    "name": "perl-HTML-Form",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTML-Form-6.04.tar.gz",
+            "sha256": "9cd557a8b61b9a98deceff259c4fb1d82df729ff9d0388f655b364dd16480080"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

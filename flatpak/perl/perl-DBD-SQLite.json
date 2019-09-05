@@ -1,0 +1,19 @@
+{
+    "name": "perl-DBD-SQLite",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "git",
+            "url": "https://github.com/DBD-SQLite/DBD-SQLite.git"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.0/x86_64-linux/auto/DBD/SQLite/SQLite.so"
+    ]
+}

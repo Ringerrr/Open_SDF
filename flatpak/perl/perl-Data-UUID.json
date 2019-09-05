@@ -1,0 +1,20 @@
+{
+    "name": "perl-Data-UUID",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/R/RJ/RJBS/Data-UUID-1.224.tar.gz",
+            "sha256": "c958c17502bbef5eccf40c040874895747f7f9b9f9e5192c18688370981bf47c"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.0/x86_64-linux/auto/Data/UUID/UUID.so"
+    ]
+}

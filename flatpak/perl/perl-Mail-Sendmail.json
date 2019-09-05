@@ -1,0 +1,17 @@
+{
+    "name": "perl-Mail-Sendmail",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/N/NE/NEILB/Mail-Sendmail-0.80.tar.gz",
+            "sha256": "5b8a98cb5cc39d80441a38aab010885ddf80e6fcd8e6e0314392cb23e7c268e4"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

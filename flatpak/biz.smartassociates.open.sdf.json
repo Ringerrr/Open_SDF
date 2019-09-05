@@ -1,0 +1,204 @@
+
+{
+    "app-id": "biz.smartassociates.open.sdf",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.30",
+    "sdk": "org.gnome.Sdk",
+    "command": "/app/launch_flatpak.sh",
+    "rename-icon": "open.sdf",
+    "rename-desktop-file": "open.sdf.desktop",
+    "rename-appdata-file": "open.sdf.appdata.xml",
+    "finish-args": [
+        "--device=dri",
+        "--filesystem=~/.ssh",
+        "--persist=SDF_persisted",
+        "--share=ipc",
+        "--share=network",
+        "--socket=x11",
+        "--socket=pulseaudio",
+        "--env=JAVA_HOME=/app/opt/jdk"
+    ],
+    "add-extensions": {
+        "biz.smartassociates.open.sdf.extensions": {
+              "version": "1.0",
+              "directory": "extensions",
+              "add-ld-path": "lib",
+              "subdirectories": true,
+              "no-autodownload": true
+        }
+    },
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/share/aclocal",
+        "/share/man",
+        "*.la", "*.a"
+    ],
+    "modules": [
+        "perl/perl.json",
+        "perl/perl-module-build.json",
+        "perl/perl-archive-extract.json",
+        "perl/perl-text-patch.json",
+        "perl/perl-tie-simple.json",
+        "perl/perl-gettext.json",
+        "perl/perl-file-slurp.json",
+        "perl/perl-ipc-system-simple.json",
+        "perl/perl-Compress-Raw-Bzip2.json",
+        "perl/perl-SUPER.json",
+        "perl/perl-Test-Warnings.json",
+        "perl/perl-Test-MockModule.json",
+        "perl/perl-archive-zip.json",
+        "perl/perl-DBI.json",
+        "perl/perl-Net-SFTP-Foreign.json",
+        "perl/perl-XML-Simple.json",
+        "perl/perl-ExtUtils-PkgConfig.json",
+        "perl/perl-ExtUtils-Depends.json",
+        "perl/perl-Mail-Sendmail.json",
+        "perl/perl-Glib.json",
+        "perl/perl-Glib-Object-Introspection.json",
+        "perl/perl-Cairo.json",
+        "perl/perl-Cairo-GObject.json",
+        "perl/perl-Gtk3.json",
+        "perl/perl-XML-Parser.json",
+        "perl/perl-Canary-Stability.json",
+        "perl/perl-JSON.json",
+        "perl/perl-Image-Size.json",
+        "perl/perl-PDF-API2.json",
+        "other/Gtk3-SourceView.json",
+        "perl/perl-File-Find-Rule.json",
+        "perl/perl-Gtk3-SourceView.json",
+        "perl/perl-Text-CSV.json",
+        "perl/perl-Text-CSV-XS.json",
+        "perl/perl-DBD-SQLite.json",
+        "perl/perl-Gtk3-Ex-DBI.json",
+        "perl/perl-PDF-ReportWriter.json",
+        "database-support/postgres.json",
+        "perl/perl-DBD-Pg.json",
+        "database-support/mysql.json",
+        "perl/perl-Devel-CheckLib.json",
+        "perl/perl-DBD-MySQL.json",
+        "perl/perl-Text-Glob.json",
+        "perl/perl-Number-Compare.json",
+        "database-support/unixodbc.json",
+        "database-support/freetds.json",
+        "perl/perl-DBD-ODBC.json",
+        "other/openssh.json",
+        "perl/perl-Net-OpenSSH.json",
+        "perl/perl-WWW-Mechanize.json",
+        "other/bash.json",
+        "perl/perl-HTTP-Server-Simple.json",
+        "perl/perl-Data-UUID.json",
+        "perl/perl-Data-GUID.json",
+        "perl/perl-Sub-Install.json",
+        "perl/perl-Sub-Exporter.json",
+        "perl/perl-Data-OptList.json",
+        "perl/perl-Params-Util.json",
+        "perl/perl-HTTP-Request.json",
+        "perl/perl-URI.json",
+        "perl/perl-CGI.json",
+        "perl/perl-HTML-Entities.json",
+        "other/openjpeg.json",
+        "other/webp-pixbuf-loader.json",
+        "other/popplerdata.json",
+        "other/poppler.json",
+        "other/djvulibre.json",
+        "other/libgxps.json",
+        "other/gspell.json",
+        "other/evince.json",
+        "perl/perl-Encode-Locale.json",
+        "perl/perl-LWP.json",
+        "perl/perl-HTTP-Date.json",
+        "perl/perl-Try-Tiny.json",
+        "perl/perl-HTML-Form.json",
+        "perl/perl-HTML-Tagset.json",
+
+        {
+            "name": "sdf",
+            "no-autogen": true,
+            "buildsystem": "simple",
+            "build-commands": [
+                "cp -R smart_etl /app",
+                "cp -R smart_gui /app",
+                "cp launch_flatpak.sh /app",
+                "cp flatpak_env.sh /app",
+                "cp launch_etl.sh /app",
+                "mkdir -p /app/share/icons/hicolor/16x16/apps",
+                "mkdir -p /app/share/icons/hicolor/32x32/apps",
+                "mkdir -p /app/share/icons/hicolor/48x48/apps",
+                "cp open.sdf.png /app/share/icons/hicolor/16x16/apps/open.sdf.png",
+                "cp open.sdf.png /app/share/icons/hicolor/32x32/apps/open.sdf.png",
+                "cp open.sdf.png /app/share/icons/hicolor/48x48/apps/open.sdf.png"
+            ],
+            "build-options": {
+                "no-debuginfo": true
+            },
+            "sources": [
+                {
+                    "type": "dir"
+                  , "path": "../"
+                }
+              , {
+                    "type": "file"
+                  , "path": "open.sdf.desktop"
+                }
+              , {
+                    "type": "file"
+                  , "path": "open.sdf.appdata.xml"
+                }
+              , {
+                    "type": "file"
+                  , "path": "open.sdf.png"
+                }
+              , {
+                    "type": "file"
+                  , "path": "launch_flatpak.sh"
+                }
+              , {
+                    "type": "file"
+                  , "path": "flatpak_env.sh"
+                }
+              , {
+                    "type": "file"
+                  , "path": "launch_etl.sh"
+                }
+            ],
+            "post-install": [
+                "mkdir -p /app/share/appdata",
+                "cp open.sdf.appdata.xml /app/share/appdata",
+                "mkdir -p /app/share/applications",
+                "cp open.sdf.desktop /app/share/applications",
+                "install -d /app/extensions"
+            ]
+        },
+        {
+            "name": "sdf-bash",
+            "no-autogen": true,
+            "buildsystem": "simple",
+            "build-commands": [
+                "mkdir -p /app/share/icons/hicolor/16x16/apps",
+                "mkdir -p /app/share/icons/hicolor/32x32/apps",
+                "mkdir -p /app/share/icons/hicolor/48x48/apps",
+                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/16x16/apps/biz.smartassociates.open.sdf-bash.png",
+                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/32x32/apps/biz.smartassociates.open.sdf-bash.png",
+                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/48x48/apps/biz.smartassociates.open.sdf-bash.png"
+            ],
+            "build-options": {
+                "no-debuginfo": true
+            },
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "biz.smartassociates.open.sdf-bash.desktop"
+                },
+                {
+                    "type": "file",
+                    "path": "biz.smartassociates.open.sdf-bash.png"
+                }
+            ],
+            "post-install": [
+                "mkdir -p /app/share/applications",
+                "cp biz.smartassociates.open.sdf-bash.desktop /app/share/applications"
+            ]
+        }
+    ]
+}

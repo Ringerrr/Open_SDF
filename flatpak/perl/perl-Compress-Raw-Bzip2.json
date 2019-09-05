@@ -1,0 +1,22 @@
+{
+   "name" : "perl-Compress-Raw-Bzip2",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/P/PM/PMQS/Compress-Raw-Bzip2-2.086.tar.gz",
+         "type" : "archive",
+         "sha256" : "46d3954a676d21cb10557dd3cc8140703b87bd8f14e49160120165586aa9f399"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.30.0/x86_64-linux/auto/Compress/Raw/Bzip2/Bzip2.so"
+   ]
+}

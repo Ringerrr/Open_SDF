@@ -1,0 +1,46 @@
+{
+    "name": "perl",
+    "cleanup": [
+        "*.pod",
+        "/bin/perl5.30.0",
+        "/bin/c2ph",
+        "/bin/corelist",
+        "/bin/cpan",
+        "/bin/enc2xs",
+        "/bin/encguess",
+        "/bin/h2*",
+        "/bin/instmodsh",
+        "/bin/json_pp",
+        "/bin/libnetcfg",
+        "/bin/perlbug",
+        "/bin/perldoc",
+        "/bin/perlthanks",
+        "/bin/piconv",
+        "/bin/pl2pm",
+        "/bin/pod*",
+        "/bin/prove",
+        "/bin/pstruct",
+        "/bin/ptar*",
+        "/bin/shasum",
+        "/bin/splain",
+        "/bin/xsubpp",
+        "/bin/zipdetails"
+    ],
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://www.cpan.org/src/5.0/perl-5.30.0.tar.gz",
+            "sha256": "851213c754d98ccff042caa40ba7a796b2cee88c5325f121be5cbb61bbf975f2"
+        },
+        {
+            "type": "script",
+            "dest-filename": "configure",
+            "commands": [
+                "./Configure -des -Dprefix=/app"
+            ]
+        }
+    ],
+    "post-install": [
+        "find /app/lib/perl5 -type f -exec chmod u+w {} \\;"
+    ]
+ }

@@ -1,0 +1,21 @@
+{
+    "name": "perl-Cairo-GObject",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/X/XA/XAOC/Cairo-GObject-1.004.tar.gz",
+            "sha256": "3bb9d40e802e51f56f1364abc553758152131803c12d85ba6e14bad6813409d5"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "find /app/lib/perl5 -type f -exec chmod u+w {} \\;"
+    ]
+
+}

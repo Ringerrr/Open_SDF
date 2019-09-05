@@ -1,0 +1,16 @@
+{
+    "name": "perl-WWW-Mechanize",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "git",
+            "url": "https://github.com/libwww-perl/WWW-Mechanize.git"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

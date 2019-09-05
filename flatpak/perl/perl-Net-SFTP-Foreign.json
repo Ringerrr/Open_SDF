@@ -1,0 +1,16 @@
+{
+    "name": "perl-Net-SFTP-Foreign",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "git",
+            "url": "https://github.com/salva/p5-Net-SFTP-Foreign.git"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

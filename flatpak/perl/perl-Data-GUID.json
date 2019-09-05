@@ -1,0 +1,17 @@
+{
+    "name": "perl-Data-GUID",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/R/RJ/RJBS/Data-GUID-0.049.tar.gz",
+            "sha256": "b8af437d49fd0425a23ebff3e5989dae64deeaf0e046aa5f413665cd3169a77b"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

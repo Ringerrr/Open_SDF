@@ -1,0 +1,13 @@
+diff --git a/dbdimp.c b/dbdimp.c
+index 77bae57..b8dc7b4 100644
+--- a/dbdimp.c
++++ b/dbdimp.c
+@@ -2595,6 +2595,7 @@ int dbd_describe(SV *sth, imp_sth_t *imp_sth, int more)
+         {
+           case SQL_VARBINARY:
+           case SQL_BINARY:
++          case -99:
+             fbh->ftype = SQL_C_BINARY;
+             if (fbh->ColDef == 0) {             /* cope with varbinary(max) */
+                 fbh->ColDisplaySize = DBIc_LongReadLen(imp_sth);
+

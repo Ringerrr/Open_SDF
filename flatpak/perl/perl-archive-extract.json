@@ -1,0 +1,16 @@
+{
+    "name": "perl-archive-extract",
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://search.cpan.org/CPAN/authors/id/B/BI/BINGOS/Archive-Extract-0.80.tar.gz",
+            "sha256": "25cbc2d5626c14d39a0b5e4fe8383941e085c9a7e0aa873d86e81b6e709025f4"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

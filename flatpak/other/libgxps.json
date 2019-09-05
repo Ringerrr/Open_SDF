@@ -1,0 +1,11 @@
+{
+    "name": "libgxps",
+    "buildsystem": "meson",
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://download.gnome.org/sources/libgxps/0.3/libgxps-0.3.0.tar.xz",
+            "sha256": "412b1343bd31fee41f7204c47514d34c563ae34dafa4cc710897366bd6cd0fae"
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "perl-JSON",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/I/IS/ISHIGAKI/JSON-2.97001.tar.gz",
+            "sha256": "e277d9385633574923f48c297e1b8acad3170c69fa590e31fa466040fc6f8f5a"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

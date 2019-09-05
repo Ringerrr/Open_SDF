@@ -1,0 +1,20 @@
+{
+    "name": "perl-HTML-Entities",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/G/GA/GAAS/HTML-Parser-3.72.tar.gz",
+            "sha256": "ec28c7e1d9e67c45eca197077f7cdc41ead1bb4c538c7f02a3296a4bb92f608b"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.0/x86_64-linux/auto/HTML/Parser/Parser.so"
+    ]
+}

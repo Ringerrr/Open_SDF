@@ -1,0 +1,17 @@
+{
+    "name": "perl-archive-zip",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://search.cpan.org/CPAN/authors/id/P/PH/PHRED/Archive-Zip-1.59.tar.gz",
+            "sha256": "7a4b1b0aa43ae7231bb3212e86ab6b538725625df06e82772c3da24c8b26e75d"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "perl-module-build",
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/L/LE/LEONT/Module-Build-0.4220.tar.gz",
+            "sha256": "fb1207c7e799366f7a8adda3f135bf8141c4d6068505650d4db2b2d3ce34b5a2"
+        },
+        {
+            "type": "file",
+            "path": "perl-BuildPL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}
+

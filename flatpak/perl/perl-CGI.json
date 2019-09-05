@@ -1,0 +1,17 @@
+{
+    "name": "perl-CGI",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/L/LE/LEEJO/CGI-4.40.tar.gz",
+            "sha256": "10efff3061b3c31a33b3cc59f955aef9c88d57d12dbac46389758cef92f24f56"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

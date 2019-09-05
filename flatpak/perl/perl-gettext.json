@@ -1,0 +1,19 @@
+{
+    "name": "perl-gettext",
+    "no-autogen": true,
+    "build-options": {
+        "no-debuginfo": true
+    },
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://search.cpan.org/CPAN/authors/id/P/PV/PVANDRY/gettext-1.05.tar.gz",
+            "sha256": "27367f3dc1be79c9ed178732756e37e4cfce45f9e2a27ebf26e1f40d80124694"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

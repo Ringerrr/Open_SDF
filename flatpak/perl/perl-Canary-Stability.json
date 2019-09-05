@@ -1,0 +1,17 @@
+{
+    "name": "perl-Canary-Stability",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/M/ML/MLEHMANN/Canary-Stability-2012.tar.gz",
+            "sha256": "fd240b111d834dbae9630c59b42fae2145ca35addc1965ea311edf0d07817107"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

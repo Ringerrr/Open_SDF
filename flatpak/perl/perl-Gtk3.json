@@ -1,0 +1,20 @@
+{
+    "name": "perl-Gtk3",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/X/XA/XAOC/Gtk3-0.034.tar.gz",
+            "sha256": "0adb213b72604310cd4190c78969b4e46f94638c364040d4dceab8f629f45d2d"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "find /app/lib/perl5 -type f -exec chmod u+w {} \\;"
+    ]
+}

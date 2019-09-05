@@ -1,0 +1,13 @@
+[Application]
+name=biz.smartassociates.open.sdf
+runtime=org.gnome.Platform/x86_64/3.32
+sdk=org.gnome.Sdk/x86_64/3.32
+version=1.0
+
+[Environment]
+ODBCSYSINI=/app/etc/
+
+[Extension biz.smartassociates.open.sdf.extensions]
+directory=extensions
+subdirectories=true
+version=1.0

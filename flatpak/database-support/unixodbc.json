@@ -1,0 +1,27 @@
+{
+    "name": "unixODBC",
+    "buildsystem": "simple",
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "http://www.unixodbc.org/unixODBC-2.3.7.tar.gz",
+            "sha256": "45f169ba1f454a72b8fcbb82abd832630a3bf93baa84731cf2949f449e1e3e77"
+        },
+        {
+            "type": "file",
+            "path": "odbcinst.ini"
+        }
+    ],
+    "build-commands": [
+          "./configure --prefix=/app --disable-drivers --disable-driverc --disable-dependency-tracking --disable-silent-rules --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16"
+        , "make"
+        , "make install"
+    ],
+    "post-install": [
+        "chmod 755 /app/etc/odbcinst.ini",
+        "cp odbcinst.ini /app/etc/odbcinst.ini",
+        "chmod 755 /app/etc/odbc.ini"
+    ]
+}
+

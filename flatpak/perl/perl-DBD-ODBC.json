@@ -1,0 +1,20 @@
+{
+    "name": "perl-DBD-ODBC",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "buildsystem": "simple",
+    "sources": [
+        {
+            "type": "git",
+            "url": "https://github.com/perl5-dbi/DBD-ODBC.git"
+        }
+    ],
+    "build-commands": [
+        "perl Makefile.PL -u -x"
+      , "make"
+      , "make install"
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.0/x86_64-linux/auto/DBD/ODBC/ODBC.so"
+    ]
+}
