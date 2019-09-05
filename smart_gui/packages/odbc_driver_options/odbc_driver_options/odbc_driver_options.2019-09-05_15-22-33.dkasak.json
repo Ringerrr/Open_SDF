@@ -1,0 +1,141 @@
+{
+   "odbc_driver_options" : {
+      "pre" : [
+         "delete from odbc_driver_options"
+      ],
+      "data" : [
+         {
+            "HELP" : "ODBC Conformance of driver",
+            "OPTION_VALUE" : "CORE",
+            "TYPE" : "Global",
+            "OPTION_NAME" : "APILevel"
+         },
+         {
+            "OPTION_VALUE" : "1",
+            "HELP" : "Level of SQL conformance, a digit from 0 to 3, from:\n\n 0: SQL-92 Entry\n 1: FIPS127-2 Transitional\n 2: SQL-92 Intermediate\n 3: SQL-92 Full",
+            "TYPE" : "Global",
+            "OPTION_NAME" : "SQLLevel"
+         },
+         {
+            "TYPE" : "Global",
+            "HELP" : "The description has no effect ...",
+            "OPTION_VALUE" : "Auto-generated ODBC driver entry",
+            "OPTION_NAME" : "Description"
+         },
+         {
+            "OPTION_NAME" : "Driver",
+            "HELP" : "The full path to tdataodbc_sb64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "OPTION_VALUE" : null,
+            "TYPE" : "Teradata::ODBC"
+         },
+         {
+            "TYPE" : "BigQuery",
+            "HELP" : "The full path to libgooglebigqueryodbc_sb64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver"
+         },
+         {
+            "TYPE" : "Netezza",
+            "HELP" : "The full path to libnzodbc.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Driver' )",
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Setup"
+         },
+         {
+            "OPTION_VALUE" : null,
+            "HELP" : "The full path to libnzodbc.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Setup' )",
+            "TYPE" : "Netezza",
+            "OPTION_NAME" : "Driver"
+         },
+         {
+            "HELP" : "A three-character string indicating whether the driver supports SQLConnect, SQLDriverConnect, and SQLBrowseConnect.\n\nNetezza doesn't appear to support SQLBrowseConnect ...",
+            "OPTION_VALUE" : "YYN",
+            "TYPE" : "Netezza",
+            "OPTION_NAME" : "ConnectFunctions"
+         },
+         {
+            "OPTION_NAME" : "ConnectFunctions",
+            "TYPE" : "Global",
+            "OPTION_VALUE" : "YYY",
+            "HELP" : "A three-character string indicating whether the driver supports SQLConnect, SQLDriverConnect, and SQLBrowseConnect."
+         },
+         {
+            "OPTION_NAME" : "DriverODBCVer",
+            "TYPE" : "Netezza",
+            "HELP" : "Document ... :)",
+            "OPTION_VALUE" : "03.51"
+         },
+         {
+            "TYPE" : "Netezza",
+            "HELP" : "SDF only supports the value 'utf16' for this option for Netezza.",
+            "OPTION_VALUE" : "utf16",
+            "OPTION_NAME" : "UnicodeTranslationOption"
+         },
+         {
+            "TYPE" : "Netezza",
+            "OPTION_VALUE" : "all",
+            "HELP" : "Document ... :)",
+            "OPTION_NAME" : "CharacterTranslationOption"
+         },
+         {
+            "OPTION_VALUE" : "256",
+            "HELP" : "Document ... :)",
+            "TYPE" : "Netezza",
+            "OPTION_NAME" : "PreFetch"
+         },
+         {
+            "OPTION_VALUE" : "16384",
+            "HELP" : "Document ... :)",
+            "TYPE" : "Netezza",
+            "OPTION_NAME" : "Socket"
+         },
+         {
+            "OPTION_VALUE" : null,
+            "HELP" : "The full path to libdb2.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "TYPE" : "DB2::ODBC",
+            "OPTION_NAME" : "Driver"
+         },
+         {
+            "OPTION_NAME" : "DontDLClose",
+            "OPTION_VALUE" : "1",
+            "HELP" : "Recommended setting from:\n https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.cli.doc/doc/t0061216.html",
+            "TYPE" : "DB2::ODBC"
+         },
+         {
+            "OPTION_NAME" : "FileUsage",
+            "TYPE" : "DB2::ODBC",
+            "HELP" : "Recommended setting from:\n https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.cli.doc/doc/t0061216.html",
+            "OPTION_VALUE" : "1"
+         },
+         {
+            "OPTION_NAME" : "Driver",
+            "TYPE" : "Snowflake",
+            "HELP" : "The full path to libSnowflake.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "OPTION_VALUE" : null
+         },
+         {
+            "HELP" : "Level of SQL conformance, a digit from 0 to 3, from:\n\n 0: SQL-92 Entry\n 1: FIPS127-2 Transitional\n 2: SQL-92 Intermediate\n 3: SQL-92 Full\n\nRecommended value for Snowflake is 1.",
+            "OPTION_VALUE" : "1",
+            "TYPE" : "Snowflake",
+            "OPTION_NAME" : "SQLLevel"
+         },
+         {
+            "OPTION_NAME" : "DriverODBCVer",
+            "HELP" : "Recommended setting for Snowflake is 03.52.",
+            "OPTION_VALUE" : "03.52",
+            "TYPE" : "Snowflake"
+         },
+         {
+            "TYPE" : "Hive",
+            "HELP" : "The full path to libhortonworkshiveodbc64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Setup' )",
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver"
+         },
+         {
+            "OPTION_NAME" : "Setup",
+            "OPTION_VALUE" : null,
+            "HELP" : "The full path to libhortonworkshiveodbc64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Driver' )",
+            "TYPE" : "Hive"
+         }
+      ]
+   }
+}

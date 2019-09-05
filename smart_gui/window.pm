@@ -1274,9 +1274,20 @@ sub manage_widget_value {
     
     my $widget = $self->{builder}->get_object( $widget_name );
     
-    my $signal_name = ref $widget eq 'Gtk3::CheckButton' ? 'toggled' : 'changed';
+    my $signal_name;
+
+    if ( ref $widget eq 'Gtk3::CheckButton' ) {
+        $signal_name = 'toggled';
+    } elsif ( ref $widget eq 'Gtk3::Switch' ) {
+        $signal_name = 'state-set';
+    } elsif ( ref $widget eq 'Gtk3::TextView' || ref $widget eq 'Gtk3::SourceView::View' ) {
+        $widget = $widget->get_buffer;
+        $signal_name = 'changed';
+    } else {
+        $signal_name = 'changed';
+    }
     
-    $widget->signal_connect( $signal_name  => sub { print "$widget_name changing ..."; $self->remember_widget_value( $widget_name ) } );
+    $widget->signal_connect( $signal_name  => sub { print "$widget_name changing ..."; $self->remember_widget_value( $widget_name ); return FALSE; } );
     
     return $value;
     

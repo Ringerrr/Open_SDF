@@ -124,7 +124,178 @@ sub new {
     $button->signal_connect( 'button-press-event', sub { $self->test_connection( @_ ) } );
     $self->{connections}->{recordset_tools_box}->pack_end( $button, TRUE, TRUE, 2 );
     $button->show;
-    
+
+    ###############################
+    # ODBC page
+
+    my $supported_drivers = $self->{globals}->{config_manager}->all_database_drivers;
+
+    my $type_model        = Gtk3::ListStore->new( "Glib::String" , "Gtk3::Gdk::Pixbuf" );
+    my $odbc_config_model = Gtk3::ListStore->new( "Glib::String" , "Glib::String" );
+
+    $widget = $self->{builder}->get_object( 'global_odbc_editor.TYPE' );
+
+    # For the global type model combo, we have a 'Global' option, at the top of the list, for ODBC options
+    # that are available to all drivers
+    my $global_icon = $self->{builder}->get_object( 'main' )->render_icon( 'gtk-file' , 'menu' );
+
+    $type_model->set(
+        $type_model->append
+      , 0 , 'Global'
+      , 1 , $global_icon
+    );
+
+    my $odbc_drivers = $self->fetch_all_supported_odbc_drivers();
+
+    foreach my $driver ( @{$odbc_drivers} ) {
+
+        my $icon_path = $self->get_db_icon_path( $driver . '.png' );
+        my $this_icon;
+
+        if ( $icon_path ) {
+            $this_icon = $self->to_pixbuf( $icon_path );
+        }
+
+        $type_model->set(
+            $type_model->append
+          , 0 , $driver
+          , 1 , $this_icon
+        );
+
+        $odbc_config_model->set(
+            $odbc_config_model->append
+          , 0 , $driver
+          , 1 , $driver
+        );
+
+    }
+
+    $self->create_combo_renderers( $widget, 0, 1 );
+
+    $widget->set_model( $type_model );
+
+    $self->{configured_odbc_driver_options} = Gtk3::Ex::DBI::Datasheet->new(
+        {
+            dbh                    => $self->{globals}->{local_db}
+          , column_sorting         => TRUE
+          , sql                    => {
+                                          select => "*"
+                                        , from   => "odbc_driver_options"
+                                        , where  => "0=1"
+                                      }
+          , fields                 => [
+                                        {
+                                            name        => "ID"
+                                          , renderer    => "hidden"
+                                        }
+                                      , {
+                                            name       => "Driver"
+                                          , renderer   => "hidden"
+                                        }
+                                      , {
+                                            name        => "Option"
+                                          , x_percent   => 50
+                                        }
+                                      , {
+                                            name        => "Value"
+                                          , x_percent   => 50
+                                        }
+                                      , {
+                                            name        => "Source"
+                                          , renderer    => "hidden"
+                                        }
+            ]
+          , on_row_select           => sub { $self->on_configured_option_select( @_ ) }
+          , on_apply                => sub { $self->generate_odbcinstini_string() }
+          , vbox                    => $self->{builder}->get_object( 'driver_options_box' )
+          , auto_tools_box          => TRUE
+          , recordset_tool_items    => [ "insert" , "undo" , "delete" , "apply" , "browse" ]
+          , recordset_extra_tools   => {
+                browse => {
+                         type        => 'button'
+                       , markup      => "<span color='blue'>browse ...</span>"
+                       , icon_name   => 'gtk-find'
+                       , coderef     => sub { $self->browse_for_driver() }
+                }
+            }
+        }
+    );
+
+    $self->{configured_odbc_drivers} = Gtk3::Ex::DBI::Datasheet->new(
+        {
+            dbh                     => $self->{globals}->{local_db}
+          , column_sorting          => 1
+          , sql                     => {
+                                            select       => "Driver"
+                                          , from         => "odbc_drivers"
+                                       }
+          , fields                  => [
+                                        {
+                                            name        => "Driver"
+                                          , x_percent   => 100
+                                          , renderer    => "combo"
+                                          , model       => $odbc_config_model
+                                        }
+                                       ]
+          , vbox                    => $self->{builder}->get_object( 'ODBC_supported_drivers_box' )
+          , auto_tools_box          => TRUE
+          , on_row_select           => sub { $self->refresh_configured_odbc_driver_options( @_ ) }
+          , on_apply                => sub { $self->on_apply_odbc_driver( @_ ) }
+        }
+    );
+
+    $self->{all_config_options} = Gtk3::Ex::DBI::Datasheet->new(
+        {
+            dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
+          , column_sorting          => 1
+          , read_only               => TRUE
+          , on_row_select           => sub { $self->refresh_global_driver_options( @_ ) }
+          , sql                     => {
+                                            select      => "type , option_name"
+                                          , from        => "odbc_driver_options"
+                                          , order_by    => "case when type = 'global' then 1 else 2 end , type , option_name"
+                                       }
+          , fields                  => [
+                                        {
+                                            name        => "type"
+                                          , x_percent   => 35
+                                        }
+                                      , {
+                                            name        => "option_name"
+                                          , x_percent   => 65
+                                        }
+                                       ]
+          , vbox                    => $self->{builder}->get_object( 'all_config_options' )
+        }
+    );
+
+    $self->{all_odbc_driver_options} = Gtk3::Ex::DBI::Form->new(
+        {
+            dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
+          , sql                     => {
+                                           select => "*"
+                                         , from   => "odbc_driver_options"
+                                         , where  => "0=1"
+                                       }
+          , force_upper_case_fields => TRUE
+          , primary_keys            => [ "TYPE" , "OPTION_NAME" ]
+          , builder                 => $self->{builder}
+          , widget_prefix           => "global_odbc_editor."
+          , on_apply                => sub { $self->{all_config_options}->query() }
+          , on_delete               => sub { $self->{all_config_options}->query() }
+          , recordset_tools_box     => $self->{builder}->get_object( 'global_odbc_editor.editor_tools_box' )
+          , recordset_tool_items    => [ "label" , "insert" , "undo" , "delete" , "apply" , "package" ]
+          , recordset_extra_tools   => {
+                package => {
+                         type        => 'button'
+                       , markup      => "<span color='blue'>package</span>"
+                       , icon_name   => 'gtk-save-as'
+                       , coderef     => sub { $self->package_odbc_options() }
+                }
+            }
+        }
+    );
+
     $self->{simple_local_config}  = Gtk3::Ex::DBI::Datasheet->new(
         {
             dbh             => $self->{globals}->{local_db}
@@ -276,8 +447,255 @@ sub new {
     
     $self->on_DatabaseType_changed;
 
+    my $odbc_intro_help = "This screen builds ODBC configurations. The main manual task is to download and unpack an ODBC driver,"
+                        . " and then register the full path to the driver below. This is a manual step as 3rd parties are usually"
+                        . " forbidden from redistributing commercial drivers. When you add a driver, some 'global' options and also"
+                        . " some driver-specific options will be automatically added. You can edit these if you like. These default"
+                        . " options come from metadata, in the next tab: ( ODBC Global Options Configuration ).";
+
+    $self->set_widget_value( 'ODBC_introduction' , $odbc_intro_help );
+
+    my $enabling_help = "All the functionality in these 2 tabs is designed around a final goal: creating a unixodbc odbcinst.ini file."
+                      . " While you can edit all the metadata here any time, this final step of managing odbcinst.ini is DISABLED by"
+                      . " default. This is because SDF doesn't currently import existing configurations ( ie we create from scratch"
+                      . " and you could lose configurations ). Please think carefully about this, and BACK UP YOUR ~/.odbcinst.ini"
+                      . " before flipping the enable switch, above.";
+
+    $self->set_widget_value( 'ODBC_enabling' , $enabling_help );
+
+    my $odbc_buffer = Gtk3::SourceView::Buffer->new_with_language( $self->{globals}->{gtksourceview_ini_language} );
+    $odbc_buffer->set_highlight_syntax( TRUE );
+
+    $odbc_buffer->set_style_scheme( $self->{globals}->{gtksourceview_scheme} );
+
+    my $source_view = $self->{builder}->get_object( 'odbcinst_ini_contents' );
+
+    if ( &Gtk3::MINOR_VERSION >= 16 ) {
+        $source_view->set_background_pattern( 'GTK_SOURCE_BACKGROUND_PATTERN_TYPE_GRID' );
+    }
+
+    $source_view->set_buffer( $odbc_buffer );
+
+    $self->manage_widget_value( "enable_odbcinst_ini_management" , FALSE );
+    $self->manage_widget_value( "odbcinst_ini_contents" );
+
     return $self;
     
+}
+
+sub on_configured_option_select {
+
+    my $self = shift;
+
+    my $source      = $self->{configured_odbc_driver_options}->get_column_value( "Source" );
+    my $option_name = $self->{configured_odbc_driver_options}->get_column_value( "OptionName" );
+
+    my $help = $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )->select(
+        "select HELP from odbc_driver_options where type = ? and option_name = ?"
+      , [ $source , $option_name ]
+    );
+
+    $self->set_widget_value( 'ODBC_option_help' , $help->[0]->{HELP} );
+
+}
+
+sub browse_for_driver {
+
+    my $self = shift;
+
+    my $path = $self->file_chooser(
+        {
+            title       => "Locate the vendor ODBC driver"
+          , path        => $ENV{HOME} . "/SDF_persisted"
+          , type        => "file"
+        }
+    );
+
+    $self->{configured_odbc_driver_options}->set_column_value( "OptionValue" , $path );
+
+}
+
+sub on_apply_odbc_driver {
+
+    my ( $self , $item ) = @_;
+
+    if ( $item->{status} eq 'inserted' ) {
+
+        my $driver = $item->{model}->get( $item->{iter} , $self->{configured_odbc_drivers}->column_from_column_name( 'Driver' ) );
+
+        # When a driver is inserted, we copy all the default options from the global metadata ...
+        #  ... users can then override these if they want
+
+        $self->{globals}->{local_db}->do( "delete from odbc_driver_options where Driver = ?" , [ $driver ] );
+
+        my $options = $self->{globals}->{config_manager}->sdf_connection( 'CONTROL' )->select(
+            "select * from odbc_driver_options where type = 'Global' or type = ? order by case when type = 'Global' then 1 else 2 end"
+          , [ $driver ]
+        );
+
+        my $options_hash;
+
+        # This loop merges in the options ( ie Global and driver-specific options ). Driver-specific ones override Globals
+        foreach my $option ( @{$options} ) {
+            $options_hash->{ $option->{OPTION_NAME} } = $option;
+        }
+
+        foreach my $option_name ( keys %{$options_hash} ) {
+            $self->{globals}->{local_db}->do(
+                "insert into odbc_driver_options ( Driver , OptionName , OptionValue , Source ) values ( ? , ? , ? , ? )"
+              , [ $driver , $options_hash->{ $option_name }->{OPTION_NAME}
+                , $options_hash->{ $option_name }->{OPTION_VALUE} , $options_hash->{ $option_name }->{TYPE}
+                ]
+            );
+        }
+
+    }
+
+    $self->refresh_configured_odbc_driver_options();
+
+}
+
+sub fetch_all_supported_odbc_drivers {
+
+    my $self = shift;
+
+    my $supported_drivers = $self->{globals}->{config_manager}->all_database_drivers;
+
+    my @return;
+
+    foreach my $driver_class ( @{$supported_drivers} ) {
+
+        my $connection = Database::Connection::generate(
+            $self->{globals}
+          , {
+                DatabaseType => $driver_class
+            }
+          , 1 # Don't connect
+        );
+
+        if ( $connection->has_odbc_driver() ) {
+
+            push @return , $driver_class;
+
+            # my $default_options = $self->{globals}->sdf_connection( 'CONTROL' )->select(
+            #     "select * from odbc_driver_options"
+            # );
+            #
+            # if ( $connection->can( 'odbc_config_options' ) ) {
+            #
+            #     my @odbc_options = $connection->odbc_config_options();
+            #
+            #     foreach my $option ( @odbc_options ) {
+            #
+            #         $self->{globals}->{local_db}->do(
+            #             "insert into odbc_driver_options ( Driver , OptionName , OptionValue , Help , Browse ) values ( ? , ? , ? , ? , ? )"
+            #             , [ $driver_class , $option->{OptionName} , $option->{OptionValue} , $option->{Help} , $option->{Browse} ]
+            #         );
+            #
+            #     }
+            #
+            # }
+
+        }
+
+    }
+
+    return \@return;
+
+}
+
+sub refresh_configured_odbc_driver_options {
+
+    my $self = shift;
+
+    my $driver = $self->{configured_odbc_drivers}->get_column_value( "Driver" );
+
+    $self->{configured_odbc_driver_options}->query(
+        {
+            where       => "Driver = ?"
+          , bind_values => [ $driver ]
+        }
+    );
+
+}
+
+sub refresh_global_driver_options {
+
+    my $self = shift;
+
+    my $type = $self->{all_config_options}->get_column_value( "type" );
+    my $options_name = $self->{all_config_options}->get_column_value( "option_name" );
+
+    $self->{all_odbc_driver_options}->query(
+        {
+            where       => "type = ? and option_name = ?"
+          , bind_values => [ $type , $options_name ]
+        }
+    );
+
+}
+
+sub package_odbc_options {
+
+    my $self = shift;
+
+    my $repository = 'core'; # While some of the metadata relates to drivers in the commercial repo, there's not much value in separating things
+
+    my $main = $self->open_window( 'window::main' );
+
+    my $odbc_driver_options = $self->{globals}->{connections}->{CONTROL}->select(
+        "select * from odbc_driver_options"
+    );
+
+    my $json = to_json(
+        {
+            odbc_driver_options => {
+                pre         => [ "delete from odbc_driver_options" ]
+              , data        => $odbc_driver_options
+            }
+        }
+      , { pretty => 1 }
+    );
+
+    $main->create_package(
+        $json
+      , 'odbc_driver_options'
+      , 'odbc_driver_options'
+      , $repository
+    );
+
+}
+
+sub generate_odbcinstini_string {
+
+    my $self = shift;
+
+    # Here we generate the contents of the odbcinst.ini file. If management of the ~/.odbcinst.ini file is enabled,
+    # when a GUI or runtime process is launched, it will check if ~/.odbcinst.ini exists, and if it doesn't, it will
+    # be written, from the contents that we generate here. We do this because under Flatpak ( which is the only
+    # kind of installation we can realistically support ), the home directory is *not* persisted ( apart from
+    # ~/SDF_persisted ), and so we need to generate this file on launch.
+
+    my $odbc_driver_options = $self->{globals}->{local_db}->select(
+        "select * from odbc_driver_options order by Driver , case when Source = 'Global' then 1 else 2 end , OptionName"
+    );
+
+    my $odbcinst_ini_string = "# This file is generated by Smart Data Frameworks ( SDF ),\n"
+                            . "#  and will be re-generated when the next SDF process is launched.\n";
+
+    my $this_driver;
+
+    foreach my $option ( @{$odbc_driver_options} ) {
+        if ( ! $this_driver || $this_driver ne $option->{Driver} ) {
+            # Next driver. Write driver header.
+            $this_driver = $option->{Driver};
+            $odbcinst_ini_string .= "\n[$this_driver]\n";
+        }
+        $odbcinst_ini_string .= $option->{OptionName} . "=" . $option->{OptionValue} . "\n";
+    }
+
+    $self->set_widget_value( 'odbcinst_ini_contents' , $odbcinst_ini_string );
+
 }
 
 sub render_db_icon {
@@ -704,17 +1122,6 @@ sub on_MaskUnmask_clicked {
     
     $self->{builder}->get_object( 'Password' )->set_visibility( ! $self->{builder}->get_object( 'Password' )->get_visibility );
     
-}
-
-sub on_ODBC_driver_config_clicked {
-
-    my $self = shift;
-
-    my $odbc_config_dialog = $self->open_window(
-        'window::odbc_config'
-      , $self->{globals}
-    );
-
 }
 
 sub setup_odbc_driver_combo {

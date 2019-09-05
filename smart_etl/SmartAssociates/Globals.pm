@@ -5,6 +5,7 @@ use warnings;
 
 use Cwd;
 use File::Find::Rule;
+use File::Copy;
 
 use base 'SmartAssociates::Base';
 
@@ -128,6 +129,30 @@ sub initialise {
             $self->LOG->warn( "Failed to parse environment string [$env_key]" );
         }
 
+    }
+
+    # Write out our odbcinst.ini file if we're managing it ...
+    my $enable_odbcini_management_record = $self->SIMPLE_SELECT( "window::configuration:enable_odbcinst_ini_management" );
+    my $odbcini_contents;
+
+    if ( $enable_odbcini_management_record ) {
+        $odbcini_contents = $self->SIMPLE_SELECT( "window::configuration:odbcinst_ini_contents" );
+        if ( $odbcini_contents ) {
+            $self->LOG->info( "odbcinst.ini management enabled ..." );
+            # We write to a file with a PID appended on the end. After we've written it, we move it into place.
+            # This is an atomic operation, so no other processes should 'see' a partially written file.
+            my $pid = $$;
+            my $new_file_path = $ENV{"HOME"} . "/.odbcinst.ini." . $pid;
+            open NEW_ODBCINST_INI , ">$new_file_path"
+                || $self->LOG->warn( "Failed to open [$new_file_path] for writing:\n" . $! );
+            print NEW_ODBCINST_INI $odbcini_contents;
+            close NEW_ODBCINST_INI
+                || $self->LOG->warn( "Failed to write [$new_file_path]:\n" . $! );
+            move( $new_file_path , $ENV{"HOME"} . "/.odbcinst.ini" )
+                || $self->LOG->warn( "Filed to move new odbcini file [$new_file_path] into place:\n" . $! );
+        } else {
+            $self->LOG->warn( "odbcinst.ini management enabled, but no file contents found!" );
+        }
     }
 
     # Create an array of resolvers ( #COMPLEX# param logic ). # We scan all ETL paths ( ie base and overlays )

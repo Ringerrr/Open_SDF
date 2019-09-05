@@ -1652,8 +1652,8 @@ sub _model_to_index_structure {
       . "        and indexes.table_name          = ?\n"
       . "        and indexes.index_name          = ?\n"
       . "--        and indexes.is_primary          = 0\n" # commented out, so DB2 can rewire _model_to_primary_key_ddl to _model_to_index_ddl
-      . "        and indexes.is_distribution_key = 0\n"
-      . "        and indexes.is_organisation_key = 0";
+      . "--        and indexes.is_distribution_key = 0\n" # commented out as it's preventing dist key indexes which are *also* unique from being generated ( which prevents FKs being created )
+      . "--        and indexes.is_organisation_key = 0";
     
     my $index_rows = $self->select(
         $sql
@@ -2078,6 +2078,23 @@ sub _pks_to_distribution_string {
         ddl       => $sql
       , warnings  => join( "\n\n", @warnings )
     };
+
+}
+
+sub reserved_words {
+
+    my $self = shift;
+
+    return qw | select from table column index user update where
+        ABORT DEC LEADING RESET DECIMAL LEFT REUSE AGGREGATE DECODE LIKE RIGHT ALIGN DEFAULT LIMIT ROWS ALL DEFERRABLE LISTEN ROWSETLIMIT ALLOCATE DESC LOAD RULE ANALYSE DISTINCT LOCAL SEARCH ANALYZE DISTRIBUTE LOCK SELECT AND DO MATERIALIZED SEQUENCE ANY ELSE MINUS SESSION_USER AS END MOVE SETOF ASC EXCEPT NATURAL SHOW
+        BETWEEN EXCLUDE NCHAR SOME BINARY EXISTS NEW SUBSTRING BIT EXPLAIN NOT SYSTEM BOTH EXPRESS NOTNULL TABLE CASE EXTEND NULL THEN
+        CAST EXTERNAL NULLIF TIES CHAR EXTRACT NULLS TIME CHARACTER FALSE NUMERIC TIMESTAMP CHECK FIRST NVL TO CLUSTER FLOAT NVL2 TRAILING
+        COALESCE FOLLOWING OFF TRANSACTION COLLATE FOR OFFSET TRIGGER COLLATION FOREIGN OLD TRIM COLUMN FROM ON TRUE CONSTRAINT FULL ONLINE UNBOUNDED
+        COPY FUNCTION ONLY UNION  CROSS GENSTATS OR UNIQUE CURRENT GLOBAL ORDER USER CURRENT_CATALOG GROUP OTHERS USING CURRENT_DATE HAVING OUT VACUUM
+        CURRENT_DB IDENTIFIER_CASE OUTER VARCHAR CURRENT_SCHEMA ILIKE OVER VERBOSE CURRENT_SID IN OVERLAPS VERSION CURRENT_TIME INDEX PARTITION VIEW CURRENT_TIMESTAMP
+        INITIALLY POSITION WHEN CURRENT_USER INNER PRECEDING WHERE CURRENT_USERID INOUT PRECISION WITH CURRENT_USEROID INTERSECT PRESERVE WRITE DEALLOCATE INTERVAL PRIMARY RESET
+        INTO REUSE CTID  OID XMIN CMIN XMAX CMAX TABLEOID ROWID DATASLICEID CREATEXID DELETEXID
+    |;
 
 }
 

@@ -313,6 +313,7 @@ sub create_model_schema {
       . "  , foreign_table         text\n"
       . "  , table_ID              integer\n"
       . "  , ddl                   text\n"
+      . "  , include               integer       not null default 1\n"
       . "  , executed              integer\n"
       . "  , error_message         text\n"
       . "  , warning               text\n"

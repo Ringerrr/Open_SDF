@@ -3178,8 +3178,12 @@ sub create_package {
     eval {
 
         if ( ! -d $snapshot_dir ) {
-            mkdir( $snapshot_dir )
-                or die( "Can't create package directory [$snapshot_dir]\n".$! );
+            my @created = make_path(
+                $snapshot_dir
+              , {
+                    verbose     => 1
+                }
+            );
         }
 
         my $full_snapshot_path = $snapshot_dir . $snapshot_name;

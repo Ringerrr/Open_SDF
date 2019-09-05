@@ -135,7 +135,7 @@ sub on_Execute_clicked {
     
     my $args_string = join( " ", @args );
     
-    $self->{globals}->{log}->print ( "\n\n$args_string\n\n" );
+#    $self->{globals}->{log}->print ( "\n\n$args_string\n\n" );
     print "\n\n$args_string\n\n";
 
     my $OUTPUT_FH;

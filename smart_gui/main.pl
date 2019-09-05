@@ -155,13 +155,6 @@ my $self_name = abs_path( $0 );     # $0 is the full path to this file
 
 foreach my $i( @INC ) { print "$i\n"; }
 
-if ( $flatpak ) {
-    print "Running inside flatpak\n";
-    print "Copying /app/etc/odbcinst.ini to ~/.odbcinst.ini\n";
-    copy( "/app/etc/odbcinst.ini", $ENV{"HOME"} . "/.odbcinst.ini" )
-        || die( "Copy failed!\n" . $! );
-}
-
 my $globals = {
     self    => {
         path                => $self_name
@@ -239,6 +232,39 @@ eval {
     
 };
 
+if ( $flatpak ) {
+    print "Running inside flatpak\n";
+}
+
+my $enable_odbcini_management_record = $globals->{config_manager}->simpleGet( "window::configuration:enable_odbcinst_ini_management" );
+my $odbcini_contents;
+
+if ( $enable_odbcini_management_record ) {
+    $odbcini_contents = $globals->{config_manager}->simpleGet( "window::configuration:odbcinst_ini_contents" );
+    if ( $odbcini_contents ) {
+        say( "odbcinst.ini management enabled ..." );
+        # We write to a file with a PID appended on the end. After we've written it, we move it into place.
+        # This is an atomic operation, so no other processes should 'see' a partially written file.
+        my $pid = $$;
+        my $new_file_path = $ENV{"HOME"} . "/.odbcinst.ini." . $pid;
+        open NEW_ODBCINST_INI , ">$new_file_path"
+            || warn( "Failed to open [$new_file_path] for writing:\n" . $! );
+        print NEW_ODBCINST_INI $odbcini_contents;
+        close NEW_ODBCINST_INI
+            || warn( "Failed to write [$new_file_path]:\n" . $! );
+        move( $new_file_path , $ENV{"HOME"} . "/.odbcinst.ini" )
+            || warn( "Filed to move new odbcini file [$new_file_path] into place:\n" . $! );
+    } else {
+        warn( "odbcinst.ini management enabled, but no file contents found!" );
+    }
+}
+
+if ( $flatpak && ! ( $enable_odbcini_management_record && $odbcini_contents ) ) {
+    print "Legacy hard-coded odbcinst.ini handling: copying /app/etc/odbcinst.ini to ~/.odbcinst.ini\n";
+    copy( "/app/etc/odbcinst.ini", $ENV{"HOME"} . "/.odbcinst.ini" )
+        || die( "Copy failed!\n" . $! );
+}
+
 if ( $@ ) {
     window::dialog(
         undef
@@ -305,6 +331,7 @@ Gtk3::StyleContext::add_provider_for_screen ( $screen , $provider , Gtk3::STYLE_
         push @language_spec_locs, $globals->{paths}->{app} . "/gtksourceview/language-specs";
         $globals->{gtksourceview_language_manager}->set_search_path( \@language_spec_locs );
         $globals->{gtksourceview_language} = $globals->{gtksourceview_language_manager}->get_language( 'smartsql' );
+        $globals->{gtksourceview_ini_language} = $globals->{gtksourceview_language_manager}->get_language( 'ini' );
         
         # TODO: UI to list / set style
         $globals->{gtksourceview_style_schema_manager} = Gtk3::SourceView::StyleSchemeManager->get_default();
