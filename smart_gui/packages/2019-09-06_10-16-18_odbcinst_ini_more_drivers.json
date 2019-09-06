@@ -1,0 +1,18 @@
+{
+   "release" : {
+      "RELEASE_BASE" : null,
+      "RELEASE_OPEN" : 0,
+      "RELEASE_NAME" : "2019-09-06_10-16-18_odbcinst_ini_more_drivers",
+      "REPOSITORY" : "core",
+      "PACKAGE_DATETIME" : "2019-09-06 10:28:16.414611"
+   },
+   "release_packages" : [
+      {
+         "OBJECT_CHANGED" : 1,
+         "PACKAGE_TYPE" : "odbc_driver_options",
+         "RELEASE_PACKAGE" : "odbc_driver_options.2019-09-06_10-27-45.dkasak.json",
+         "RELEASE_NAME" : "2019-09-06_10-16-18_odbcinst_ini_more_drivers",
+         "OBJECT_NAME" : "odbc_driver_options"
+      }
+   ]
+}

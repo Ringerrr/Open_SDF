@@ -1,0 +1,153 @@
+{
+   "odbc_driver_options" : {
+      "data" : [
+         {
+            "HELP" : "NOTE: There are critical bugs when using DB2's ODBC driver. Use the native driver instead.\n\nThe full path to libdb2.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "TYPE" : "DB2::ODBC",
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver"
+         },
+         {
+            "OPTION_VALUE" : "CORE",
+            "OPTION_NAME" : "APILevel",
+            "HELP" : "ODBC Conformance of driver",
+            "TYPE" : "Global"
+         },
+         {
+            "OPTION_NAME" : "SQLLevel",
+            "OPTION_VALUE" : "1",
+            "TYPE" : "Global",
+            "HELP" : "Level of SQL conformance, a digit from 0 to 3, from:\n\n 0: SQL-92 Entry\n 1: FIPS127-2 Transitional\n 2: SQL-92 Intermediate\n 3: SQL-92 Full"
+         },
+         {
+            "TYPE" : "Global",
+            "HELP" : "The description has no effect ...",
+            "OPTION_NAME" : "Description",
+            "OPTION_VALUE" : "Auto-generated ODBC driver entry"
+         },
+         {
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver",
+            "HELP" : "The full path to tdataodbc_sb64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "TYPE" : "Teradata::ODBC"
+         },
+         {
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver",
+            "HELP" : "The full path to libgooglebigqueryodbc_sb64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "TYPE" : "BigQuery"
+         },
+         {
+            "HELP" : "The full path to libnzodbc.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Driver' )",
+            "TYPE" : "Netezza",
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Setup"
+         },
+         {
+            "OPTION_NAME" : "Driver",
+            "OPTION_VALUE" : null,
+            "TYPE" : "Netezza",
+            "HELP" : "The full path to libnzodbc.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Setup' )"
+         },
+         {
+            "OPTION_VALUE" : "YYN",
+            "OPTION_NAME" : "ConnectFunctions",
+            "HELP" : "A three-character string indicating whether the driver supports SQLConnect, SQLDriverConnect, and SQLBrowseConnect.\n\nNetezza doesn't appear to support SQLBrowseConnect ...",
+            "TYPE" : "Netezza"
+         },
+         {
+            "OPTION_NAME" : "ConnectFunctions",
+            "OPTION_VALUE" : "YYY",
+            "TYPE" : "Global",
+            "HELP" : "A three-character string indicating whether the driver supports SQLConnect, SQLDriverConnect, and SQLBrowseConnect."
+         },
+         {
+            "OPTION_VALUE" : "03.51",
+            "OPTION_NAME" : "DriverODBCVer",
+            "HELP" : "Document ... :)",
+            "TYPE" : "Netezza"
+         },
+         {
+            "TYPE" : "Netezza",
+            "HELP" : "SDF only supports the value 'utf16' for this option for Netezza.",
+            "OPTION_NAME" : "UnicodeTranslationOption",
+            "OPTION_VALUE" : "utf16"
+         },
+         {
+            "TYPE" : "Netezza",
+            "HELP" : "Document ... :)",
+            "OPTION_NAME" : "CharacterTranslationOption",
+            "OPTION_VALUE" : "all"
+         },
+         {
+            "OPTION_NAME" : "PreFetch",
+            "OPTION_VALUE" : "256",
+            "TYPE" : "Netezza",
+            "HELP" : "Document ... :)"
+         },
+         {
+            "TYPE" : "Netezza",
+            "HELP" : "Document ... :)",
+            "OPTION_NAME" : "Socket",
+            "OPTION_VALUE" : "16384"
+         },
+         {
+            "OPTION_VALUE" : null,
+            "OPTION_NAME" : "Driver",
+            "HELP" : "The full path to libSnowflake.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.",
+            "TYPE" : "Snowflake"
+         },
+         {
+            "HELP" : "Level of SQL conformance, a digit from 0 to 3, from:\n\n 0: SQL-92 Entry\n 1: FIPS127-2 Transitional\n 2: SQL-92 Intermediate\n 3: SQL-92 Full\n\nRecommended value for Snowflake is 1.",
+            "TYPE" : "Snowflake",
+            "OPTION_VALUE" : "1",
+            "OPTION_NAME" : "SQLLevel"
+         },
+         {
+            "TYPE" : "Hive",
+            "HELP" : "The full path to libhortonworkshiveodbc64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Setup' )",
+            "OPTION_NAME" : "Driver",
+            "OPTION_VALUE" : null
+         },
+         {
+            "TYPE" : "Hive",
+            "HELP" : "The full path to libhortonworkshiveodbc64.so\n\nUse the browse button ( above ) to locate this file in the location where you unpacked it.\n\n( Yes this is the same path as for the 'Driver' )",
+            "OPTION_NAME" : "Setup",
+            "OPTION_VALUE" : null
+         },
+         {
+            "HELP" : "Recommended setting for Snowflake is 03.52",
+            "TYPE" : "Snowflake",
+            "OPTION_VALUE" : "03.52",
+            "OPTION_NAME" : "DriverODBCVer"
+         },
+         {
+            "HELP" : "NOTE: There are critical bugs when using DB2's ODBC driver. Use the native driver instead.\n\nThe full path to libdb2.so\n\nRecommended setting from:\n https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.cli.doc/doc/t0061216.html",
+            "TYPE" : "DB2::ODBC",
+            "OPTION_VALUE" : "1",
+            "OPTION_NAME" : "DontDLClose"
+         },
+         {
+            "HELP" : "NOTE: There are critical bugs when using DB2's ODBC driver. Use the native driver instead.\n\nThe full path to libdb2.so\n\nRecommended setting from:\n https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.apdv.cli.doc/doc/t0061216.html",
+            "TYPE" : "DB2::ODBC",
+            "OPTION_VALUE" : "1",
+            "OPTION_NAME" : "FileUsage"
+         },
+         {
+            "TYPE" : "SQLServer",
+            "HELP" : "The full path to libtdsodbc.so\n\nOnly the FreeTDS library is supported / tested. FreeTDS is packed in our Flatpak repository, and the driver path is already selected for you. If you choose to use another driver, note that freebcp ( from FreeTDS ) and also bcp ( Microsoft's version ) produces invalid CSV output. The packaged version includes a patch to fix this.",
+            "OPTION_NAME" : "Driver",
+            "OPTION_VALUE" : "/app/lib/libtdsodbc.so"
+         },
+         {
+            "HELP" : "The full path to libtdsodbc.so\n\nOnly the FreeTDS library is supported / tested. FreeTDS is packed in our Flatpak repository, and the driver path is already selected for you. If you choose to use another driver, note that freebcp ( from FreeTDS ) and also bcp ( Microsoft's version ) produces invalid CSV output. The packaged version includes a patch to fix this.",
+            "TYPE" : "SQLServer",
+            "OPTION_VALUE" : "/app/lib/libtdsodbc.so",
+            "OPTION_NAME" : "Setup"
+         }
+      ],
+      "pre" : [
+         "delete from odbc_driver_options"
+      ]
+   }
+}

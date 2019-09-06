@@ -549,9 +549,17 @@ sub on_apply_odbc_driver {
             );
         }
 
+    } elsif ( $item->{status} eq 'deleted' ){
+        
+        $self->{globals}->{local_db}->do(
+            "delete from odbc_driver_options where ID = ?"
+          , [ $item->{primary_keys}->{ID} ]
+        );
+
     }
 
     $self->refresh_configured_odbc_driver_options();
+    $self->setup_odbc_driver_combo();
 
 }
 
