@@ -318,7 +318,9 @@ sub upgrade_schema {
           , version_key     => $version_key
         }
     );
-    
+
+    print "\n";
+
 }
 
 sub do_upgrades {
@@ -470,7 +472,7 @@ sub do_upgrades {
         $progress_bar->set_fraction( 0 );
         $self->kick_gtk;
     }
-    
+
 }
 
 sub sdf_connection {

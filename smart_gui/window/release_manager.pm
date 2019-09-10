@@ -555,7 +555,7 @@ sub import_releases {
     my $all_releases = $self->{globals}->{connections}->{CONTROL}->select(
         "select * from releases"
       , undef
-      , "RELEASE_NAME"
+      , "release_name"
     );
 
     foreach my $repo ( @{$self->{repos}} ) {

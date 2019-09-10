@@ -394,7 +394,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="pgf.PROCESSING_GROUP_NAME">
+                                                      <object class="GtkEntry" id="pgf.processing_group_name">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -426,7 +426,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkComboBoxText" id="pgf.REPOSITORY">
+                                                      <object class="GtkComboBoxText" id="pgf.repository">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="has_entry">True</property>
@@ -464,7 +464,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="pgf.PROCESSING_GROUP_DESCRIPTION">
+                                                      <object class="GtkEntry" id="pgf.processing_group_description">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -497,7 +497,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="pgf.TAGS">
+                                                      <object class="GtkEntry" id="pgf.tags">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -535,7 +535,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                         <property name="can_focus">True</property>
                                                         <property name="shadow_type">in</property>
                                                         <child>
-                                                          <object class="GtkTextView" id="pgf.NOTES">
+                                                          <object class="GtkTextView" id="pgf.notes">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                           </object>
@@ -575,7 +575,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                                         <property name="can_focus">True</property>
                                                         <property name="shadow_type">in</property>
                                                         <child>
-                                                          <object class="GtkTextView" id="pgf.CUSTOM_ARGS">
+                                                          <object class="GtkTextView" id="pgf.custom_args">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                           </object>
@@ -599,7 +599,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="pgf.DISABLE_FLAG">
+                                              <object class="GtkCheckButton" id="pgf.disable_flag">
                                                 <property name="label" translatable="yes">Disabled</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -612,7 +612,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="pgf.TEMPLATE">
+                                              <object class="GtkCheckButton" id="pgf.template">
                                                 <property name="label" translatable="yes">Template</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -850,7 +850,7 @@ When you select a &lt;b&gt;Job&lt;/b&gt; in the list below, subsequent pages ( &
                                             <property name="can_focus">True</property>
                                             <property name="shadow_type">in</property>
                                             <child>
-                                              <object class="GtkTextView" id="CONFIG.NOTES">
+                                              <object class="GtkTextView" id="config.notes">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="wrap_mode">word</property>
@@ -1258,7 +1258,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                 <property name="can_focus">True</property>
                                 <property name="shadow_type">etched-in</property>
                                 <child>
-                                  <object class="GtkSourceView" id="TEMPLATE_TEXT_READ_ONLY">
+                                  <object class="GtkSourceView" id="template_text_read_only">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="editable">False</property>
@@ -1343,7 +1343,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkComboBoxText" id="CONFIG.CONNECTION_NAME">
+                                                  <object class="GtkComboBoxText" id="config.connection_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="has_entry">True</property>
@@ -1383,7 +1383,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkComboBox" id="CONFIG.TEMPLATE_NAME">
+                                                  <object class="GtkComboBox" id="config.template_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <signal name="changed" handler="on_CONFIG_TEMPLATE_NAME_changed" after="yes" swapped="no"/>
@@ -1417,7 +1417,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.SOURCE_TABLE_NAME">
+                                                  <object class="GtkEntry" id="config.source_table_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                   </object>
@@ -1450,7 +1450,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.TARGET_TABLE_NAME">
+                                                  <object class="GtkEntry" id="config.target_table_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                   </object>
@@ -1483,7 +1483,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.TARGET_DB_NAME">
+                                                  <object class="GtkEntry" id="config.target_db_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <signal name="focus-out-event" handler="on_CONFIG_TARGET_DB_NAME_focus_out_event" after="yes" swapped="no"/>
@@ -1517,7 +1517,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.TARGET_SCHEMA_NAME">
+                                                  <object class="GtkEntry" id="config.target_schema_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <signal name="focus-out-event" handler="on_CONFIG_TARGET_SCHEMA_NAME_focus_out_event" after="yes" swapped="no"/>
@@ -1551,7 +1551,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.SOURCE_SCHEMA_NAME">
+                                                  <object class="GtkEntry" id="config.source_schema_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <signal name="focus-out-event" handler="on_CONFIG_SOURCE_SCHEMA_NAME_focus_out_event" after="yes" swapped="no"/>
@@ -1585,7 +1585,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.SOURCE_DB_NAME">
+                                                  <object class="GtkEntry" id="config.source_db_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <signal name="focus-out-event" handler="on_CONFIG_SOURCE_DB_NAME_focus_out_event" after="yes" swapped="no"/>
@@ -1633,7 +1633,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.BEGIN_TRANSACTION">
+                                                      <object class="GtkCheckButton" id="config.begin_transaction">
                                                         <property name="label" translatable="yes">Begin Transaction</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1648,7 +1648,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.COMMIT_STEP">
+                                                      <object class="GtkCheckButton" id="config.commit_step">
                                                         <property name="label" translatable="yes">Commit</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1663,7 +1663,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.DISABLE_FLAG">
+                                                      <object class="GtkCheckButton" id="config.disable_flat">
                                                         <property name="label" translatable="yes">Disable Flag</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1678,7 +1678,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.ON_ERROR_CONTINUE">
+                                                      <object class="GtkCheckButton" id="config.on_error_continue">
                                                         <property name="label" translatable="yes">On Error Continue</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1726,7 +1726,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.VERIFIED">
+                                                      <object class="GtkCheckButton" id="config.verified">
                                                         <property name="label" translatable="yes">Verified</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1741,7 +1741,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="CONFIG.AUTOGENERATED">
+                                                      <object class="GtkCheckButton" id="config.autogenerated">
                                                         <property name="label" translatable="yes">Autogenerated</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1835,7 +1835,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.PARENT_SEQUENCE_ORDER">
+                                                  <object class="GtkEntry" id="config.parent_sequence_order">
                                                     <property name="width_request">70</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
@@ -1870,7 +1870,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.SEQUENCE_ORDER">
+                                                  <object class="GtkEntry" id="config.sequence_order">
                                                     <property name="width_request">70</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
@@ -1905,7 +1905,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="left_padding">12</property>
                                                 <child>
-                                                  <object class="GtkEntry" id="CONFIG.PROCESSING_GROUP_NAME">
+                                                  <object class="GtkEntry" id="config.processing_group_name">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                   </object>
@@ -2024,7 +2024,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="shadow_type">etched-in</property>
                                                         <child>
-                                                          <object class="GtkSourceView" id="PARAM_VALUE.PARAM_VALUE">
+                                                          <object class="GtkSourceView" id="param_value.param_value">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="has_tooltip">True</property>
@@ -2049,7 +2049,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkBox" id="PARAM_VALUE_undo_redo_box">
+                                                      <object class="GtkBox" id="param_value_undo_redo_box">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="spacing">5</property>
@@ -2104,7 +2104,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                   <object class="GtkBox" id="hbox61">
                                                     <property name="can_focus">False</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="PARAM_VALUE.PARAM_NAME">
+                                                      <object class="GtkEntry" id="param_value.param_name">
                                                         <property name="can_focus">True</property>
                                                         <property name="invisible_char">●</property>
                                                         <property name="primary_icon_activatable">False</property>
@@ -2117,7 +2117,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkEntry" id="PARAM_VALUE.PROCESSING_GROUP_NAME">
+                                                      <object class="GtkEntry" id="param_value.processing_group_name">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="invisible_char">●</property>
@@ -2131,7 +2131,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkEntry" id="PARAM_VALUE.SEQUENCE_ORDER">
+                                                      <object class="GtkEntry" id="param_value.sequence_order">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="invisible_char">●</property>
@@ -2162,7 +2162,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="left_padding">12</property>
                                                         <child>
-                                                          <object class="GtkBox" id="PARAM_VALUE_recordset_tools">
+                                                          <object class="GtkBox" id="param_value_recordset_tools">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="spacing">5</property>
@@ -2317,7 +2317,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                             <property name="can_focus">False</property>
                             <property name="left_padding">12</property>
                             <child>
-                              <object class="GtkEntry" id="HARVEST_CONTROL.GROUPING_CODE">
+                              <object class="GtkEntry" id="harvest_control.grouping_code">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_markup" translatable="yes">Harvest jobs are executed by passing a &lt;span color='blue'&gt;&lt;b&gt;&lt;i&gt;--harvest-group&lt;/i&gt;&lt;/b&gt;&lt;/span&gt; command-line option to SmartETL, which instructs it to harvest all files in that group.</property>
@@ -2344,7 +2344,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkCheckButton" id="HARVEST_CONTROL.PERFORM_LOAD_ORDER_CHECK">
+                          <object class="GtkCheckButton" id="harvest_control.perform_load_order_check">
                             <property name="label" translatable="yes">Perform Load Order Check</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -2360,7 +2360,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="HARVEST_CONTROL.PROCESSING_GROUP_NAME">
+                          <object class="GtkEntry" id="harvest_control.processing_group_name">
                             <property name="can_focus">True</property>
                           </object>
                           <packing>
@@ -2393,7 +2393,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                 <property name="can_focus">False</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkEntry" id="HARVEST_CONTROL.FILE_REGEX">
+                                  <object class="GtkEntry" id="harvest_control.file_regex">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_markup" translatable="yes">The &lt;b&gt;&lt;i&gt;File Regular Expression&lt;/i&gt;&lt;/b&gt; is used to determine what &lt;b&gt;&lt;i&gt;Processing Group&lt;/i&gt;&lt;/b&gt; to launch to handle each file. It is also used to parse out items of consequence to the &lt;b&gt;&lt;i&gt;Harvest&lt;/i&gt;&lt;/b&gt; job, including the &lt;b&gt;&lt;i&gt;EXTRACT_DATE&lt;/i&gt;&lt;/b&gt;.</property>
@@ -2427,7 +2427,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                 <property name="can_focus">False</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkEntry" id="HARVEST_CONTROL.RECORD_LENGTH">
+                                  <object class="GtkEntry" id="harvest_control.record_length">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_markup" translatable="yes">The &lt;b&gt;&lt;i&gt;Record Length&lt;/i&gt;&lt;/b&gt; is used to map files with data of a particular width to a &lt;b&gt;&lt;i&gt;Config&lt;/i&gt;&lt;/b&gt; configured to load the corresponding file format. Note that Netezza can &lt;b&gt;&lt;i&gt;not&lt;/i&gt;&lt;/b&gt; handle data with fewer fields than defined in the &lt;b&gt;&lt;i&gt;layout&lt;/i&gt;&lt;/b&gt; section of the external table.</property>
@@ -2484,7 +2484,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkEntry" id="HARVEST_CONTROL.EXAMPLE_FILENAME">
+                                          <object class="GtkEntry" id="harvest_control.example_filename">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                           </object>
@@ -2578,7 +2578,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_1">
+                                                      <object class="GtkEntry" id="harvest_control.pos_1">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2611,7 +2611,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_2">
+                                                      <object class="GtkEntry" id="harvest_control.pos_2">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2644,7 +2644,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_3">
+                                                      <object class="GtkEntry" id="harvest_control.pos_3">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2677,7 +2677,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_4">
+                                                      <object class="GtkEntry" id="harvest_control.pos_4">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2710,7 +2710,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_5">
+                                                      <object class="GtkEntry" id="harvest_control.pos_5">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2743,7 +2743,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_6">
+                                                      <object class="GtkEntry" id="harvest_control.pos_6">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2776,7 +2776,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_7">
+                                                      <object class="GtkEntry" id="harvest_control.pos_7">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2809,7 +2809,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_8">
+                                                      <object class="GtkEntry" id="harvest_control.pos_8">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2842,7 +2842,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_9">
+                                                      <object class="GtkEntry" id="harvest_control.pos_9">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2875,7 +2875,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_10">
+                                                      <object class="GtkEntry" id="harvest_control.pos_10">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2908,7 +2908,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_11">
+                                                      <object class="GtkEntry" id="harvest_control.pos_11">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2941,7 +2941,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_12">
+                                                      <object class="GtkEntry" id="harvest_control.pos_12">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -2974,7 +2974,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_13">
+                                                      <object class="GtkEntry" id="harvest_control.pos_13">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3007,7 +3007,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_14">
+                                                      <object class="GtkEntry" id="harvest_control.pos_14">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3040,7 +3040,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="HARVEST_CONTROL.POS_15">
+                                                      <object class="GtkEntry" id="harvest_control.pos_15">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3096,7 +3096,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_1">
+                                                      <object class="GtkEntry" id="val_1">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3129,7 +3129,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_2">
+                                                      <object class="GtkEntry" id="val_2">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3162,7 +3162,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_3">
+                                                      <object class="GtkEntry" id="val_3">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3195,7 +3195,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_4">
+                                                      <object class="GtkEntry" id="val_4">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3228,7 +3228,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_5">
+                                                      <object class="GtkEntry" id="val_5">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3261,7 +3261,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_6">
+                                                      <object class="GtkEntry" id="val_6">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3294,7 +3294,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_7">
+                                                      <object class="GtkEntry" id="val_7">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3327,7 +3327,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_8">
+                                                      <object class="GtkEntry" id="val_8">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3360,7 +3360,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_9">
+                                                      <object class="GtkEntry" id="val_9">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3393,7 +3393,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_10">
+                                                      <object class="GtkEntry" id="val_10">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3426,7 +3426,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_11">
+                                                      <object class="GtkEntry" id="val_11">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3459,7 +3459,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_12">
+                                                      <object class="GtkEntry" id="val_12">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3492,7 +3492,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_13">
+                                                      <object class="GtkEntry" id="val_13">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3525,7 +3525,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_14">
+                                                      <object class="GtkEntry" id="val_14">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3558,7 +3558,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="left_padding">12</property>
                                                     <child>
-                                                      <object class="GtkEntry" id="VAL_15">
+                                                      <object class="GtkEntry" id="val_15">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                       </object>
@@ -3609,7 +3609,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="HARVEST_CONTROL_toolsbox">
+                      <object class="GtkBox" id="harvest_control_toolsbox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
@@ -3736,7 +3736,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                     <property name="can_focus">False</property>
                                     <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkEntry" id="TEMPLATE.TEMPLATE_NAME">
+                                      <object class="GtkEntry" id="template.template_name">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">●</property>
@@ -3772,7 +3772,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                     <property name="can_focus">False</property>
                                     <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkEntry" id="TEMPLATE.CLASS">
+                                      <object class="GtkEntry" id="template.class">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">●</property>
@@ -3807,35 +3807,12 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                     <property name="can_focus">False</property>
                                     <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkBox" id="box30">
+                                      <object class="GtkEntry" id="template.template_desc">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="homogeneous">True</property>
-                                        <child>
-                                          <object class="GtkEntry" id="TEMPLATE.TEMPLATE_DESC">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="invisible_char">●</property>
-                                            <property name="primary_icon_activatable">False</property>
-                                            <property name="secondary_icon_activatable">False</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkEntry" id="TEMPLATE.TEMPLATE_ID">
-                                            <property name="sensitive">False</property>
-                                            <property name="can_focus">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3866,7 +3843,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                     <property name="can_focus">False</property>
                                     <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkEntry" id="TEMPLATE.REPOSITORY">
+                                      <object class="GtkEntry" id="template.repository">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="invisible_char">●</property>
@@ -3914,7 +3891,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                     <property name="can_focus">True</property>
                                     <property name="shadow_type">etched-in</property>
                                     <child>
-                                      <object class="GtkSourceView" id="TEMPLATE.TEMPLATE_TEXT">
+                                      <object class="GtkSourceView" id="template.template_text">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="has_tooltip">True</property>
@@ -4050,7 +4027,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                 <property name="can_focus">False</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkBox" id="TEMPLATE_recordset_tools">
+                                  <object class="GtkBox" id="template_recordset_tools">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>

@@ -3,12 +3,15 @@ package Database::ConfigManager::SQLite;
 use strict;
 use warnings;
 
+use 5.20.0;
+
 use parent 'Database::ConfigManager';
 
 use constant TYPE       => 'SQLite';
 
 use Glib qw( TRUE FALSE );
 use File::Find qw( finddepth );
+use File::Copy;
 
 sub new {
     
@@ -29,9 +32,16 @@ sub new {
     foreach my $package ( @{$packages} ) {
         $self->{etl_package_map}->{ $package->{OverlayName} } = $package->{OverlayPath};
     }
-    
+
+    if ( $self->{globals}->{self}->{flatpak} ) {
+        say( "\nRunning inside flatpak\n" );
+    } else {
+        say( "\nRunning natively ( ie not in flatpak )\n" );
+    }
+
     $self->set_environment_variables();
-    
+    $self->manage_odbc_inst_ini();
+
     $self->{db_connection_cache} = {};
     
     return $self;
@@ -250,13 +260,15 @@ sub set_environment_variables {
         
         if ( $env_key =~ /ENV:([\w]*)/ ) {
             $key = $1;
-            print "Setting environment variable: $key: $value\n";
+            say( "Setting environment variable: $key: $value" );
             $ENV{ $key } = $value;
         } else {
             warn "Failed to parse ENV string: $env_key";
         }
     }
-    
+
+    print "\n";
+
 }
 
 sub get_db_connection {
@@ -275,6 +287,43 @@ sub get_db_connection {
     }
     
     return $self->{db_connection_cache}->{ $key };
+    
+}
+
+sub manage_odbc_inst_ini {
+
+    my $self = shift;
+
+    my $enable_odbcini_management_record = $self->simpleGet( "window::configuration:enable_odbcinst_ini_management" );
+    my $odbcini_contents;
+
+    if ( $enable_odbcini_management_record ) {
+        $odbcini_contents = $self->simpleGet( "window::configuration:odbcinst_ini_contents" );
+        if ( $odbcini_contents ) {
+            say( "odbcinst.ini management enabled ..." );
+            # We write to a file with a PID appended on the end. After we've written it, we move it into place.
+            # This is an atomic operation, so no other processes should 'see' a partially written file.
+            my $pid = $$;
+            my $new_file_path = $ENV{"HOME"} . "/.odbcinst.ini." . $pid;
+            open NEW_ODBCINST_INI , ">$new_file_path"
+                || warn( "Failed to open [$new_file_path] for writing:\n" . $! );
+            print NEW_ODBCINST_INI $odbcini_contents;
+            close NEW_ODBCINST_INI
+                || warn( "Failed to write [$new_file_path]:\n" . $! );
+            move( $new_file_path , $ENV{"HOME"} . "/.odbcinst.ini" )
+                || warn( "Filed to move new odbcini file [$new_file_path] into place:\n" . $! );
+        } else {
+            warn( "odbcinst.ini management enabled, but no file contents found!" );
+        }
+    }
+
+    if ( $self->{globals}->{self}->{flatpak} && ! ( $enable_odbcini_management_record && $odbcini_contents ) ) {
+        say( "Legacy hard-coded odbcinst.ini handling: copying /app/etc/odbcinst.ini to ~/.odbcinst.ini" );
+        copy( "/app/etc/odbcinst.ini", $ENV{"HOME"} . "/.odbcinst.ini" )
+            || die( "Copy failed!\n" . $! );
+    }
+
+    print "\n";
     
 }
 

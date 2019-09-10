@@ -874,7 +874,7 @@
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkSourceView" id="EXECUTED_TEMPLATE">
+                          <object class="GtkSourceView" id="executed_template">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="left_margin">2</property>
@@ -902,7 +902,7 @@
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkSourceView" id="PERF_STATS">
+                          <object class="GtkSourceView" id="perf_stats">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="left_margin">2</property>
@@ -959,7 +959,7 @@
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkTextView" id="WARNINGS_MSG">
+                          <object class="GtkTextView" id="warnings_msg">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                           </object>
@@ -986,7 +986,7 @@
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkTextView" id="ERROR_MSG">
+                          <object class="GtkTextView" id="error_msg">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                           </object>

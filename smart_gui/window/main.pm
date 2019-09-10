@@ -194,7 +194,7 @@ sub new {
     );
     
     my $configurations_connections = $self->{globals}->{connections}->{CONTROL}->select(
-        "select CONNECTION_NAME from CONFIG group by CONNECTION_NAME"
+        "select connection_name from config group by connection_name"
     );
     
     my $unique_connection_names;
@@ -204,10 +204,10 @@ sub new {
     }
     
     foreach my $this_conn ( @{$configurations_connections} ) {
-        $unique_connection_names->{$this_conn->{CONNECTION_NAME}} = 1;
+        $unique_connection_names->{$this_conn->{connection_name}} = 1;
     }
     
-    my $widget = $self->{builder}->get_object( "CONFIG.CONNECTION_NAME" );
+    my $widget = $self->{builder}->get_object( "config.connection_name" );
     my $model = Gtk3::ListStore->new( "Glib::String" );
     
     foreach my $this_conn ( sort keys %{$unique_connection_names} ) {
@@ -232,10 +232,10 @@ sub new {
     # The language specs provide syntax highlighting - see the gtksourceview directory
     
     for my $widget_name (
-                          "PARAM_VALUE.PARAM_VALUE"
+                          "param_value.param_value"
                         , "ParamDefaultValue"
-                        , "TEMPLATE_TEXT_READ_ONLY"
-                        , "TEMPLATE.TEMPLATE_TEXT"
+                        , "template_text_read_only"
+                        , "template.template_text"
     ) {
         
         my $view_buffer = Gtk3::SourceView::Buffer->new_with_language( $self->{globals}->{gtksourceview_language} );
@@ -261,20 +261,19 @@ sub new {
 
     $self->{template} = Gtk3::Ex::DBI::Form->new(
         {
-            dbh                     => $control_db_connection # $self->{globals}->{connections}->{CONTROL}
+            dbh                     => $control_db_connection
           , sql                     => {
                                               select        => "*"
-                                            , from          => "TEMPLATE"
+                                            , from          => "template"
             }
-          , force_upper_case_fields => 1
-          , widget_prefix           => "TEMPLATE."
-          , primary_keys            => [ "TEMPLATE_NAME" ]
+          , debug                   => TRUE
+          , widget_prefix           => "template."
           , builder                 => $self->{builder}
           , on_current              => sub { $self->on_template_current( @_ ) }
           , before_apply            => sub { $self->before_template_apply( @_ ) }
           , on_apply                => sub { $self->on_template_apply( @_ ) }
           , on_delete               => sub { $self->on_template_delete( @_ ) }
-          , recordset_tools_box     => $self->{builder}->get_object( "TEMPLATE_recordset_tools" )
+          , recordset_tools_box     => $self->{builder}->get_object( "template_recordset_tools" )
           , recordset_tool_items    => [ "label" , "new", "undo", "delete", "apply", "clone", "package" ]
           , recordset_extra_tools   => {
                 new => {
@@ -304,35 +303,32 @@ sub new {
         {
             dbh                 => $control_db_connection
           , sql                 => {
-                      select        => "TEMPLATE_NAME, PARAM_NAME, PARAM_DESC, PARAM_DEFAULT"
-                    , from          => "param"
-                    , order_by      => "PARAM_NAME"
-            }
-          , force_upper_case_fields => 1
-          , primary_keys            => [ "TEMPLATE_NAME", "PARAM_NAME" ]
-         #, dont_update_keys        => 1
+                                          select        => "template_name , param_name , param_desc , param_default"
+                                        , from          => "param"
+                                        , order_by      => "param_name"
+                                   }
           , auto_incrementing       => 0
           , fields                  => [
             {
-                name            => "TEMPLATE_NAME"
+                name            => "template_name"
               , renderer        => "hidden"
               , dont_update     => 1
               }
             , {
-                name            => "PARAM_NAME"
+                name            => "param_name"
               , x_percent       => 30
               }
             , {
-                name            => "PARAM_DESC"
+                name            => "param_desc"
               , x_percent       => 40
               }
             , {
-                name            => "PARAM_DEFAULT"
+                name            => "param_default"
               , x_percent       => 30
             }
         ]
             , vbox                    => $self->{builder}->get_object( "param" )
-            , recordset_tools_box     => $self->{builder}->get_object( "PARAM_recordset_tools" )
+            , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
             , before_insert           => sub { $self->before_param_insert }
             , on_insert               => sub { $self->on_param_insert }
         } );
@@ -347,36 +343,21 @@ sub new {
       , sql             => {
                               select       => "*"
                             , from         => "config"
-                            , order_by     => "SEQUENCE_ORDER"
+                            , order_by     => "sequence_order"
                             , where        => "0=1"
                            }
-      , force_upper_case_fields => 1
-      #, dont_update_keys        => 1
-#      , schema          => ( $self->{globals}->{connections}->{CONTROL}->connection_type eq 'Postgres' ? 'public' : undef )
-      , widget_prefix   => "CONFIG."
-      # , combos          => {
-      #                           TEMPLATE_NAME     => {
-      #                                                   sql     => {
-      #                                                                   select          => "TEMPLATE_NAME, TEMPLATE_NAME"
-      #                                                                 , from            => "TEMPLATE"
-      #                                                                 , order_by        => "TEMPLATE_NAME"
-      #                                                   }
-      #                           }
-      #   }
-      , primary_keys            => [ "PROCESSING_GROUP_NAME", "SEQUENCE_ORDER" ]
+      , widget_prefix           => "config."
       , builder                 => $self->{builder}
       , status_label            => "record_status"
-      , record_spinner          => "CONFIG_spinner"
       , auto_apply              => TRUE
       , on_current              => sub { $self->on_config_current() }
       , on_apply                => sub { $self->on_config_apply() }
       , on_delete               => sub { $self->on_config_delete() }
       , before_delete           => sub { $self->before_config_delete() }
       , on_initial_changed      => sub { $self->on_config_insert() }
-      # , debug                   => 1
+      , debug                   => TRUE
       , apeture                 => 1
-      , recordset_tools_box     => $self->{builder}->get_object( "CONFIG_recordset_tools" )
-#      , recordset_tool_items    => [ qw ' label insert undo delete apply ' ]
+      , recordset_tools_box     => $self->{builder}->get_object( "config_recordset_tools" )
     } );
     
     $self->pulse( "Creating Gtk3::Ex::DBI::Form - {HARVEST_CONTROL}" );
@@ -386,17 +367,15 @@ sub new {
         dbh                     => $control_db_connection
       , sql                     => {
                                       select       => "*"
-                                    , from         => "HARVEST_CONTROL"
+                                    , from         => "harvest_control"
                                     , where        => "0=1"
                                    }
-      , force_upper_case_fields => 1
-      , widget_prefix           => "HARVEST_CONTROL."
-      , primary_keys            => [ "PROCESSING_GROUP_NAME" ]
+      , widget_prefix           => "harvest_control."
       , builder                 => $self->{builder}
       , on_initial_changed      => sub { $self->on_harvest_control_insert() }
-      # , debug                   => 1
+      , debug                   => TRUE
       , apeture                 => 1
-      , recordset_tools_box     => $self->{builder}->get_object( "HARVEST_CONTROL_toolsbox" )
+      , recordset_tools_box     => $self->{builder}->get_object( "harvest_control_toolsbox" )
     } );
     
     $self->pulse( "Creating Gtk3::Ex::DBI::Datasheet - {CONFIG_PARAMS_LIST}" );
@@ -407,38 +386,37 @@ sub new {
       , dump_on_error   => 1
       , sql             => {
                               pass_through => "select\n"
-                                            . "    param.PARAM_NAME, case when PV.PARAM_NAME is null then 0 else 1 end as DEFINED"
-                                            . "  , param.PARAM_DESC, param.PARAM_DEFAULT\n"
+                                            . "    param.param_name , case when PV.param_name is null then 0 else 1 end as defined"
+                                            . "  , param.param_desc , param.param_default\n"
                                             . "from\n"
-                                            . "    PARAM left join\n"
+                                            . "    param left join\n"
                                             . "    (\n"
-                                            . "        select PARAM_NAME from PARAM_VALUE where PROCESSING_GROUP_NAME = ''\n"
-                                            . "    ) PV on PARAM.PARAM_NAME = PV.PARAM_NAME\n"
+                                            . "        select param_name from param_value where processing_group_name = ''\n"
+                                            . "    ) PV on param.param_name = PV.PARAM_NAME\n"
                                             . "where\n"
-                                            . "    PARAM.TEMPLATE_NAME = ''\n"
+                                            . "    param.template_name = ''\n"
                                             . "order by\n"
-                                            . "    PARAM.PARAM_NAME"
+                                            . "    param.param_name"
                            }
-      , force_upper_case_fields => 1
-      , read_only       => 1
+      , read_only       => TRUE
       , fields          => [
             {
-                name          => "PARAM_NAME"
+                name          => "param_name"
               , header_markup => "Parameter Name"
               , x_percent     => 100
             }
           , {
-                name          => "DEF"
+                name          => "def"
               , header_markup => "<small>defined</small>"
               , x_absolute    => 50
               , renderer      => "toggle"
             }
           , {
-                name          => "PARAM_DESC"
+                name          => "param_desc"
               , renderer      => "hidden"
             }
           , {
-                name          => "PARAM_DEFAULT"
+                name          => "param_default"
               , renderer      => "hidden"
             }
         ]
@@ -452,28 +430,17 @@ sub new {
     {
         dbh                     => $control_db_connection,
         sql                     => {
-                                    select        => "PROCESSING_GROUP_NAME,"
-                                                   . " SEQUENCE_ORDER,"
-                                                   . " PARAM_NAME,"
-                                                   . " PARAM_VALUE"
-                                  , from          => "PARAM_VALUE"
+                                    select        => "*"
+                                  , from          => "param_value"
                                   , where         => "0=1"
                                 }
-      , force_upper_case_fields => 1
-      , primary_keys            => [ "PROCESSING_GROUP_NAME", "SEQUENCE_ORDER", "PARAM_NAME" ]
-      , widget_prefix           => "PARAM_VALUE."
-      #, widgets                 => {
-      #                                  PARAM_VALUE     => {
-      #                                      object      => $param_value_view
-      #                                  }
-      #  }
-      #, dont_update_keys        => 1
+      , widget_prefix           => "param_value."
       , builder                 => $self->{builder}
       , on_apply                => sub { $self->on_param_value_apply( @_ ) }
       , on_delete               => sub { $self->on_param_value_delete( @_ ) }
       , on_initial_changed      => sub { $self->on_param_value_initial_changed( @_ ) }
-      # , debug                   => 1
-      , recordset_tools_box     => $self->{builder}->get_object( "PARAM_VALUE_recordset_tools" )
+      , debug                   => TRUE
+      , recordset_tools_box     => $self->{builder}->get_object( "param_value_recordset_tools" )
       , recordset_tool_items    => [ qw ' label undo delete apply strip fullscreen' ]
       , recordset_extra_tools   => {
                                         strip => {
@@ -498,7 +465,6 @@ sub new {
     {
         dbh                 => $control_db_connection
       , auto_incrementing   => 0
-      , primary_keys        => [ "PROCESSING_GROUP_SET_NAME", "PROCESSING_GROUP_NAME" ]
       , sql                 => {
                                    select           => "*"
                                  , from             => "processing_group_set_members"
@@ -507,7 +473,7 @@ sub new {
       , force_upper_case_fields => 1
       , fields              => [
                                    {
-                                        name        => "PROCESSING_GROUP_SET_NAME"
+                                        name        => "processing_group_set_name"
                                       , renderer    => "hidden"
                                    }
                                  , {
@@ -524,14 +490,12 @@ sub new {
     {
         dbh                 => $control_db_connection
       , auto_incrementing   => 0
-      , primary_keys        => [ "PROCESSING_GROUP_SET_NAME" ]
       , column_sorting      => 1
       , sql                 => {
                                    select           => "*"
                                  , from             => "processing_group_sets"
-                                 , order_by         => "PROCESSING_GROUP_SET_NAME"
+                                 , order_by         => "processing_group_set_name"
                                }
-      , force_upper_case_fields => 1
       , fields              => [
                                    {
                                        name         => "Processing Group Set"
@@ -552,17 +516,15 @@ sub new {
     {
         dbh                     => $control_db_connection
       , sql                     => {
-                                      select      => "REPOSITORY , PROCESSING_GROUP_NAME, PROCESSING_GROUP_DESCRIPTION , CUSTOM_ARGS , DISABLE_FLAG , TEMPLATE , TAGS , NOTES"
+                                      select      => "*"
                                     , from        => "processing_group"
-                                    , where       => "PROCESSING_GROUP_NAME = ?"
+                                    , where       => "processing_group_name = ?"
                                     , bind_values => [ undef ]
                                    }
-      , primary_keys            => [ "PROCESSING_GROUP_NAME" ]
-      , auto_incrementing       => 0
+      , auto_incrementing       => FALSE
       , builder                 => $self->{builder}
       , widget_prefix           => "pgf."
       , debug                   => 1
-      , force_upper_case_fields => 1
       , recordset_tools_box     => $self->{builder}->get_object( "pgf_recordset_tools" )
       , recordset_tool_items    => [ "label" , "insert", "undo", "delete", "apply", "package", "rename", "clone" ]
       , recordset_extra_tools   => {
@@ -594,20 +556,18 @@ sub new {
     {
         dbh                     => $control_db_connection
       , sql                     => {
-                                      select      => "PROCESSING_GROUP_NAME , substr( LAST_RUN_TIMESTAMP::VARCHAR, 0, 20 ) as LAST_RUN_TIMESTAMP"
-                                                   . " , LAST_RUN_SECONDS , DISABLE_FLAG , TEMPLATE"
-                                    , from        => "PROCESSING_GROUP"
-                                    , order_by    => "TEMPLATE , PROCESSING_GROUP_NAME"
+                                      select      => "processing_group_name , substr( last_run_timestamp::VARCHAR, 0, 20 ) as last_run_timestamp"
+                                                   . " , last_run_seconds , disable_flag , template"
+                                    , from        => "processing_group"
+                                    , order_by    => "template , processing_group_name"
                                    }
-      , read_only               => 1
-      , force_upper_case_fields => 1
-      , primary_keys            => [ "PROCESSING_GROUP_NAME" ]
-      , auto_incrementing       => 0
+      , read_only               => TRUE
+      , auto_incrementing       => FALSE
       , vbox                    => $self->{builder}->get_object( "processing_groups" )
       , before_query            => sub { $self->fetch_max_job_runtime() }
       # , on_apply                => sub { $self->on_processing_group_apply( @_ ) }
       , on_row_select           => sub { $self->on_processing_groups_select() }
-      , column_sorting          => 1
+      , column_sorting          => TRUE
       , fields                  => [
             {
                 name            => "Process Group Name"
@@ -782,7 +742,7 @@ sub refresh_repos_combo {
         );
     }
 
-    my $widget = $self->{builder}->get_object( 'pgf.REPOSITORY' );
+    my $widget = $self->{builder}->get_object( 'pgf.repository' );
 
     $widget->set_model( $repo_model );
     $widget->set_entry_text_column( 0 );
@@ -793,7 +753,7 @@ sub rename_processing_group {
     
     my $self = shift;
     
-    my $processing_group_name           = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name           = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     if ( ! $processing_group_name ) {
         
@@ -866,7 +826,7 @@ sub rename_processing_group {
         
         $self->{processing_groups}->select_rows(
             {
-                column_no   => $self->{processing_groups}->column_from_sql_name( "PROCESSING_GROUP_NAME" )
+                column_no   => $self->{processing_groups}->column_from_sql_name( "processing_group_name" )
               , operator    => "eq"
               , value       => $new_name
             }
@@ -900,7 +860,7 @@ sub clone_processing_group {
     
     my ( $self , $new_name ) = @_;
     
-    my $processing_group_name           = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name           = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     if ( ! $processing_group_name ) {
         
@@ -1032,7 +992,7 @@ sub before_processing_group_delete {
     my ( $self ) = @_;
 
     my $dbh = $self->{processing_groups}->{dbh};
-    my $processing_group = $self->{processing_group_form}->get_widget_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_group_form}->get_widget_value( "processing_group_name" );
     $dbh->do( "delete from param_value where processing_group_name = ?", [ $processing_group ] );
     $dbh->do( "delete from config where processing_group_name = ?", [ $processing_group ] );
     
@@ -1064,21 +1024,21 @@ sub on_processing_group_sets_apply {
         
         my $dbh = $self->{processing_group_sets}->{dbh};
         
-        my $processing_group_set_name = $item->{primary_keys}->{PROCESSING_GROUP_SET_NAME};
+        my $processing_group_set_name = $item->{primary_keys}->{processing_group_set_name};
         
         my $processing_group_members = $dbh->select(
-            "select PROCESSING_GROUP_NAME from PROCESSING_GROUP_SET_MEMBERS where PROCESSING_GROUP_SET_NAME = ?"
+            "select processing_group_name from processing_group_set_members where processing_group_set_name = ?"
           , [ $processing_group_set_name ]
         );
         
         foreach my $processing_group ( @{$processing_group_members} ) {
-            $dbh->do( "delete from param_value where processing_group_name = ?", [ $processing_group->{PROCESSING_GROUP_NAME} ] );
-            $dbh->do( "delete from config where processing_group_name = ?", [ $processing_group->{PROCESSING_GROUP_NAME} ] );
-            $dbh->do( "delete from processing_group where processing_group_name = ?", [ $processing_group->{PROCESSING_GROUP_NAME} ] );
-            $dbh->do( "delete from md5_validation_control where src_job like '" . $processing_group->{PROCESSING_GROUP_NAME} . "_-_%'", [] );
+            $dbh->do( "delete from param_value where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
+            $dbh->do( "delete from config where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
+            $dbh->do( "delete from processing_group where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
+            $dbh->do( "delete from md5_validation_control where src_job like '" . $processing_group->{processing_group_name} . "_-_%'", [] );
         }
         
-        $dbh->do( "delete from PROCESSING_GROUP_SET_MEMBERS where PROCESSING_GROUP_SET_NAME = ?"
+        $dbh->do( "delete from processing_group_set_members where processing_group_name = ?"
           , [ $processing_group_set_name ]
         );
         
@@ -1094,7 +1054,7 @@ sub on_harvest_control_insert {
     
     my $self = shift;
     
-    my $processing_group_name = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     if ( ! $processing_group_name ) {
         
@@ -1111,7 +1071,7 @@ sub on_harvest_control_insert {
         
     }
     
-    $self->{harvest_control}->set_widget_value( "PROCESSING_GROUP_NAME", $processing_group_name );
+    $self->{harvest_control}->set_widget_value( "processing_group_name", $processing_group_name );
     
 }
 
@@ -1119,27 +1079,24 @@ sub on_TestRegex_clicked {
     
     my $self = shift;
     
-    my $file_regex      = $self->{harvest_control}->get_widget_value( "FILE_REGEX" );
-    my $filename        = $self->{harvest_control}->get_widget_value( 'EXAMPLE_FILENAME' );
+    my $file_regex      = $self->{harvest_control}->get_widget_value( "file_regex" );
+    my $filename        = $self->{harvest_control}->get_widget_value( 'example_filename' );
     
     foreach my $counter ( 1 .. 15 ) {
-        $self->{builder}->get_object( 'VAL_' . $counter )->set_text( '' );
+        $self->{builder}->get_object( 'val_' . $counter )->set_text( '' );
     }
     
     my @matches    = $filename =~ /$file_regex/i;
     
     foreach my $counter ( 1 .. 15 ) {
-        $self->{builder}->get_object( 'VAL_' . $counter )->set_text( '' );
+        $self->{builder}->get_object( 'val_' . $counter )->set_text( '' );
     }
     
     my $counter    = 1;
     
     foreach my $match ( @matches ) {
-        
-        $self->{builder}->get_object( 'VAL_' . $counter )->set_text( $match );
-        
+        $self->{builder}->get_object( 'val_' . $counter )->set_text( $match );
         $counter ++;
-        
     }
     
 }
@@ -1148,11 +1105,11 @@ sub on_processing_group_set_members {
     
     my ( $self, $one, $two, $three, $four, $five ) = @_;
     
-    my $pg_name = $self->{processing_group_set_members}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $pg_name = $self->{processing_group_set_members}->get_column_value( "processing_group_name" );
     
     $self->{processing_groups}->select_rows(
         {
-            column_no   => $self->{processing_groups}->column_from_sql_name( "PROCESSING_GROUP_NAME" )
+            column_no   => $self->{processing_groups}->column_from_sql_name( "processing_group_name" )
           , operator    => "eq"
           , value       => $pg_name
         }
@@ -1165,7 +1122,7 @@ sub build_group_treeview {
     
     my $self = shift;
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     my $model = $self->{group_hierarchy_model} = Gtk3::TreeStore->new(
         qw' Glib::Int
@@ -1174,9 +1131,9 @@ sub build_group_treeview {
     );
     
     my $steps = $self->{globals}->{connections}->{CONTROL}->select(
-        "select SEQUENCE_ORDER, PARENT_SEQUENCE_ORDER, TEMPLATE_NAME from CONFIG\n"
-      . "where PROCESSING_GROUP_NAME = ?\n"
-      . "order by SEQUENCE_ORDER"
+        "select sequence_order , parent_sequence_order , template_name from config\n"
+      . "where processing_group_name = ?\n"
+      . "order by sequence_order"
       , [ $processing_group ]
     );
     
@@ -1187,15 +1144,15 @@ sub build_group_treeview {
         # If this step has a parent, we need to get the parent's iter
         my $parent_iter;
         
-        if ( $step->{PARENT_SEQUENCE_ORDER} ) {
-            $parent_iter = $sequence_to_iter->{ $step->{PARENT_SEQUENCE_ORDER} };
+        if ( $step->{parent_sequence_order} ) {
+            $parent_iter = $sequence_to_iter->{ $step->{parent_sequence_order} };
         }
         
         my $this_iter = $model->append( $parent_iter );
         
-        $sequence_to_iter->{ $step->{SEQUENCE_ORDER} } = $this_iter;
+        $sequence_to_iter->{ $step->{sequence_order} } = $this_iter;
 
-        my $icon_path = $self->get_template_icon_path( $step->{TEMPLATE_NAME} . ".png" );
+        my $icon_path = $self->get_template_icon_path( $step->{template_name} . ".png" );
         my $icon;
 
         if ( $icon_path ) {
@@ -1204,9 +1161,9 @@ sub build_group_treeview {
 
         $model->set(
             $this_iter
-          , 0, $step->{SEQUENCE_ORDER}
+          , 0, $step->{sequence_order}
           , 1, $icon
-          , 2, $step->{TEMPLATE_NAME}
+          , 2, $step->{template_name}
         );
         
     }
@@ -1263,14 +1220,14 @@ sub on_hierarchy_select {
         return; # shouldn't happen?
     }
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     my $sequence_order   = $model->get( $iter, 0 );
 
     $self->{hierarchy_select_block} = 1;
 
     $self->{config}->query(
         {
-            where       => "PROCESSING_GROUP_NAME = ? and SEQUENCE_ORDER = ?"
+            where       => "processing_group_name = ? and sequence_order = ?"
           , bind_values => [ $processing_group, $sequence_order ]
         }
     );
@@ -1321,7 +1278,7 @@ sub on_InsertBefore_clicked {
 
     my $sequence_order = $sequence_orders[0];
 
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
 
     $self->{globals}->{connections}->{CONTROL}->insert_step_before( $processing_group, $sequence_order );
 
@@ -1354,7 +1311,7 @@ sub on_InsertAfter_clicked {
 
     my $sequence_order = $sequence_orders[0];
 
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
 
     $self->{globals}->{connections}->{CONTROL}->insert_step_after( $processing_group, $sequence_order );
 
@@ -1391,7 +1348,7 @@ sub on_MoveUp_clicked {
         return;
     }
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     $self->{globals}->{connections}->{CONTROL}->move_step_up( $processing_group, $sequence_order );
     
@@ -1424,7 +1381,7 @@ sub on_MoveDown_clicked {
     
     my $sequence_order = $sequence_orders[0];
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     $self->{globals}->{connections}->{CONTROL}->move_step_down( $processing_group, $sequence_order );
     
@@ -1453,10 +1410,10 @@ sub on_SetParent_clicked {
     
     my $parent_sequence_order = shift @sequence_orders;
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
-    my $sql = "update CONFIG set PARENT_SEQUENCE_ORDER = ?\n"
-      . "where PROCESSING_GROUP_NAME = ? and SEQUENCE_ORDER in (\n    "
+    my $sql = "update config set parent_sequence_order = ?\n"
+      . "where processing_group_name = ? and sequence_order in (\n    "
       . join( "\n  , ", @sequence_orders ) . "\n)";
     
     $self->{globals}->{connections}->{CONTROL}->do( $sql, [ $parent_sequence_order, $processing_group ] );
@@ -1482,10 +1439,10 @@ sub on_UnsetParent_clicked {
         return;
     }
     
-    my $processing_group = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
-    my $sql = "update CONFIG set PARENT_SEQUENCE_ORDER = 0\n"
-      . "where PROCESSING_GROUP_NAME = ? and SEQUENCE_ORDER in (\n    "
+    my $sql = "update config set parent_sequence_order = 0\n"
+      . "where processing_group_name = ? and sequence_order in (\n    "
       . join( "\n  , ", @sequence_orders ) . "\n)";
     
     $self->{globals}->{connections}->{CONTROL}->do( $sql, [ $processing_group ] );
@@ -1499,7 +1456,7 @@ sub update_template_selector {
     my $self = shift;
 
     my $templates = $self->{globals}->{connections}->{CONTROL}->select(
-        "select TEMPLATE_NAME from TEMPLATE order by TEMPLATE_NAME"
+        "select template_name from template order by template_name"
     );
 
     my $template_model = Gtk3::ListStore->new( "Glib::String" , "Gtk3::Gdk::Pixbuf" ); # model for the combo in the template form
@@ -1507,7 +1464,7 @@ sub update_template_selector {
 
     foreach my $template ( @{$templates} ) {
 
-        my $icon_path = $self->get_template_icon_path( $template->{TEMPLATE_NAME} . ".png" );
+        my $icon_path = $self->get_template_icon_path( $template->{template_name} . ".png" );
         my $icon;
 
         if ( $icon_path ) {
@@ -1516,13 +1473,13 @@ sub update_template_selector {
 
         $template_model->set(
             $template_model->append
-          , 0 , $template->{TEMPLATE_NAME}
+          , 0 , $template->{template_name}
           , 1, $icon
         );
 
         $config_model->set(
             $config_model->append
-          , 0 , $template->{TEMPLATE_NAME}
+          , 0 , $template->{template_name}
           , 1, $icon
         );
 
@@ -1539,19 +1496,19 @@ sub update_template_selector {
     }
 
     # combo in config form
-    $widget = $self->{builder}->get_object( 'CONFIG.TEMPLATE_NAME' );
+    $widget = $self->{builder}->get_object( 'config.template_name' );
 
     # fetch the current value before replacing the combo ...
     my $current_value;
 
     # Also note that during construction, we get called *before* the $self->{config} form is created ...
     if ( exists $self->{config} ) {
-        $current_value = $self->{config}->get_widget_value( "CONFIG.TEMPLATE_NAME" );
+        $current_value = $self->{config}->get_widget_value( "config.template_name" );
         $self->{config}->{changelock} = TRUE;
     }
     $widget->set_model( $config_model );
     if ( exists $self->{config} ) {
-        $self->{config}->set_widget_value( "CONFIG.TEMPLATE_NAME" , $current_value );
+        $self->{config}->set_widget_value( "config.template_name" , $current_value );
         $self->{config}->{changelock} = FALSE;
     }
 
@@ -1566,7 +1523,7 @@ sub on_EditTemplate_clicked {
 
     my $self = shift;
 
-    my $template_name = $self->{config}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name = $self->{config}->get_widget_value( "template_name" );
 
     if ( $template_name ) {
         $self->set_widget_value( "TemplateSelector" , $template_name );
@@ -1583,7 +1540,7 @@ sub on_TemplateSelector_changed {
     
     $self->{template}->query(
         {
-            where       => "TEMPLATE_NAME = ?"
+            where       => "template_name = ?"
           , bind_values => [ $template_name ]
         }
     );
@@ -1594,7 +1551,7 @@ sub on_ChooseTemplateIcon_clicked {
 
     my $self = shift;
 
-    my $repo = $self->{template}->get_widget_value( "REPOSITORY" );
+    my $repo = $self->{template}->get_widget_value( "repository" );
 
     if ( ! $repo ) {
         $self->dialog(
@@ -1607,7 +1564,7 @@ sub on_ChooseTemplateIcon_clicked {
         return;
     }
 
-    my $template_name = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name = $self->{template}->get_widget_value( "template_name" );
 
     if ( ! $repo ) {
         $self->dialog(
@@ -1645,11 +1602,11 @@ sub on_processing_group_sets_select {
     
     my $self = shift;
     
-    my $PGS_NAME = $self->{processing_group_sets}->get_column_value( "PROCESSING_GROUP_SET_NAME" );
+    my $PGS_NAME = $self->{processing_group_sets}->get_column_value( "processing_group_set_name" );
     
     $self->{processing_group_set_members}->query(
         {
-            where       => "PROCESSING_GROUP_SET_NAME = ?"
+            where       => "processing_group_set_name = ?"
           , bind_values => [ $PGS_NAME ]
         }
     );
@@ -1666,8 +1623,8 @@ sub on_PGS_AddMember_clicked {
     
     my $self = shift;
     
-    my $processing_group_set_name = $self->{processing_group_sets}->get_column_value( "PROCESSING_GROUP_SET_NAME" );
-    my $processing_group_name     = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_set_name = $self->{processing_group_sets}->get_column_value( "processing_group_set_name" );
+    my $processing_group_name     = $self->{processing_groups}->get_column_value( "processing_group_set_name" );
     
     if ( ! $processing_group_set_name || ! $processing_group_name ) {
         
@@ -1685,8 +1642,8 @@ sub on_PGS_AddMember_clicked {
     
     $self->{processing_group_set_members}->insert;
     
-    $self->{processing_group_set_members}->set_column_value( "PROCESSING_GROUP_SET_NAME", $processing_group_set_name );
-    $self->{processing_group_set_members}->set_column_value( "PROCESSING_GROUP_NAME", $processing_group_name );
+    $self->{processing_group_set_members}->set_column_value( "processing_group_set_name", $processing_group_set_name );
+    $self->{processing_group_set_members}->set_column_value( "processing_group_name", $processing_group_name );
     
     $self->{processing_group_set_members}->apply;
     
@@ -1709,14 +1666,14 @@ sub on_CONFIG_TEMPLATE_NAME_changed {
         return;
     }
     
-    my $template_name = $self->{config}->get_widget_value( "CONFIG.TEMPLATE_NAME" );
+    my $template_name = $self->{config}->get_widget_value( "config.template_name" );
     
     my $records = $self->{globals}->{connections}->{CONTROL}->select(
-        "select TEMPLATE_TEXT from TEMPLATE where TEMPLATE_NAME = ?"
+        "select template_text from template where template_name = ?"
       , [ $template_name ]
     );
     
-    $self->{config}->set_widget_value( "TEMPLATE_TEXT_READ_ONLY", $records->[0]->{TEMPLATE_TEXT} );
+    $self->{config}->set_widget_value( "template_text_read_only", $records->[0]->{template_text} );
     
     # Set up autocompletion for the current template
     
@@ -1729,7 +1686,7 @@ sub on_CONFIG_TEMPLATE_NAME_changed {
                       #CONFIG_SOURCE_TABLE_NAME# #CONFIG_TARGET_TABLE_NAME# |;
     
     while ( $iter ) {
-        push @tokens, $model->get( $iter, $self->{config_params_list}->column_from_column_name( "PARAM_NAME" ) );
+        push @tokens, $model->get( $iter, $self->{config_params_list}->column_from_column_name( "param_name" ) );
         if ( ! $model->iter_next( $iter ) ) {
             last;
         }
@@ -1743,7 +1700,7 @@ sub on_CONFIG_TEMPLATE_NAME_changed {
         push @tokens, "#$token#";
     }
     
-    my $completion = $self->{builder}->get_object( "PARAM_VALUE.PARAM_VALUE" )->get_completion;
+    my $completion = $self->{builder}->get_object( "param_value.param_value" )->get_completion;
     
     if ( ! $self->{param_value_provider_buffer} ) {
         $self->{param_value_provider_buffer} = Gtk3::SourceView::Buffer->new;
@@ -1963,23 +1920,23 @@ sub on_config_insert {
     # TODO: shouldn't peek into internals ... expose this via some other method
     if ( $self->{config}->{inserting} ) {
         
-        my $processing_group = $self->{processing_group_form}->get_widget_value( "PROCESSING_GROUP_NAME" );
-        $self->{config}->set_widget_value( "PROCESSING_GROUP_NAME", $processing_group );
+        my $processing_group = $self->{processing_group_form}->get_widget_value( "processing_group_name" );
+        $self->{config}->set_widget_value( "processing_group_name", $processing_group );
         
         my $max_sequence_order;
         
         my $records = $self->{globals}->{connections}->{CONTROL}->select(
-            "select max(SEQUENCE_ORDER) as MAX_SEQUENCE_ORDER from CONFIG\n"
-          . "where PROCESSING_GROUP_NAME = ?"
+            "select max(sequence_order) as max_sequence_order from config\n"
+          . "where processing_group_name = ?"
           , [ $processing_group ]
         );
         
         if ( @{$records} ) {
-            $max_sequence_order = $$records[0]->{MAX_SEQUENCE_ORDER};
+            $max_sequence_order = $$records[0]->{max_sequence_order};
         }
         
-        $self->{config}->set_widget_value( "SEQUENCE_ORDER", $max_sequence_order + 1 );
-        $self->{config}->set_widget_value( "PARENT_SEQUENCE_ORDER", 0 );
+        $self->{config}->set_widget_value( "sequence_order", $max_sequence_order + 1 );
+        $self->{config}->set_widget_value( "parent_sequence_order", 0 );
         
     }
     
@@ -2001,10 +1958,10 @@ sub before_config_delete {
     
     if ( $response eq 'yes' ) {
         my $sth = $self->{globals}->{connections}->{CONTROL}->prepare(
-            "delete from PARAM_VALUE where PROCESSING_GROUP_NAME = ? and SEQUENCE_ORDER = ?"
+            "delete from param_value where processing_group_name = ? and sequence_order = ?"
         );
-        $sth->execute( $self->{config}->original_value( "PROCESSING_GROUP_NAME" )
-                     , $self->{config}->original_value( "SEQUENCE_ORDER" )
+        $sth->execute( $self->{config}->original_value( "processing_group_name" )
+                     , $self->{config}->original_value( "sequence_order" )
         );
         return TRUE;
     } else {
@@ -2030,18 +1987,18 @@ sub on_delete_selected_processing_group_clicked {
         return;
     }
     
-    my $processing_group_name = $self->{config_filter_selector}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name = $self->{config_filter_selector}->get_column_value( "processing_group_name" );
     
     my $dbh = $self->{globals}->{connections}->{CONTROL};
     
     my $sth = $dbh->prepare(
-        "delete from PARAM_VALUE where PROCESSING_GROUP_NAME = ?"
+        "delete from param_value where processing_group_name = ?"
     ) || return;
     
     $dbh->execute( $sth, [ $processing_group_name ] );
     
     $sth = $dbh->prepare(
-        "delete from CONFIG where PROCESSING_GROUP_NAME = ?"
+        "delete from config where processing_group_name = ?"
     ) || return;
     
     $dbh->execute( $sth, [ $processing_group_name ] );
@@ -2055,8 +2012,6 @@ sub on_template_delete {
     my $self = shift;
 
     $self->update_template_selector();
-
-    # $self->{config}->setup_combo( "TEMPLATE_NAME" );
     
 }
 
@@ -2066,8 +2021,8 @@ sub on_template_current {
     
     $self->{param}->query(
         {
-            where       => "TEMPLATE_NAME = ?"
-          , bind_values => [ $self->{template}->get_widget_value( "TEMPLATE_NAME" ) ]
+            where       => "template_name = ?"
+          , bind_values => [ $self->{template}->get_widget_value( "template_name" ) ]
         }
     );
     
@@ -2083,7 +2038,7 @@ sub on_template_insert {
         return FALSE;
     } else {
         $self->{template}->insert;
-        $self->{template}->set_widget_value( "REPOSITORY", $repo );
+        $self->{template}->set_widget_value( "repository", $repo );
         return FALSE;
     }
     
@@ -2097,16 +2052,16 @@ sub before_template_apply {
     # As we use text-based PKs, and allow changes,
     # we have to update all FKs if a user changes the PK.
     
-    $self->{template_old_key} = $self->{template}->original_value( "TEMPLATE_NAME" );
-    $self->{template_new_key} = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    $self->{template_old_key} = $self->{template}->original_value( "template_name" );
+    $self->{template_new_key} = $self->{template}->get_widget_value( "template_name" );
     
     if ( $self->{template_old_key} && $self->{template_old_key} ne $self->{template_new_key} ) {
         
         if ( $self->dialog(
                 {
-                    title   => "Change primary key [TEMPLATE_NAME]?"
+                    title   => "Change primary key [template_name]?"
                   , type    => "question"
-                  , markup  => "[TEMPLATE_NAME] is a primary key used in the tables: ( TEMPLATE, PARAM, CONFIG ).\n\n"
+                  , markup  => "[template_nae] is a primary key used in the tables: ( template , param , config ).\n\n"
                              . "These can all be automatically updated to keep everything in a consistent state, however,\n\n"
                              . "<b><i>it is then up to you to snapshot all affected metadata into a release kit</i></b>.\n\n"
                              . "Are you sure you want to continue?"
@@ -2133,18 +2088,18 @@ sub on_template_apply {
     if ( $self->{template_old_key} && $self->{template_old_key} ne $self->{template_new_key} ) {
         
         $self->{globals}->{connections}->{CONTROL}->do(
-            "update PARAM set TEMPLATE_NAME = ? where TEMPLATE_NAME = ?"
+            "update param set template_name = ? where template_name = ?"
           , [ $self->{template_new_key} , $self->{template_old_key} ]
         );
         
         $self->{globals}->{connections}->{CONTROL}->do(
-            "update CONFIG set TEMPLATE_NAME = ? where TEMPLATE_NAME = ?"
+            "update config set template_name = ? where template_name = ?"
           , [ $self->{template_new_key} , $self->{template_old_key} ]
         );
         
         $self->{template}->query(
             {
-                where       => "TEMPLATE_NAME = ?"
+                where       => "template_name = ?"
               , bind_values => [ $self->{template_new_key} ]
             }
         );
@@ -2153,7 +2108,7 @@ sub on_template_apply {
         
     }
     
-    $self->{config}->setup_combo( "TEMPLATE_NAME" );
+    $self->{config}->setup_combo( "template_name" );
     
     $self->update_template_selector;
     
@@ -2215,28 +2170,28 @@ sub on_config_current {
     
     # When we move to a new config record, we have to fetch the list of associated parameters, and show the ones defined
     
-    my $template_name           = $self->{config}->get_widget_value( "TEMPLATE_NAME" );
-    my $processing_group_name   = $self->{config}->get_widget_value( "PROCESSING_GROUP_NAME" );
-    my $sequence_order          = $self->{config}->get_widget_value( "SEQUENCE_ORDER" );
+    my $template_name           = $self->{config}->get_widget_value( "template_name" );
+    my $processing_group_name   = $self->{config}->get_widget_value( "processing_group_name" );
+    my $sequence_order          = $self->{config}->get_widget_value( "sequence_order" );
     
     $self->{config_params_list}->{sql}->{pass_through}
         = "select\n"
-        . "    PARAM.PARAM_NAME, case when PV.PARAM_NAME is null then 0 else 1 end as DEFINED, PARAM.PARAM_DESC, param.PARAM_DEFAULT\n"
+        . "    param.param_name, case when PV.param_name is null then 0 else 1 end as defined, param.param_desc, param.param_default\n"
         . "from\n"
-        . "    PARAM left join\n"
+        . "    param left join\n"
         . "    (\n"
         . "        select\n"
-        . "            PARAM_NAME\n"
+        . "            param_name\n"
         . "        from\n"
-        . "            PARAM_VALUE\n"
+        . "            param_value\n"
         . "        where\n"
-        . "            PROCESSING_GROUP_NAME = '" . $processing_group_name . "'\n"
-        . "        and SEQUENCE_ORDER = " . ( $sequence_order || 0 ) . "\n"
-        . "    ) PV on PARAM.PARAM_NAME = PV.PARAM_NAME\n"
+        . "            processing_group_name = '" . $processing_group_name . "'\n"
+        . "        and sequence_order = " . ( $sequence_order || 0 ) . "\n"
+        . "    ) PV on param.param_name = PV.param_name\n"
         . "where\n"
-        . "    PARAM.TEMPLATE_NAME = '" . $template_name . "'\n"
+        . "    param.template_name = '" . $template_name . "'\n"
         . "order by\n"
-        . "    PARAM.PARAM_NAME";
+        . "    param.param_name";
     
     print "\n\n" . $self->{config_params_list}->{sql}->{pass_through} . "\n\n";
     
@@ -2294,7 +2249,7 @@ sub on_config_apply {
 
         $self->build_group_treeview;
 
-        my $sequence = $self->{config}->get_widget_value( "SEQUENCE_ORDER" );
+        my $sequence = $self->{config}->get_widget_value( "sequence_order" );
         $self->select_sequence_in_treeview( $sequence );
 
     }
@@ -2315,11 +2270,11 @@ sub on_param_value_select {
     
     $self->{param_value}->query(
         {
-            where       => "PROCESSING_GROUP_NAME = ? and SEQUENCE_ORDER = ? and PARAM_NAME = ?"
+            where       => "processing_group_name = ? and sequence_order = ? and param_name = ?"
           , bind_values => [
-                                $self->{config}->get_widget_value( "PROCESSING_GROUP_NAME" )
-                              , $self->{config}->get_widget_value( "SEQUENCE_ORDER" )
-                              , $self->{config_params_list}->get_column_value( "PARAM_NAME" )
+                                $self->{config}->get_widget_value( "processing_group_name" )
+                              , $self->{config}->get_widget_value( "sequence_order" )
+                              , $self->{config_params_list}->get_column_value( "param_name" )
                            ]
         }
     );
@@ -2328,12 +2283,12 @@ sub on_param_value_select {
     {
         no warnings 'uninitialized';
         $self->{builder}->get_object( "ParamDescription" )->set_markup(
-            "<b>Parameter Value: </b> " . $self->{config_params_list}->get_column_value( "PARAM_DESC" )
+            "<b>Parameter Value: </b> " . $self->{config_params_list}->get_column_value( "param_desc" )
         );
     }
 
     # Show the param's default value, and highlight the default value tab selector if there is a default
-    my $param_default_value = $self->{config_params_list}->get_column_value( "PARAM_DEFAULT" );
+    my $param_default_value = $self->{config_params_list}->get_column_value( "param_default" );
 
     if ( defined $param_default_value ) {
         $self->set_widget_value( "ParamDefaultValue" , $param_default_value );
@@ -2342,7 +2297,7 @@ sub on_param_value_select {
     }
 
     # Show the param value if one exists, and show the default value page if no param value is currently defined
-    my $param_value = $self->{param_value}->get_widget_value( "PARAM_VALUE" );
+    my $param_value = $self->{param_value}->get_widget_value( "param_value" );
 
     if ( $param_value ne '' || $param_default_value eq '' ) {
         $self->{builder}->get_object( 'ParamValue_DefaultValueLabel' )->set_text( "Default Value" );
@@ -2369,8 +2324,8 @@ sub on_processing_groups_select {
 
     $self->{processing_group_form}->query(
         {
-            where       => "PROCESSING_GROUP_NAME = ?"
-          , bind_values => [ $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" ) ]
+            where       => "processing_group_name = ?"
+          , bind_values => [ $self->{processing_groups}->get_column_value( "processing_group_name" ) ]
         }
     );
 
@@ -2384,7 +2339,7 @@ sub on_processing_groups_select {
         $self->{config}->query(
             {
                 where       => "processing_group_name = ?"
-                             . " and SEQUENCE_ORDER = ?"
+                             . " and sequence_order = ?"
               , bind_values => [
                                     undef
                                   , undef
@@ -2395,8 +2350,8 @@ sub on_processing_groups_select {
     
     $self->{harvest_control}->query(
         {
-            where       => "PROCESSING_GROUP_NAME = ?"
-          , bind_values => [ $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" ) ]
+            where       => "processing_group_name = ?"
+          , bind_values => [ $self->{processing_groups}->get_column_value( "processing_group_name" ) ]
         }
     );
     
@@ -2406,7 +2361,7 @@ sub on_param_value_initial_changed {
     
     my $self = shift;
     
-    my $param_name = $self->{config_params_list}->get_column_value( "PARAM_NAME");
+    my $param_name = $self->{config_params_list}->get_column_value( "param_name");
     
     if ( ! $param_name ) {
         $self->dialog(
@@ -2419,7 +2374,7 @@ sub on_param_value_initial_changed {
         return 0; # This will undo changes in the recordset
     }
     
-    my $processing_group_name = $self->{config}->get_widget_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name = $self->{config}->get_widget_value( "processing_group_name" );
     
     if ( ! $processing_group_name ) {
         $self->dialog(
@@ -2432,22 +2387,22 @@ sub on_param_value_initial_changed {
         return 0; # This will undo changes in the recordset
     }
     
-    my $sequence_order = $self->{config}->get_widget_value( "SEQUENCE_ORDER" );
+    my $sequence_order = $self->{config}->get_widget_value( "sequence_order" );
     
     if ( ! $sequence_order ) {
         $self->dialog(
             {
                 title   => "Can't insert record yet!",
                 type    => "error",
-                text    => "You need to have a CONFIG record selected, AND have a SEQUENCE_ORDER value set before you can insert a record here"
+                text    => "You need to have a config record selected, AND have a sequence_order value set before you can insert a record here"
             }
         );
         return 0; # This will undo changes in the recordset
     }
     
-    $self->{param_value}->set_widget_value( "PROCESSING_GROUP_NAME", $processing_group_name );
-    $self->{param_value}->set_widget_value( "SEQUENCE_ORDER", $sequence_order );
-    $self->{param_value}->set_widget_value( "PARAM_NAME", $param_name );
+    $self->{param_value}->set_widget_value( "processing_group_name", $processing_group_name );
+    $self->{param_value}->set_widget_value( "sequence_order", $sequence_order );
+    $self->{param_value}->set_widget_value( "param_name", $param_name );
     
     $self->{last_edited_param_name} = $param_name;
     
@@ -2463,7 +2418,7 @@ sub on_param_value_apply {
     
     $self->{config_params_list}->select_rows(
         {
-            column_no   => $self->{config_params_list}->column_from_column_name( "PARAM_NAME" )
+            column_no   => $self->{config_params_list}->column_from_column_name( "param_name" )
           , operator    => "eq"
           , value       => $self->{last_edited_param_name}
         }
@@ -2477,13 +2432,13 @@ sub on_param_value_delete {
     
     # requery the config_param_list, which will now display the 'defined' flag if we've just inserted a new record
     
-    my $param_name = $self->{config_params_list}->get_column_value( "PARAM_NAME" );
+    my $param_name = $self->{config_params_list}->get_column_value( "param_name" );
     
     $self->on_config_current();
     
     $self->{config_params_list}->select_rows(
         {
-            column_no   => $self->{config_params_list}->column_from_column_name( "PARAM_NAME" )
+            column_no   => $self->{config_params_list}->column_from_column_name( "param_name" )
           , operator    => "=="
           , value       => $param_name
         }
@@ -2495,7 +2450,7 @@ sub on_ParamValue_strip_subsequent_clicked {
     
     my $self = shift;
     
-    my $param_value = $self->{param_value}->get_widget_value( "PARAM_VALUE" );
+    my $param_value = $self->{param_value}->get_widget_value( "param_name" );
     
     my @lines = split "\n", $param_value;
     
@@ -2509,7 +2464,7 @@ sub on_ParamValue_strip_subsequent_clicked {
     
     my $new_value = join( "\n", @new_lines );
     
-    $self->{param_value}->set_widget_value( "PARAM_VALUE", $new_value );
+    $self->{param_value}->set_widget_value( "param_value", $new_value );
     
 }
 
@@ -2517,7 +2472,7 @@ sub before_param_insert {
     
     my $self = shift;
     
-    my $template_name = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name = $self->{template}->get_widget_value( "template_name" );
     
     if ( ! $template_name ) {
         $self->dialog(
@@ -2538,20 +2493,20 @@ sub on_param_insert {
     
     my $self = shift;
     
-    my $template_name = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name = $self->{template}->get_widget_value( "template_name" );
     
     if ( ! $template_name ) {
         $self->dialog(
             {
                 title   => "Oh no!",
                 type    => "error",
-                text    => "Couldn't get the TEMPLATE_NAME to stamp into this PARAM record. Please investigate ..."
+                text    => "Couldn't get the template_name to stamp into this param record. Please investigate ..."
             }
         );
         return FALSE;
     }
     
-    $self->{param}->set_column_value( "TEMPLATE_NAME", $template_name );
+    $self->{param}->set_column_value( "template_name", $template_name );
     
 }
 
@@ -2559,7 +2514,7 @@ sub on_PopulateParamaters_clicked {
     
     my $self = shift;
     
-    my $template_sql = $self->{template}->get_widget_value( "TEMPLATE_TEXT" );
+    my $template_sql = $self->{template}->get_widget_value( "template_name" );
     
     my @substitution_parameters = $template_sql =~ /#P_[a-zA-Z0-9_]*#/g;
     my %parameters_hash = map { $_ => 0 } @substitution_parameters;
@@ -2574,7 +2529,7 @@ sub on_PopulateParamaters_clicked {
     my %model_params;
     
     while ( $iter ) {
-        my $param_name = $model->get( $iter, $self->{param}->column_from_column_name( "PARAM_NAME" ) );
+        my $param_name = $model->get( $iter, $self->{param}->column_from_column_name( "param_name" ) );
         $model_params{ $param_name } = 0;
         foreach my $param ( keys %parameters_hash ) {
             if ( $param eq $param_name ) {
@@ -2607,7 +2562,7 @@ sub on_PopulateParamaters_clicked {
                 ) eq 'yes'
             ) {
                 $self->{param}->insert;
-                $self->{param}->set_column_value( "PARAM_NAME", $param );
+                $self->{param}->set_column_value( "param_name", $param );
             }
         }
     }
@@ -2627,7 +2582,7 @@ sub on_PopulateParamaters_clicked {
             ) {
                 $self->{param}->select_rows(
                     {
-                        column_no   => $self->{param}->column_from_column_name( "PARAM_NAME" )
+                        column_no   => $self->{param}->column_from_column_name( "param_name" )
                       , operator    => "=="
                       , value       => $param
                     }
@@ -2653,14 +2608,14 @@ sub export_processing_group_type_dml {
     
     my $control_db_name         = $self->{globals}->{CONTROL_DB_NAME};
     my $config_manager          = $self->{config}->{dbh}->{config_manager};
-    my $processing_group_name   = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+    my $processing_group_name   = $self->{processing_groups}->get_column_value( "processing_group_name" );
     my $overlay_path            = $self->overlay_path_dialog || return;
     
     $self->snapshot_metadata(
         {
             dbh                 => $self->{processing_groups}->{dbh}
-          , table               => "PROCESSING_GROUP"
-          , primary_key_array   => [ "PROCESSING_GROUP_NAME" ]
+          , table               => "processing_group"
+          , primary_key_array   => [ "processing_group_name" ]
           , keys_aoa            => [ [ $processing_group_name ] ]
           , config_manager      => $config_manager
           , overlay_path        => $overlay_path
@@ -2671,8 +2626,8 @@ sub export_processing_group_type_dml {
     $self->snapshot_metadata(
         {
             dbh                 => $self->{processing_groups}->{dbh}
-          , table               => "CONFIG"
-          , primary_key_array   => [ "PROCESSING_GROUP_NAME" ]
+          , table               => "config"
+          , primary_key_array   => [ "processing_group_name" ]
           , keys_aoa            => [ [ $processing_group_name ] ]
           , config_manager      => $config_manager
           , overlay_path        => $overlay_path
@@ -2683,8 +2638,8 @@ sub export_processing_group_type_dml {
     $self->snapshot_metadata(
         {
             dbh                 => $self->{processing_groups}->{dbh}
-          , table               => "PARAM_VALUE"
-          , primary_key_array   => [ "PROCESSING_GROUP_NAME" ]
+          , table               => "param_value"
+          , primary_key_array   => [ "processing_group_name" ]
           , keys_aoa            => [ [ $processing_group_name ] ]
           , config_manager      => $config_manager
           , overlay_path        => $overlay_path
@@ -2695,8 +2650,8 @@ sub export_processing_group_type_dml {
     $self->snapshot_metadata(
         {
             dbh                 => $self->{processing_groups}->{dbh}
-          , table               => "HARVEST_CONTROL"
-          , primary_key_array   => [ "PROCESSING_GROUP_NAME" ]
+          , table               => "harvest_control"
+          , primary_key_array   => [ "processing_group_name" ]
           , keys_aoa            => [ [ $processing_group_name ] ]
           , config_manager      => $config_manager
           , overlay_path        => $overlay_path
@@ -2718,39 +2673,39 @@ sub export_template_dml {
     
     my $self                    = shift;
     
-    my $template_name           = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name           = $self->{template}->get_widget_value( "template_name" );
     my $config_manager          = $self->{config}->{dbh}->{config_manager};
     my $overlay_path            = $self->overlay_path_dialog || return;
     
     $self->snapshot_metadata(
         {
             dbh                 => $self->{config}->{dbh}
-          , table               => "TEMPLATE"
-          , primary_key_array   => [ "TEMPLATE_NAME" ]
+          , table               => "template"
+          , primary_key_array   => [ "template_name" ]
           , keys_aoa            => [ [ $template_name ] ]
           , config_manager      => $config_manager
           , overlay_path        => $overlay_path
-          , snapshot_name       => $self->{template}->get_widget_value( "TEMPLATE_NAME" )
+          , snapshot_name       => $self->{template}->get_widget_value( "template_name" )
         }
     );
     
     # We also save PARAM records for this TEMPLATE record
     my $param_names = $self->{param}->{dbh}->select(
-        "select PARAM_NAME from PARAM where TEMPLATE_NAME = ?"
+        "select param_name from param where template_name = ?"
       , [ $template_name ]
-      , "PARAM_NAME"
+      , "param_name"
     );
     
     if ( keys %{$param_names} ) {
         $self->snapshot_metadata(
             {
                 dbh                 => $self->{param_value}->{dbh}
-              , table               => "PARAM"
-              , primary_key_array   => [ "TEMPLATE_NAME" ]             # NOTE !!! We delete by TEMPLATE_NAME here
+              , table               => "param"
+              , primary_key_array   => [ "template_name" ]             # NOTE !!! We delete by TEMPLATE_NAME here
               , keys_aoa            => [ [ $template_name ] ]
               , config_manager      => $config_manager
               , overlay_path        => $overlay_path
-              , snapshot_name       => $self->{template}->get_widget_value( "TEMPLATE_NAME" )
+              , snapshot_name       => $self->{template}->get_widget_value( "template_name" )
             }
         );
     }
@@ -2935,7 +2890,7 @@ sub template_copy {
 
     my $self = shift;
 
-    my $template_name = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
+    my $template_name = $self->{template}->get_widget_value( "template_name" );
 
     my $new_template_name = $self->dialog(
         {
@@ -2997,8 +2952,8 @@ sub package_template {
 
     my $self = shift;
 
-    my $template_name = $self->{template}->get_widget_value( "TEMPLATE_NAME" );
-    my $repository    = $self->{template}->get_widget_value( "REPOSITORY" );
+    my $template_name = $self->{template}->get_widget_value( "template_name" );
+    my $repository    = $self->{template}->get_widget_value( "repository" );
 
     if ( ! $repository ) {
         $self->dialog(
@@ -3048,8 +3003,8 @@ sub package_processing_group {
 
     my $self = shift;
 
-    my $processing_group_name = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
-    my $repository            = $self->{processing_group_form}->get_widget_value( "REPOSITORY" );
+    my $processing_group_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
+    my $repository            = $self->{processing_group_form}->get_widget_value( "repository" );
 
     if ( ! $repository ) {
         $self->dialog(
@@ -3129,7 +3084,7 @@ sub create_package {
     my $releases;
     
     foreach my $release ( @{$releases_aoh} ) {
-        push @{$releases}, $release->{RELEASE_NAME};
+        push @{$releases}, $release->{release_name};
     }
 
     my $release_name;
@@ -3252,12 +3207,12 @@ sub on_AnotherLaunchGroup_clicked {
     
     my $launcher    = $self->open_window( 'window::framework_launcher', $self->{globals} );
     
-    my $custom_args = $self->{processing_group_form}->get_widget_value( "CUSTOM_ARGS" );
+    my $custom_args = $self->{processing_group_form}->get_widget_value( "custom_args" );
     
     if ( $custom_args  ) {
         $launcher->set_widget_value( "CustomArgs", $custom_args );
     } else {
-        my $pg_name = $self->{processing_groups}->get_column_value( "PROCESSING_GROUP_NAME" );
+        my $pg_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
         $launcher->{builder}->get_object( "ProcessingGroupName" )->set_text( $pg_name );
     }
     
@@ -3344,9 +3299,9 @@ sub autogen {
     $self->{config}->query(
         {
             where       => "processing_group_name = ?"
-                         . " and SEQUENCE_ORDER = ?"
+                         . " and sequence_order = ?"
           , bind_values => [
-                                $definition->{config}->{PROCESSING_GROUP_NAME}
+                                $definition->{config}->{processing_group_name}
                               , $self->{sequence_order}
                            ]
         }
@@ -3355,9 +3310,9 @@ sub autogen {
     $self->kick_gtk;
 
     # First, test to see that the passed template exists. If it doesn't, we'll have some nasty errors ...
-    my $template_name = $definition->{config}->{TEMPLATE_NAME};
+    my $template_name = $definition->{config}->{template_name};
 
-    my $model = $self->{config}->get_object( 'TEMPLATE_NAME' )->get_model;
+    my $model = $self->{config}->get_object( 'template_name' )->get_model;
     my $iter  = $model->get_iter_first;
     my $found = 0;
 
@@ -3388,8 +3343,8 @@ sub autogen {
         $self->{config}->set_widget_value( $field, $definition->{config}->{$field} );
     }
     
-    $self->{config}->set_widget_value( "SEQUENCE_ORDER", $self->{sequence_order} );
-    $self->{config}->set_widget_value( "AUTOGENERATED", 1 );
+    $self->{config}->set_widget_value( "sequence_order", $self->{sequence_order} );
+    $self->{config}->set_widget_value( "autogenerated", 1 );
     
     # Apply changes
     $self->{config}->apply();
@@ -3404,7 +3359,7 @@ sub autogen {
         # Query the param_value object
         $self->{config_params_list}->select_rows(
             {
-                column_no   => $self->{config_params_list}->column_from_sql_name( "PARAM_NAME" )
+                column_no   => $self->{config_params_list}->column_from_sql_name( "param_name" )
               , operator    => "eq"
               , value       => $param
             }
@@ -3416,7 +3371,7 @@ sub autogen {
         
         # Set / delete the value
         if ( defined $value ) {
-            $self->{param_value}->set_widget_value( "PARAM_VALUE", $value );
+            $self->{param_value}->set_widget_value( "param_value", $value );
             $self->{param_value}->apply();
         } else {
             $self->{param_value}->delete;
@@ -3502,12 +3457,12 @@ sub fetch_max_job_runtime {
     
     my $self = shift;
     
-    $self->{MAX_RUNTIMES} = $self->{globals}->{connections}->{LOG}->select(
-        "select   batch_identifier as BATCH_IDENTIFIER, max(processing_time) as MAX_RUNTIME\n"
+    $self->{max_runtimes} = $self->{globals}->{connections}->{LOG}->select(
+        "select   batch_identifier , max(processing_time) as max_runtime\n"
       . "from     batch_ctl\n"
       . "group by batch_identifier"
       , undef
-      , "BATCH_IDENTIFIER"
+      , "batch_identifier"
     );
     
 }
@@ -3519,7 +3474,7 @@ sub processing_group_job_seconds_render_function {
     my $pg_name = $model->get( $iter, $self->{processing_groups}->column_from_column_name( "Process Group Name" ) );
     my $seconds = $model->get( $iter, $self->{processing_groups}->column_from_column_name( "Job Seconds" ) );
     
-    my $this_render_value = $seconds / ( $self->{MAX_RUNTIMES}->{$pg_name}->{MAX_RUNTIME} || 1 ) * 100;
+    my $this_render_value = $seconds / ( $self->{max_runtimes}->{$pg_name}->{max_runtime} || 1 ) * 100;
     
     #my $gvalue = Glib::Object::Introspection::GValueWrapper->new( 'Glib::Int', $this_render_value );
     #$cell->set( value => $gvalue );

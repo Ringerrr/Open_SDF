@@ -48,7 +48,7 @@ sub new {
     
     $view_buffer->set_style_scheme( $self->{globals}->{gtksourceview_scheme} );
     
-    my $source_view = $self->{builder}->get_object( 'EXECUTED_TEMPLATE' );
+    my $source_view = $self->{builder}->get_object( 'executed_template' );
     
     if ( Gtk3::MINOR_VERSION >= 16 ) {
         $source_view->set_background_pattern( 'GTK_SOURCE_BACKGROUND_PATTERN_TYPE_GRID' );
@@ -64,49 +64,48 @@ sub new {
     $self->{jobs} = Gtk3::Ex::DBI::Datasheet->new(
     {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
-      , read_only               => 1
+      , read_only               => TRUE
       , on_row_select           => sub { $self->on_jobs_row_select( @_ ) }
       , primary_keys            => [ "JOB_ID" ]
-      , auto_incrementing       => 0
-      , column_sorting          => 1
-      , force_upper_case_fields => 1
+      , auto_incrementing       => FALSE
+      , column_sorting          => TRUE
       , sql                     => {
-                                        select    => "BATCH_ID, IDENTIFIER, JOB_ID, PROCESSING_GROUP_NAME, STATUS, PROCESSING_TIME, HOSTNAME"
-                                      , from      => "JOB_CTL"
-                                      , where     => "BATCH_ID = ?"
-                                      , order_by  => "JOB_ID"
+                                        select      => "*"
+                                      , from        => "job_ctl"
+                                      , where       => "batch_id = ?"
+                                      , order_by    => "job_id"
                                       , bind_values => [ 0 ]
                                    }
       , fields                  => [
                                         {
-                                            name            => "BATCH_ID"
+                                            name            => "batch_id"
                                           , renderer        => "hidden"
                                         }
                                       , {
-                                            name            => "IDENTIFIER"
+                                            name            => "identifier"
                                           , x_percent       => 35
                                         }
                                       , {
-                                            name            => "JOB_ID"
+                                            name            => "job_id"
                                           , x_percent       => 10
                                           , number          => { separate_thousands  => TRUE } # this also activates numeric sorting
                                         }
                                       , {
-                                            name            => "PROCESSING_GROUP_NAME"
+                                            name            => "processing_group_name"
                                           , x_percent       => 25
                                         }
                                       , {
-                                            name            => "STATUS"
+                                            name            => "status"
                                           , x_percent       => 10
                                         }
                                       , {
-                                            name            => "PROCESSING_TIME"
+                                            name            => "processing_time"
                                           , x_percent       => 20
                                           , renderer        => "number"
                                           , number          => { separate_thousands  => TRUE } # this also activates numeric sorting
                                         }
                                       , {
-                                            name            => "HOST_NAME"
+                                            name            => "host_name"
 #                                          , renderer        => "hidden"
                                         }
                                    ]
@@ -116,22 +115,20 @@ sub new {
     $self->{steps} = Gtk3::Ex::DBI::Datasheet->new(
     {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
-      , read_only               => 1
+      , read_only               => TRUE
       , on_row_select           => sub { $self->on_steps_row_select( @_ ) }
-      , primary_keys            => [ "LOAD_EXECUTION_ID" ]
-      , auto_incrementing       => 0
-      , column_sorting          => 1
-      , force_upper_case_fields => 1
+      , auto_incrementing       => FALSE
+      , column_sorting          => TRUE
       , sql                     => {
-                                        select    => "LOAD_EXECUTION_ID , TEMPLATE_NAME , TARGET_DB_NAME , TARGET_TABLE_NAME , PROCESSING_TIME , ROWS_AFFECTED , PERF_STATS , WARNINGS"
-                                      , from      => "LOAD_EXECUTION"
-                                      , order_by  => "START_TS"
-                                      , where     => "JOB_ID = ?"
+                                        select      => "load_execution_id , template_name , target_db_name , target_table_name , processing_time , rows_affected , perf_stats , warnings"
+                                      , from        => "load_execution"
+                                      , order_by    => "start_ts"
+                                      , where       => "job_id = ?"
                                       , bind_values => [ 0 ]
                                    }
       , fields                  => [
                                         {
-                                            name            => "LOAD_EXECUTION_ID"
+                                            name            => "load_execution_id"
                                           , renderer        => "hidden"
                                         }
                                       , {
@@ -159,11 +156,11 @@ sub new {
                                           , number          => { separate_thousands  => TRUE } # this also activates numeric sorting
                                         }
                                       , {
-                                            name            => "PERF_STATS"
+                                            name            => "perf_stats"
                                           , renderer        => "hidden"
                                         }
                                       , {
-                                            name            => "WARNINGS"
+                                            name            => "warnings"
                                           , renderer        => "hidden"
                                         }
                                     ]
@@ -173,17 +170,15 @@ sub new {
     $self->{active_batches} = Gtk3::Ex::DBI::Datasheet->new(
     {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
-      , read_only               => 1
+      , read_only               => TRUE
       , on_row_select           => sub { $self->on_batch_row_select( 'active_batches' ) }
-      , primary_keys            => [ "BATCH_ID" ]
-      , auto_incrementing       => 0
-      , column_sorting          => 1
-      , force_upper_case_fields => 1
+      , auto_incrementing       => FALSE
+      , column_sorting          => TRUE
       , sql                     => {
                                         select    => "*"
-                                      , from      => "BATCH_CTL"
-                                      , where     => "STATUS not like 'COMPLETE%' and STATUS != 'READY' and STATUS != 'KILLED'"
-                                      , order_by  => "BATCH_ID desc"
+                                      , from      => "batch_ctl"
+                                      , where     => "status not like 'COMPLETE%' and status != 'READY' and status != 'KILLED'"
+                                      , order_by  => "batch_id desc"
                                    }
       , fields                  => [
                                         {
@@ -224,16 +219,14 @@ sub new {
     $self->{complete_batches} = Gtk3::Ex::DBI::Datasheet->new(
     {
         dbh                     => $self->{mem_dbh}
-      , read_only               => 1
+      , read_only               => TRUE
       , on_row_select           => sub { $self->on_batch_row_select( 'complete_batches' ) }
-      , primary_keys            => [ "BATCH_ID" ]
-      , auto_incrementing       => 0
-      , column_sorting          => 1
-      , force_upper_case_fields => 1
+      , auto_incrementing       => FALSE
+      , column_sorting          => TRUE
       , sql                     => {
                                             select          => "*"
-                                          , from            => "COMPLETE_BATCHES"
-                                          , order_by        => "BATCH_ID desc" 
+                                          , from            => "complete_batches"
+                                          , order_by        => "batch_id desc"
                                    }
       , fields                  => [
                                         {
@@ -280,8 +273,7 @@ sub new {
                                         }
         }
       , recordset_tool_items    => [ qw | delete_batch data_to_csv | ]
-      , auto_tools_box          => 1
-      #, treeview                => $self->{builder}->get_object( "CompleteBatches" )
+      , auto_tools_box          => TRUE
     } );
     
     $self->{datacop_totals} = Gtk3::Ex::DBI::Datasheet->new(
@@ -293,8 +285,8 @@ sub new {
       , column_sorting          => 1
       , force_upper_case_fields => 1
       , sql                     => {
-                                            select          => "RECORDS_VALIDATED, RECORDS_REJECTED"
-                                          , from            => "DATA_COP_TOTALS"
+                                            select          => "records_validated, records_rejected"
+                                          , from            => "data_cop_totals"
                                           , where           => "job_id = ?"
                                           , bind_values     => [ 0 ]
                                    }
@@ -310,8 +302,8 @@ sub new {
       , column_sorting          => 1
       , force_upper_case_fields => 1
       , sql                     => {
-                                            select          => "COLUMN_NAME, COLUMN_TYPE, COLUMN_TYPE_EXTRA, ISSUE_TYPE, ISSUE_COUNT"
-                                          , from            => "DATA_COP_ISSUES_SUMMARY"
+                                            select          => "column_name , column_type , column_type_extra , issue_type , issue_count"
+                                          , from            => "data_cop_issues_summary"
                                           , where           => "job_id = ?"
                                           , bind_values     => [ 0 ]
                                    }
@@ -334,28 +326,28 @@ sub get_completed_batches {
     
     if ( $self->{builder}->get_object( "BatchID_Filter" )->get_active ) {
         
-        $filter = "where B.BATCH_ID in ( " . $self->{builder}->get_object( "BatchID" )->get_text . " )";
+        $filter = "where B.batch_id in ( " . $self->{builder}->get_object( "BatchID" )->get_text . " )";
         
     } elsif ( $self->{builder}->get_object( "Today" )->get_active ) {
         
-        $filter = "where  B.STATUS in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
+        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
                 . "and now() - interval '1 days' <= B.START_TS";
         
     } elsif ( $self->{builder}->get_object( "ThisWeek" )->get_active ) {
         
-        $filter = "where  B.STATUS in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
+        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
                 . "and now() - interval '7 days' <= B.START_TS";
         
     } else {
         
-        $filter = "where  B.STATUS in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
+        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
         
     }
     
-    my $sql = "select B.BATCH_ID, B.BATCH_IDENTIFIER, B.START_TS, B.END_TS, B.STATUS, B.PROCESSING_TIME, B.HOSTNAME\n"
-            . "from   BATCH_CTL B left join JOB_CTL J on B.BATCH_ID = J.BATCH_ID\n"
+    my $sql = "select B.batch_id , B.batch_identifier , B.start_ts , B.end_ts , B.status , B.processing_time , B.hostname\n"
+            . "from   batch_ctl B left join job_ctl J on B.batch_id = J.batch_id\n"
             . "$filter\n"
-            . "group by B.BATCH_ID, B.BATCH_IDENTIFIER, B.START_TS, B.END_TS, B.STATUS, B.PROCESSING_TIME, B.HOSTNAME";
+            . "group by B.batch_id , B.batch_identifier , B.start_ts , B.end_ts , B.status , B.processing_time , B.hostname";
     
     print "\n\n$sql\n\n";
     
@@ -378,11 +370,11 @@ sub get_completed_batches {
         $sth
       , [
             {
-                name    => "BATCH_ID"
+                name    => "batch_id"
               , type    => "number"
             }
           , {
-                name    => "BATCH_IDENTIFIER"
+                name    => "batch_identifier"
               , type    => "number"
             }
 #          , {
@@ -390,28 +382,28 @@ sub get_completed_batches {
 #              , type    => "text"
 #            }
           , {
-                name    => "START_TS"
+                name    => "start_ts"
               , type    => "text"
             }
           , {
-                name    => "END_TS"
+                name    => "end_ts"
               , type    => "text"
             }
           , {
-                name    => "STATUS"
+                name    => "status"
               , type    => "text"
             }
           , {
-                name    => "PROCESSING_TIME"
+                name    => "processing_time"
               , type    => "number"
             }
           , {
-                name    => "HOSTNAME"
+                name    => "hostname"
               , type    => "text"
             }
         ]
       , $self->{mem_dbh}
-      , "COMPLETE_BATCHES"
+      , "complete_batches"
     );
     
     if ( exists $self->{complete_batches} ) {
@@ -432,7 +424,7 @@ sub delete_batch {
     
     my $self = shift;
     
-    my $batch_id = $self->{complete_batches}->get_column_value( "BATCH_ID" );
+    my $batch_id = $self->{complete_batches}->get_column_value( "batch_id" );
     
     if ( ! $batch_id ) {
         return;
@@ -469,14 +461,14 @@ sub on_batch_row_select{
     
     my ( $self, $type ) = @_;
     
-    my $batch_id = $self->{$type}->get_column_value( "BATCH_ID" );
+    my $batch_id = $self->{$type}->get_column_value( "batch_id" );
     
     $self->{jobs}->query( { bind_values => [ $batch_id ] } );
     
     $self->{steps}->query( { bind_values => [ 0 ] } );
     
-    $self->{builder}->get_object( "EXECUTED_TEMPLATE" )->get_buffer->set_text( '' );
-    $self->{builder}->get_object( "ERROR_MSG" )->get_buffer->set_text( '' );
+    $self->{builder}->get_object( "executed_template" )->get_buffer->set_text( '' );
+    $self->{builder}->get_object( "error_msg" )->get_buffer->set_text( '' );
     
     # Select 1st job in batch
     my $model = $self->{jobs}->{treeview}->get_model;
@@ -517,14 +509,14 @@ sub on_jobs_row_select {
     
     my $self = shift;
     
-    my $job_id = $self->{jobs}->get_column_value( "JOB_ID" );
+    my $job_id = $self->{jobs}->get_column_value( "job_id" );
     
     $self->{steps}->query( { bind_values => [ $job_id ] } );
     $self->{datacop_totals}->query( { bind_values => [ $job_id ] } );
     $self->{datacop_issues_summary}->query( { bind_values => [ $job_id ] } );
     
-    $self->{builder}->get_object( "EXECUTED_TEMPLATE" )->get_buffer->set_text( '' );
-    $self->{builder}->get_object( "ERROR_MSG" )->get_buffer->set_text( '' );
+    $self->{builder}->get_object( "executed_template" )->get_buffer->set_text( '' );
+    $self->{builder}->get_object( "error_msg" )->get_buffer->set_text( '' );
     
 }
 
@@ -532,7 +524,7 @@ sub on_steps_row_select {
     
     my $self = shift;
     
-    my $le_id = $self->{steps}->get_column_value( "LOAD_EXECUTION_ID" );
+    my $le_id = $self->{steps}->get_column_value( "load_execution_id" );
     
     my $log_db = $self->{globals}->{config_manager}->sdf_connection( "LOG" );
     
@@ -542,9 +534,9 @@ sub on_steps_row_select {
     foreach my $type ( "log", "error" ) {
         
         my $sth = $log_db->prepare(
-            "select PART_TEXT from EXECUTION_LOG_PARTS\n"
-          . "where LOAD_EXECUTION_ID = ? and LOG_TYPE = ?\n"
-          . "order by PART_SEQUENCE"
+            "select part_text from execution_log_parts\n"
+          . "where load_execution_id= ? and log_type = ?\n"
+          . "order by part_sequence"
         ) || die( $log_db->errstr );
         
         $sth->execute( $le_id, $type )
@@ -558,39 +550,40 @@ sub on_steps_row_select {
         
     }
     
-    $self->{builder}->get_object( "PERF_STATS" )->get_buffer->set_text( $self->{steps}->get_column_value( "PERF_STATS" ) || '' );
-    $self->{builder}->get_object( "EXECUTED_TEMPLATE" )->get_buffer->set_text( $log_stuff->{log} || '' );
+    $self->{builder}->get_object( "perf_stats" )->get_buffer->set_text( $self->{steps}->get_column_value( "perf_stats" ) || '' );
+    $self->{builder}->get_object( "executed_template" )->get_buffer->set_text( $log_stuff->{log} || '' );
 
     # Warnings
-    my $warnings = $self->{steps}->get_column_value( "WARNINGS" );
+    my $warnings = $self->{steps}->get_column_value( "warnings" );
     my $page_focus_grab;
 
     if ( $warnings && $warnings ne "[]\n" ) {
-        $self->{builder}->get_object( "WARNINGS_MSG" )->get_buffer->set_text( $warnings );
+        $self->{builder}->get_object( "warnings_msg" )->get_buffer->set_text( $warnings );
         $self->{builder}->get_object( "Warnings_label" )->set_markup( "<span color='red'><b>Warnings</b></span>" );
         my $focused_page = $self->{builder}->get_object( 'ExecutionLog_notebook' )->get_current_page();;
         if ( $focused_page != 3 && $focused_page !=4 ) {
             $self->{previous_active_page} = $self->{builder}->get_object( 'ExecutionLog_notebook' )->get_current_page();
         }
-        $page_focus_grab = 1;
+        $page_focus_grab = TRUE;
         $self->{builder}->get_object( 'ExecutionLog_notebook' )->set_current_page( 3 );
     } else {
-        $self->{builder}->get_object( "WARNINGS_MSG" )->get_buffer->set_text( '' );
+        $self->{builder}->get_object( "warnings_msg" )->get_buffer->set_text( '' );
         $self->{builder}->get_object( "Warnings_label" )->set_markup( "<b>Warnings</b>" );
     }
 
     if ( $log_stuff->{error} ) {
-        $self->{builder}->get_object( "ERROR_MSG" )->get_buffer->set_text( $log_stuff->{error} );
+        $self->{builder}->get_object( "error_msg" )->get_buffer->set_text( $log_stuff->{error} );
         $self->{builder}->get_object( "Errors_label" )->set_markup( "<span color='red'><b>Errors</b></span>" );
         if ( ! $page_focus_grab ) {
-            my $focused_page = $self->{builder}->get_object( 'ExecutionLog_notebook' )->get_current_page();;
+            my $focused_page = $self->{builder}->get_object( 'ExecutionLog_notebook' )->get_current_page();
             if ( $focused_page != 3 && $focused_page !=4 ) {
                 $self->{previous_active_page} = $self->{builder}->get_object( 'ExecutionLog_notebook' )->get_current_page();
             }
         }
         $self->{builder}->get_object( 'ExecutionLog_notebook' )->set_current_page( 4 );
+        $page_focus_grab = TRUE;
     } else {
-        $self->{builder}->get_object( "ERROR_MSG" )->get_buffer->set_text( '' );
+        $self->{builder}->get_object( "error_msg" )->get_buffer->set_text( '' );
         $self->{builder}->get_object( "Errors_label" )->set_markup( "<b>Errors</b>" );
     }
 
@@ -606,9 +599,9 @@ sub on_steps_row_select {
     }
 
     my $sth = $log_db->prepare(
-        "select LOG_TYPE from EXECUTION_LOG_PARTS\n"
-      . "where LOAD_EXECUTION_ID = ? and LOG_TYPE not in ( 'log' , 'error' )\n"
-      . "group by LOG_TYPE"
+        "select log_type from execution_log_parts\n"
+      . "where load_execution_id = ? and log_type not in ( 'log' , 'error' )\n"
+      . "group by log_type"
     ) || die( $log_db->errstr );
 
     $sth->execute( $le_id )
@@ -619,18 +612,18 @@ sub on_steps_row_select {
     while ( my $row = $sth->fetchrow_hashref ) {
 
         my $custom_log_sth = $log_db->prepare(
-            "select PART_TEXT from EXECUTION_LOG_PARTS\n"
-           . "where LOAD_EXECUTION_ID = ? and LOG_TYPE = ?\n"
-           . "order by PART_SEQUENCE"
+            "select part_text from execution_log_parts\n"
+           . "where load_execution_id = ? and log_type = ?\n"
+           . "order by part_sequence"
         ) || die( $log_db->errstr );
 
-        $custom_log_sth->execute( $le_id, $row->{LOG_TYPE} )
+        $custom_log_sth->execute( $le_id, $row->{log_type} )
             || die( $sth->errstr );
 
         my $custom_log_text;
 
         while ( my $custom_log_row = $custom_log_sth->fetchrow_hashref ) {
-            $custom_log_text .= $custom_log_row->{PART_TEXT};
+            $custom_log_text .= $custom_log_row->{part_text};
         }
 
         my $this_buffer = Gtk3::TextBuffer->new();
@@ -677,7 +670,7 @@ sub on_FetchJobLog_clicked {
     
     my $self = shift;
 
-    my $job_id   = $self->{jobs}->get_column_value( "JOB_ID" );
+    my $job_id   = $self->{jobs}->get_column_value( "job_id" );
 
     my $log_record = $self->{globals}->{config_manager}->sdf_connection( "LOG" )->select(
         "select * from job_full_log where job_id = ?"
@@ -686,7 +679,7 @@ sub on_FetchJobLog_clicked {
 
     if ( @{$log_record} ) {
         my $launcher    = $self->open_window( 'window::framework_launcher', $self->{globals} );
-        $launcher->log_to_buffer( $$log_record[0]->{LOG_TEXT} );
+        $launcher->log_to_buffer( $$log_record[0]->{log_text} );
         $launcher->zoom_log();
     } else {
         $self->dialog(
@@ -706,7 +699,7 @@ sub on_FailJob_clicked {
     
     my $self = shift;
     
-    my $job_id = $self->{jobs}->get_column_value( "JOB_ID" );
+    my $job_id = $self->{jobs}->get_column_value( "job_id" );
     
     $self->{jobs}->{dbh}->do( "update job_ctl set status = 'ERROR' where job_id = ?", [ $job_id ] );
     $self->{jobs}->query;
@@ -717,8 +710,8 @@ sub on_SetJobStatus_clicked {
     
     my $self = shift;
     
-    my $job_id = $self->{jobs}->get_column_value( "JOB_ID" );
-    my $status = $self->{jobs}->get_column_value( "STATUS" );
+    my $job_id = $self->{jobs}->get_column_value( "job_id" );
+    my $status = $self->{jobs}->get_column_value( "status" );
     
     my $status_response = $self->dialog(
         {
@@ -745,9 +738,9 @@ sub on_FailBatch_clicked {
     
     my $self = shift;
     
-    my $batch_id = $self->{active_batches}->get_column_value( "BATCH_ID" );
+    my $batch_id = $self->{active_batches}->get_column_value( "batch_id" );
     
-    $self->{active_batches}->{dbh}->do( "update batch_ctl set status = 'COMPLETE_WITH_ERROR' where BATCH_ID = ?", [ $batch_id ] );
+    $self->{active_batches}->{dbh}->do( "update batch_ctl set status = 'COMPLETE_WITH_ERROR' where batch_id = ?", [ $batch_id ] );
     $self->{jobs}->{dbh}->do( "update job_ctl set status = 'ERROR' where batch_id = ? and status = 'RUNNING'", [ $batch_id ] );
     $self->{active_batches}->query;
     $self->{complete_batches}->query;

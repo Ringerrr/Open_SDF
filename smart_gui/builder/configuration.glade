@@ -93,7 +93,9 @@
                             <property name="width_request">200</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">This form includes a builder that constructs the &lt;b&gt;connection string&lt;/b&gt; below. For this to work, you should first select a &lt;b&gt;Database Type&lt;/b&gt;, which instructs the builder to use a particular driver ( included in the connection string ). Note that you can manually edit the connection string if you want to, however some functionality in the GUI and ETL framework will &lt;b&gt;only&lt;/b&gt; work with supported database types ( ie are in the &lt;b&gt;Database Type&lt;/b&gt; combo ).</property>
+                            <property name="label" translatable="yes">This form includes a builder that constructs the &lt;b&gt;connection string&lt;/b&gt; below. For this to work, you should first select a &lt;b&gt;Database Type&lt;/b&gt;, which instructs the builder to use a particular driver ( included in the connection string ). Note that you can manually edit the connection string if you want to, however some functionality in the GUI and ETL framework will &lt;b&gt;only&lt;/b&gt; work with supported database types ( ie are in the &lt;b&gt;Database Type&lt;/b&gt; combo ).
+
+For connections that utilise an &lt;b&gt;ODBC driver&lt;/b&gt;, you will have to first configure your ODBC environment, in the next page ( &lt;b&gt;ODBC Configuration&lt;/b&gt; ). When you edit your ODBC configuration, the 'ODBC Driver' combo box on this page will be refreshed to display all configured ODBC drivers.</property>
                             <property name="use_markup">True</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">20</property>
@@ -134,7 +136,8 @@
                                   <object class="GtkLabel" id="label9">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Database Type</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Database Type&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -213,7 +216,8 @@
                                   <object class="GtkLabel" id="label12">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Connection Name</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Connection Name&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -786,7 +790,8 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Connection Credentials</property>
+                                <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Connection Credentials&lt;/b&gt;&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                             </child>
                           </object>
@@ -797,126 +802,163 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="box7">
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="homogeneous">True</property>
+                            <property name="label_xalign">0</property>
                             <child>
-                              <object class="GtkFrame" id="frame14">
+                              <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
-                                <property name="shadow_type">none</property>
+                                <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkAlignment" id="alignment14">
+                                  <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
+                                    <property name="orientation">vertical</property>
                                     <child>
-                                      <object class="GtkEntry" id="ProxyAddress">
+                                      <object class="GtkBox" id="box7">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkFrame" id="frame14">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label_xalign">0</property>
+                                            <property name="shadow_type">none</property>
+                                            <child>
+                                              <object class="GtkAlignment" id="alignment14">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="left_padding">12</property>
+                                                <child>
+                                                  <object class="GtkEntry" id="ProxyAddress">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child type="label">
+                                              <object class="GtkLabel" id="label10">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">DBD::Proxy Address ( host:port )</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="UseProxy">
+                                            <property name="label" translatable="yes">Use Proxy ( DBD::Proxy running locally will proxy data
+through native drivers on the proxy server )</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox" id="box6">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkFrame" id="frame4">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label_xalign">0</property>
+                                            <property name="shadow_type">none</property>
+                                            <child>
+                                              <object class="GtkAlignment" id="alignment4">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="left_padding">12</property>
+                                                <child>
+                                                  <object class="GtkEntry" id="DynamicProxyAddress">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child type="label">
+                                              <object class="GtkLabel" id="label1">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">Dynamic SSH Tunnel Endpoint</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="UseDynamicProxy">
+                                            <property name="label" translatable="yes">Use Dynamic Tunneling. This will select an available local port, and open
+an ssh tunnel to the target Hostname / IP. You must have your SSH
+connection configured for this to work.</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
-                                <child type="label">
-                                  <object class="GtkLabel" id="label10">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">DBD::Proxy Address ( host:port )</property>
-                                  </object>
-                                </child>
                               </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
                             </child>
-                            <child>
-                              <object class="GtkCheckButton" id="UseProxy">
-                                <property name="label" translatable="yes">Use Proxy ( DBD::Proxy running locally will proxy data
-through native drivers on the proxy server )</property>
+                            <child type="label">
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">start</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Tunneling and Driver Proxying&lt;/b&gt;&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="box6">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkFrame" id="frame4">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
-                                <property name="shadow_type">none</property>
-                                <child>
-                                  <object class="GtkAlignment" id="alignment4">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
-                                    <child>
-                                      <object class="GtkEntry" id="DynamicProxyAddress">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkLabel" id="label1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Dynamic SSH Tunnel Endpoint</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="UseDynamicProxy">
-                                <property name="label" translatable="yes">Use Dynamic Tunneling. This will select an available local port, and open
-an ssh tunnel to the target Hostname / IP. You must have your SSH
-connection configured for this to work.</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">start</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">5</property>
                           </packing>
                         </child>
                         <child>
@@ -932,7 +974,7 @@ Note: This is for debugging purposes ONLY; connection objects will NOT work prop
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">6</property>
+                            <property name="position">5</property>
                           </packing>
                         </child>
                         <child>
@@ -986,7 +1028,7 @@ Note: This is for debugging purposes ONLY; connection objects will NOT work prop
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">7</property>
+                            <property name="position">6</property>
                           </packing>
                         </child>
                         <child>
@@ -1001,7 +1043,7 @@ Note: This is for debugging purposes ONLY; connection objects will NOT work prop
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">8</property>
+                            <property name="position">7</property>
                           </packing>
                         </child>
                       </object>
@@ -1012,7 +1054,8 @@ Note: This is for debugging purposes ONLY; connection objects will NOT work prop
                   <object class="GtkLabel" id="label13">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Connection Details</property>
+                    <property name="label" translatable="yes">&lt;span color='dark green'&gt;&lt;b&gt;Connection Details&lt;/b&gt;&lt;/span&gt;</property>
+                    <property name="use_markup">True</property>
                   </object>
                 </child>
               </object>
@@ -1037,118 +1080,50 @@ Connections</property>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="border_width">5</property>
+                <property name="border_width">10</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
+                <property name="homogeneous">True</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="spacing">5</property>
-                    <property name="homogeneous">True</property>
+                    <property name="label_xalign">0</property>
                     <child>
-                      <object class="GtkFrame">
-                        <property name="height_request">120</property>
+                      <object class="GtkAlignment">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkAlignment">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
-                            <child>
-                              <object class="GtkScrolledWindow">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="shadow_type">in</property>
-                                <child>
-                                  <object class="GtkTextView" id="ODBC_introduction">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="wrap_mode">word</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Introduction</property>
+                            <property name="label" translatable="yes">&lt;big&gt;This set of pages builds ODBC configurations. The main manual task ( ie to be performed outside SDF ) is to
+&lt;b&gt;download and unpack an ODBC driver&lt;/b&gt;. Then register the full path to the driver ( &lt;b&gt;ODBC Driver Installation&lt;/b&gt; page, bottom section ).
+
+&lt;span color='purple'&gt;&lt;b&gt;&lt;i&gt;Binary drivers can't be packaged by SDF as redistribution is usually forbidden by the vendor.&lt;/i&gt;&lt;/b&gt;&lt;/span&gt;
+
+When running under Flatpak, you should put the unpacked driver somewhere in the &lt;b&gt;~/SDF_persisted directory&lt;/b&gt;
+( a sub-directory is fine ), as &lt;b&gt;&lt;i&gt;NO OTHER DIRECTORIES&lt;/i&gt;&lt;/b&gt; are persisted across container restarts.
+
+From your host operating system, this will be in a location such as:
+ ~/.var/app/biz.smartassociates.open.sdf/SDF_persisted
+
+When you add a driver, some 'global' options and also some driver-specific options will be automatically added.
+You can edit these if you like. These default options come from metadata, in the next tab: ( ODBC Global Options Configuration ).&lt;/big&gt;</property>
+                            <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
                     </child>
-                    <child>
-                      <object class="GtkFrame">
-                        <property name="height_request">120</property>
+                    <child type="label">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <child>
-                          <object class="GtkAlignment">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
-                            <child>
-                              <object class="GtkScrolledWindow">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="shadow_type">in</property>
-                                <child>
-                                  <object class="GtkTextView" id="ODBC_enabling">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="wrap_mode">word</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">odbcinst.ini Management Enabling:</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSwitch" id="enable_odbcinst_ini_management">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
+                        <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Introduction&lt;/b&gt;&lt;/span&gt;</property>
+                        <property name="use_markup">True</property>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -1157,6 +1132,88 @@ Connections</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <child>
+                      <object class="GtkAlignment">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;big&gt;All the functionality in these 2 tabs is designed around a final goal: creating a unixodbc odbcinst.ini file.
+
+While you can edit all the metadata here any time, this final step of managing odbcinst.ini is DISABLED by default.
+This is because SDF doesn't currently import existing configurations ( ie we create from scratch and you could lose configurations ).
+
+&lt;span color='red'&gt;&lt;i&gt;&lt;b&gt;Please think carefully about this, and BACK UP YOUR ~/.odbcinst.ini before flipping the enable switch, above.&lt;/b&gt;&lt;/i&gt;&lt;/span&gt;&lt;/big&gt;</property>
+                            <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;span color='red'&gt;&lt;b&gt;odbcinst.ini Management Enabling:&lt;/b&gt;&lt;/span&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSwitch" id="enable_odbcinst_ini_management">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">How To ...</property>
+              </object>
+              <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="border_width">5</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">5</property>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
@@ -1183,14 +1240,15 @@ Connections</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">All Configured ODBC drivers</property>
+                        <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;All Configured ODBC drivers&lt;/b&gt;&lt;/span&gt;</property>
+                        <property name="use_markup">True</property>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
@@ -1219,19 +1277,20 @@ Connections</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Driver options</property>
+                        <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Driver options&lt;/b&gt;&lt;/span&gt;</property>
+                        <property name="use_markup">True</property>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame">
-                    <property name="height_request">120</property>
+                    <property name="height_request">150</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -1260,17 +1319,21 @@ Connections</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Option Help</property>
+                        <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Option Help&lt;/b&gt;&lt;/span&gt;</property>
+                        <property name="use_markup">True</property>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel">
@@ -1279,6 +1342,7 @@ Connections</property>
                 <property name="label" translatable="yes">ODBC Driver Installation</property>
               </object>
               <packing>
+                <property name="position">1</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1298,7 +1362,7 @@ Connections</property>
                 </child>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child type="tab">
@@ -1308,7 +1372,7 @@ Connections</property>
                 <property name="label" translatable="yes">Generated odbcinst.ini file</property>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -1365,7 +1429,8 @@ If you just want to edit an option for a particular connection, do so in the ODB
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">All ODBC config options</property>
+                            <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;All ODBC config options&lt;/b&gt;&lt;/span&gt;</property>
+                            <property name="use_markup">True</property>
                           </object>
                         </child>
                       </object>
@@ -1391,8 +1456,32 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                 <property name="can_focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkEntry" id="global_odbc_editor.ID">
-                                    <property name="can_focus">True</property>
+                                  <object class="GtkFrame">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label_xalign">0</property>
+                                    <property name="shadow_type">none</property>
+                                    <child>
+                                      <object class="GtkAlignment">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="left_padding">12</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="global_odbc_editor.type">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Type&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1412,9 +1501,9 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkComboBox" id="global_odbc_editor.TYPE">
+                                          <object class="GtkEntry" id="global_odbc_editor.option_name">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can_focus">True</property>
                                           </object>
                                         </child>
                                       </object>
@@ -1423,7 +1512,8 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Type</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Option Name&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
                                       </object>
                                     </child>
                                   </object>
@@ -1445,7 +1535,7 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkEntry" id="global_odbc_editor.OPTION_NAME">
+                                          <object class="GtkEntry" id="global_odbc_editor.option_value">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                           </object>
@@ -1456,7 +1546,8 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Option Name</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Option Value&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
                                       </object>
                                     </child>
                                   </object>
@@ -1478,45 +1569,12 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">12</property>
                                         <child>
-                                          <object class="GtkEntry" id="global_odbc_editor.OPTION_VALUE">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child type="label">
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Option Value</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkFrame">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label_xalign">0</property>
-                                    <property name="shadow_type">none</property>
-                                    <child>
-                                      <object class="GtkAlignment">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="left_padding">12</property>
-                                        <child>
                                           <object class="GtkScrolledWindow">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="shadow_type">etched-in</property>
                                             <child>
-                                              <object class="GtkTextView" id="global_odbc_editor.HELP">
+                                              <object class="GtkTextView" id="global_odbc_editor.help">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="wrap_mode">word</property>
@@ -1530,14 +1588,15 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Help</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Help&lt;/b&gt;</property>
+                                        <property name="use_markup">True</property>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
                                     <property name="fill">True</property>
-                                    <property name="position">4</property>
+                                    <property name="position">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1552,7 +1611,7 @@ If you just want to edit an option for a particular connection, do so in the ODB
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">5</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1563,7 +1622,8 @@ If you just want to edit an option for a particular connection, do so in the ODB
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Option Editor</property>
+                            <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Option Editor&lt;/b&gt;&lt;/span&gt;</property>
+                            <property name="use_markup">True</property>
                           </object>
                         </child>
                       </object>
@@ -1582,7 +1642,7 @@ If you just want to edit an option for a particular connection, do so in the ODB
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
@@ -1592,7 +1652,7 @@ If you just want to edit an option for a particular connection, do so in the ODB
                 <property name="label" translatable="yes">ODBC Global Options Configuration</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

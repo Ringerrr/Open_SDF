@@ -1,9 +1,11 @@
 package Database::Connection::SQLite;
 
-use parent 'Database::Connection';
-
 use strict;
 use warnings;
+
+use 5.20.0;
+
+use parent 'Database::Connection';
 
 use constant DB_TYPE            => 'SQLite';
 
@@ -92,7 +94,7 @@ sub build_connection_string {
     
     my $string = "dbi:SQLite:dbname=" . $location;
 
-    print "[$string]\n";
+    say( "Creating SQLite connection at: [$string]" );
 
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     

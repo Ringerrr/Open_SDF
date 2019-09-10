@@ -70,9 +70,9 @@ sub connect_pre {
     # returned by db-specific 'fetch column' SQL with column names returned by queries ).
     # We need to remove this and implement column name mangling explicitely and ONLY in the cases where we need it.
     
-    if ( ! $options_hash->{dont_force_case} ) {
-        $dbi_options_hash->{FetchHashKeyName}  = 'NAME_uc';
-    }
+    # if ( ! $options_hash->{dont_force_case} ) {
+    #     $dbi_options_hash->{FetchHashKeyName}  = 'NAME_uc';
+    # }
     
     $options_hash->{dbi_options_hash} = $dbi_options_hash;
     

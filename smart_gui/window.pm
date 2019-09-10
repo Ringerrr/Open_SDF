@@ -654,7 +654,7 @@ sub open_window {
     
     my $window;
     
-    if ( $self ) {
+    if ( defined $self ) {
         
         # We can either be called by main.pl ( in which case $self will be undef )
         # or by an open window( in which case $self will be that window )

@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use JSON;
+use Pango;
 
 use Glib qw( TRUE FALSE );
 
@@ -133,7 +134,7 @@ sub new {
     my $type_model        = Gtk3::ListStore->new( "Glib::String" , "Gtk3::Gdk::Pixbuf" );
     my $odbc_config_model = Gtk3::ListStore->new( "Glib::String" , "Glib::String" );
 
-    $widget = $self->{builder}->get_object( 'global_odbc_editor.TYPE' );
+    $widget = $self->{builder}->get_object( 'global_odbc_editor.type' );
 
     # For the global type model combo, we have a 'Global' option, at the top of the list, for ODBC options
     # that are available to all drivers
@@ -277,8 +278,6 @@ sub new {
                                          , from   => "odbc_driver_options"
                                          , where  => "0=1"
                                        }
-          , force_upper_case_fields => TRUE
-          , primary_keys            => [ "TYPE" , "OPTION_NAME" ]
           , builder                 => $self->{builder}
           , widget_prefix           => "global_odbc_editor."
           , on_apply                => sub { $self->{all_config_options}->query() }
@@ -447,22 +446,6 @@ sub new {
     
     $self->on_DatabaseType_changed;
 
-    my $odbc_intro_help = "This screen builds ODBC configurations. The main manual task is to download and unpack an ODBC driver,"
-                        . " and then register the full path to the driver below. This is a manual step as 3rd parties are usually"
-                        . " forbidden from redistributing commercial drivers. When you add a driver, some 'global' options and also"
-                        . " some driver-specific options will be automatically added. You can edit these if you like. These default"
-                        . " options come from metadata, in the next tab: ( ODBC Global Options Configuration ).";
-
-    $self->set_widget_value( 'ODBC_introduction' , $odbc_intro_help );
-
-    my $enabling_help = "All the functionality in these 2 tabs is designed around a final goal: creating a unixodbc odbcinst.ini file."
-                      . " While you can edit all the metadata here any time, this final step of managing odbcinst.ini is DISABLED by"
-                      . " default. This is because SDF doesn't currently import existing configurations ( ie we create from scratch"
-                      . " and you could lose configurations ). Please think carefully about this, and BACK UP YOUR ~/.odbcinst.ini"
-                      . " before flipping the enable switch, above.";
-
-    $self->set_widget_value( 'ODBC_enabling' , $enabling_help );
-
     my $odbc_buffer = Gtk3::SourceView::Buffer->new_with_language( $self->{globals}->{gtksourceview_ini_language} );
     $odbc_buffer->set_highlight_syntax( TRUE );
 
@@ -491,11 +474,11 @@ sub on_configured_option_select {
     my $option_name = $self->{configured_odbc_driver_options}->get_column_value( "OptionName" );
 
     my $help = $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )->select(
-        "select HELP from odbc_driver_options where type = ? and option_name = ?"
+        "select help from odbc_driver_options where type = ? and option_name = ?"
       , [ $source , $option_name ]
     );
 
-    $self->set_widget_value( 'ODBC_option_help' , $help->[0]->{HELP} );
+    $self->set_widget_value( 'ODBC_option_help' , $help->[0]->{help} );
 
 }
 
@@ -537,20 +520,23 @@ sub on_apply_odbc_driver {
 
         # This loop merges in the options ( ie Global and driver-specific options ). Driver-specific ones override Globals
         foreach my $option ( @{$options} ) {
-            $options_hash->{ $option->{OPTION_NAME} } = $option;
+            $options_hash->{ $option->{option_name} } = $option;
         }
 
         foreach my $option_name ( keys %{$options_hash} ) {
             $self->{globals}->{local_db}->do(
                 "insert into odbc_driver_options ( Driver , OptionName , OptionValue , Source ) values ( ? , ? , ? , ? )"
-              , [ $driver , $options_hash->{ $option_name }->{OPTION_NAME}
-                , $options_hash->{ $option_name }->{OPTION_VALUE} , $options_hash->{ $option_name }->{TYPE}
+              , [
+                    $driver
+                  , $option_name
+                  , $options_hash->{ $option_name }->{option_value}
+                  , $options_hash->{ $option_name }->{type}
                 ]
             );
         }
 
     } elsif ( $item->{status} eq 'deleted' ){
-        
+
         $self->{globals}->{local_db}->do(
             "delete from odbc_driver_options where ID = ?"
           , [ $item->{primary_keys}->{ID} ]
@@ -560,6 +546,7 @@ sub on_apply_odbc_driver {
 
     $self->refresh_configured_odbc_driver_options();
     $self->setup_odbc_driver_combo();
+    $self->generate_odbcinstini_string();
 
 }
 
