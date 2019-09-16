@@ -2514,9 +2514,9 @@ sub on_PopulateParamaters_clicked {
     
     my $self = shift;
     
-    my $template_sql = $self->{template}->get_widget_value( "template_name" );
+    my $template_text = $self->{template}->get_widget_value( "template_text" );
     
-    my @substitution_parameters = $template_sql =~ /#P_[a-zA-Z0-9_]*#/g;
+    my @substitution_parameters = $template_text =~ /#P_[a-zA-Z0-9_]*#/g;
     my %parameters_hash = map { $_ => 0 } @substitution_parameters;
     
     # The rest kinda requires knowledge of Gtk3::Ex::DBI::Datasheet internals ...
@@ -2543,9 +2543,6 @@ sub on_PopulateParamaters_clicked {
             last;
         }
     }
-    
-#    print Dumper( \%parameters_hash );
-#    print Dumper( \%model_params );
     
     # Now loop through the parameters again, and insert ones defined in the template that
     # aren't in the param datasheet
@@ -2599,7 +2596,9 @@ sub on_PopulateParamaters_clicked {
           , text    => "Finished comparing template SQL with parameters"
         }
     );
-    
+
+    return FALSE;
+
 }
 
 sub export_processing_group_type_dml {

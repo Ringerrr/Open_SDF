@@ -48,12 +48,12 @@ sub new {
             dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
           , column_sorting          => 1
           , sql                     => {
-                                            select      => "REPOSITORY, RELEASE_NAME, RELEASE_OPEN, RELEASE_APPLIED"
+                                            select      => "repository, release_name, release_open, release_applied"
                                           , from        => "releases"
                                           , order_by    => "release_name"
                                        }
-          , primary_keys            => [ "RELEASE_NAME" ]
-          , force_upper_case_fields => 1
+          # , primary_keys            => [ "RELEASE_NAME" ]
+          # , force_upper_case_fields => 1
           , auto_incrementing       => 0
           , multi_select            => 1
           , fields                  => [
@@ -125,14 +125,14 @@ sub new {
             dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
           , column_sorting          => 1
           , sql                     => {
-                                            select      => "RELEASE_NAME , PACKAGE_TYPE , RELEASE_PACKAGE , OBJECT_CHANGED"
+                                            select      => "release_name, package_type , release_package , object_changed"
                                           , from        => "release_packages"
                                           , where       => "release_name = ?"
                                           , order_by    => "release_package"
                                           , bind_values => [ undef ]
                                        }
-          , primary_keys            => [ "RELEASE_NAME", "RELEASE_PACKAGE" ]
-          , force_upper_case_fields => 1
+          # , primary_keys            => [ "RELEASE_NAME", "RELEASE_PACKAGE" ]
+          # , force_upper_case_fields => 1
           , auto_incrementing       => 0
           , fields                  => [
                                         {
@@ -236,7 +236,7 @@ sub maybe_delete_release_component {
 
     my $self = shift;
 
-    my @selected_open_flags = $self->{releases}->get_column_value( "RELEASE_OPEN" );
+    my @selected_open_flags = $self->{releases}->get_column_value( "release_open" );
     my $this_open_flag      = $selected_open_flags[0];
 
     if ( ! $this_open_flag ) {
@@ -261,7 +261,7 @@ sub delete_release {
 
     my $self = shift;
 
-    my @selected_release_names = $self->{releases}->get_column_value( "RELEASE_NAME" );
+    my @selected_release_names = $self->{releases}->get_column_value( "release_name" );
     my $selected_release_name = $selected_release_names[0];
 
     $self->{globals}->{connections}->{CONTROL}->do(
@@ -318,7 +318,7 @@ sub on_row_select {
     
     my ( $self, $tree_selection ) = @_;
 
-    my @selected_release_names = $self->{releases}->get_column_value( "RELEASE_NAME" );
+    my @selected_release_names = $self->{releases}->get_column_value( "release_name" );
 
     $self->{release_packages}->query(
         {
@@ -332,8 +332,8 @@ sub diff_releases {
 
     my ( $self ) = @_;
 
-    my @selected_release_names = $self->{releases}->get_column_value( "RELEASE_NAME" );
-    my @selected_repos         = $self->{releases}->get_column_value( "REPOSITORY" );
+    my @selected_release_names = $self->{releases}->get_column_value( "release_name" );
+    my @selected_repos         = $self->{releases}->get_column_value( "repository" );
 
     if ( @selected_release_names != 2 ) {
 
@@ -400,7 +400,7 @@ sub package_release {
 
     my $self = shift;
 
-    my @selected_release_names = $self->{releases}->get_column_value( "RELEASE_NAME" );
+    my @selected_release_names = $self->{releases}->get_column_value( "release_name" );
 
     if ( @selected_release_names != 1 ) {
 
@@ -416,10 +416,10 @@ sub package_release {
 
     }
 
-    my @selected_open_flags = $self->{releases}->get_column_value( "RELEASE_OPEN" );
+    my @selected_open_flags = $self->{releases}->get_column_value( "release_open" );
     my $this_open_flag      = $selected_open_flags[0];
 
-    my @selected_repos      = $self->{releases}->get_column_value( "REPOSITORY" );
+    my @selected_repos      = $self->{releases}->get_column_value( "repository" );
     my $this_repo           = $selected_repos[0];
 
     if ( ! $this_open_flag ) {
@@ -439,14 +439,14 @@ sub package_release {
     my $this_release = $selected_release_names[0];
 
     my $closed_releases = $self->{globals}->{connections}->{CONTROL}->select(
-        "select RELEASE_NAME from releases where RELEASE_OPEN = 0 and REPOSITORY = ? order by PACKAGE_DATETIME limit 5"
+        "select release_name from releases where release_open = 0 and repository = ? order by package_datetime limit 5"
       , [ $this_repo ]
     );
 
     my $release_base_candidates = [];
 
     foreach my $release_rec ( @{$closed_releases} ) {
-        push @{$release_base_candidates}, $release_rec->{RELEASE_NAME};
+        push @{$release_base_candidates}, $release_rec->{release_name};
     }
 
     my $release_base;
@@ -619,7 +619,7 @@ sub apply_release_package {
 
     my ( $self ) = @_;
 
-    my @selected_release_names = $self->{releases}->get_column_value( "RELEASE_NAME" );
+    my @selected_release_names = $self->{releases}->get_column_value( "release_name" );
 
     if ( @selected_release_names != 1 ) {
 
@@ -654,7 +654,7 @@ sub apply_release_package {
 
     my $release_name = $selected_release_names[0];
 
-    my @selected_repos = $self->{releases}->get_column_value( "REPOSITORY" );
+    my @selected_repos = $self->{releases}->get_column_value( "repository" );
     my $repo = $selected_repos[0];
 
     my $release_packages_sql = "select * from release_packages where release_name = ?";
@@ -681,7 +681,7 @@ sub apply_release_package {
                     'gui'
                   , $repo
                   , 'builtin'
-                ) . $component_record->{PACKAGE_TYPE} . "/" . $component_record->{OBJECT_NAME} . "/" . $component_record->{RELEASE_PACKAGE}
+                ) . $component_record->{package_type} . "/" . $component_record->{object_name} . "/" . $component_record->{release_package}
             );
 
             # The keys to component are all tables ...

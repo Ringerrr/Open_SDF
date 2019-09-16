@@ -1663,7 +1663,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="config.disable_flat">
+                                                      <object class="GtkCheckButton" id="config.disable_flag">
                                                         <property name="label" translatable="yes">Disable Flag</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
@@ -1793,7 +1793,7 @@ To edit the template, click the button below:&lt;/span&gt;</property>
                                             <property name="can_focus">False</property>
                                             <property name="left_padding">12</property>
                                             <child>
-                                              <object class="GtkBox" id="CONFIG_recordset_tools">
+                                              <object class="GtkBox" id="config_recordset_tools">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="spacing">3</property>
@@ -3931,7 +3931,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                             <property name="spacing">5</property>
                             <property name="homogeneous">True</property>
                             <child>
-                              <object class="GtkButton" id="PopulateParamaters1">
+                              <object class="GtkButton" id="PopulateParamaters">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -4095,7 +4095,7 @@ Please see hints attached to tool-tips for individual fields ...</property>
                                 <property name="can_focus">False</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkBox" id="PARAM_recordset_tools">
+                                  <object class="GtkBox" id="param_recordset_tools">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="border_width">5</property>
