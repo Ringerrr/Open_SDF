@@ -6,7 +6,6 @@ use strict;
 use warnings;
 
 use JSON;
-use Pango;
 
 use Glib qw( TRUE FALSE );
 
