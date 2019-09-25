@@ -66,11 +66,11 @@ sub new {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
       , read_only               => TRUE
       , on_row_select           => sub { $self->on_jobs_row_select( @_ ) }
-      , primary_keys            => [ "JOB_ID" ]
+      # , primary_keys            => [ "JOB_ID" ]
       , auto_incrementing       => FALSE
       , column_sorting          => TRUE
       , sql                     => {
-                                        select      => "*"
+                                        select      => "batch_id , identifier , job_id , processing_group_name , status , processing_time , hostname"
                                       , from        => "job_ctl"
                                       , where       => "batch_id = ?"
                                       , order_by    => "job_id"
@@ -122,7 +122,7 @@ sub new {
       , sql                     => {
                                         select      => "load_execution_id , template_name , target_db_name , target_table_name , processing_time , rows_affected , perf_stats , warnings"
                                       , from        => "load_execution"
-                                      , order_by    => "start_ts"
+                                      , order_by    => "load_execution_id"
                                       , where       => "job_id = ?"
                                       , bind_values => [ 0 ]
                                    }
@@ -638,7 +638,7 @@ sub on_steps_row_select {
         }
 
         my $label = Gtk3::Label->new();
-        $label->set_markup( "<b>" . $row->{LOG_TYPE} . "</b>" );
+        $label->set_markup( "<b>" . $row->{log_type} . "</b>" );
 
         $notebook->append_page( $this_scrolled_window , $label );
 

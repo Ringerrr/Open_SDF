@@ -169,7 +169,7 @@ sub fetch_column_info {
       . "    COLUMN_NAME\n"
       . "  , DATA_TYPE\n"
       . "  , case when DATA_TYPE like '%CHAR%' then '(' || CHAR_LENGTH || ')'\n"
-      . "         when DATA_TYPE = 'NUMBER' then '(' || DATA_LENGTH || ',' || DATA_SCALE || ')'\n"
+      . "         when DATA_TYPE = 'NUMBER' then '(' || coalesce( DATA_PRECISION, 38 ) || ',' || DATA_SCALE || ')'\n"
       . "         else ''\n"
       . "    end as PRECISION\n"
       . "  , case when NULLABLE = 'Y' then 1 else 0 end as NULLABLE\n"
@@ -203,7 +203,7 @@ sub fetch_all_column_info {
             . "  , COLUMN_NAME             as COLUMN_NAME\n"
             . "  , DATA_TYPE               as DATA_TYPE\n"
             . "  , case when DATA_TYPE like '%CHAR%' then '(' || CHAR_LENGTH || ')'\n"
-            . "         when DATA_TYPE = 'NUMBER' then '(' || DATA_LENGTH || ',' || case when DATA_SCALE is null then 0 else DATA_SCALE end || ')'\n"
+            . "         when DATA_TYPE = 'NUMBER' then '(' || coalesce( DATA_PRECISION, 38 ) || ',' || case when DATA_SCALE is null then 0 else DATA_SCALE end || ')'\n"
             . "         else ''\n"
             . "    end as PRECISION\n"
             . "  , case when upper(NULLABLE) = 'Y' then 1\n"
@@ -668,6 +668,20 @@ sub db_schema_table_string {
         }
     }
     
+}
+
+sub drop_db_schema_table_string {
+
+    my ( $self, $database, $schema, $table, $cascade, $options ) = @_;
+
+    my $sql = "drop table " . $self->db_schema_table_string( $database, $schema, $table, $options );
+
+    if ( $cascade ) {
+        $sql .= " cascade constraints";
+    }
+
+    return $sql;
+
 }
 
 sub limit_clause {

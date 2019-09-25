@@ -470,7 +470,6 @@ sub new {
                                  , from             => "processing_group_set_members"
                                  , where            => "0=1"
                                }
-      , force_upper_case_fields => 1
       , fields              => [
                                    {
                                         name        => "processing_group_set_name"
@@ -1038,7 +1037,7 @@ sub on_processing_group_sets_apply {
             $dbh->do( "delete from md5_validation_control where src_job like '" . $processing_group->{processing_group_name} . "_-_%'", [] );
         }
         
-        $dbh->do( "delete from processing_group_set_members where processing_group_name = ?"
+        $dbh->do( "delete from processing_group_set_members where processing_group_set_name = ?"
           , [ $processing_group_set_name ]
         );
         
@@ -1624,7 +1623,7 @@ sub on_PGS_AddMember_clicked {
     my $self = shift;
     
     my $processing_group_set_name = $self->{processing_group_sets}->get_column_value( "processing_group_set_name" );
-    my $processing_group_name     = $self->{processing_groups}->get_column_value( "processing_group_set_name" );
+    my $processing_group_name     = $self->{processing_groups}->get_column_value( "processing_group_name" );
     
     if ( ! $processing_group_set_name || ! $processing_group_name ) {
         

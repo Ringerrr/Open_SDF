@@ -83,31 +83,31 @@ use constant    BIGINT_MAX                          => "9223372036854775808";
 # 'done' ones are handled in DataCop
 use constant    SQL_GUID                            => -11;
 use constant    SQL_WLONGVARCHAR                    => -10;
-use constant    SQL_WVARCHAR                        =>  -9;     # done
-use constant    SQL_WCHAR                           =>  -8;     # done
-use constant    SQL_BIGINT                          =>  -5;     # done
+use constant    SQL_WVARCHAR                        =>  -9;
+use constant    SQL_WCHAR                           =>  -8;
+use constant    SQL_BIGINT                          =>  -5;
 use constant    SQL_BIT                             =>  -7;
-use constant    SQL_TINYINT                         =>  -6;     # done
+use constant    SQL_TINYINT                         =>  -6;
 use constant    SQL_LONGVARBINARY                   =>  -4;
 use constant    SQL_VARBINARY                       =>  -3;
 use constant    SQL_BINARY                          =>  -2;
 use constant    SQL_LONGVARCHAR                     =>  -1;
 use constant    SQL_UNKNOWN_TYPE                    =>   0;
 use constant    SQL_ALL_TYPES                       =>   0;
-use constant    SQL_CHAR                            =>   1;     # done
-use constant    SQL_NUMERIC                         =>   2;     # done
-use constant    SQL_DECIMAL                         =>   3;     # done
-use constant    SQL_INTEGER                         =>   4;     # done
-use constant    SQL_SMALLINT                        =>   5;     # done
+use constant    SQL_CHAR                            =>   1;
+use constant    SQL_NUMERIC                         =>   2;
+use constant    SQL_DECIMAL                         =>   3;
+use constant    SQL_INTEGER                         =>   4;
+use constant    SQL_SMALLINT                        =>   5;
 use constant    SQL_FLOAT                           =>   6;
 use constant    SQL_REAL                            =>   7;
 use constant    SQL_DOUBLE                          =>   8;
-use constant    SQL_DATETIME                        =>   9;     # done
-use constant    SQL_DATE                            =>   9;     # done
+use constant    SQL_DATETIME                        =>   9;
+use constant    SQL_DATE                            =>   9; # oracle issues?
 use constant    SQL_INTERVAL                        =>  10;
 use constant    SQL_TIME                            =>  10;
-use constant    SQL_TIMESTAMP                       =>  11;     # done
-use constant    SQL_VARCHAR                         =>  12;     # done
+use constant    SQL_TIMESTAMP                       =>  11;
+use constant    SQL_VARCHAR                         =>  12;
 use constant    SQL_BOOLEAN                         =>  16;
 use constant    SQL_UDT                             =>  17;
 use constant    SQL_UDT_LOCATOR                     =>  18;
@@ -793,15 +793,27 @@ sub fetch_column_type_info {
         $self->log->fatal( "fetch_column_type_info() called without a usage" );
     }
 
+    my $return;
+
     my $unquoted_column = $column;
     $unquoted_column =~ s/"//g;
-    
+
+    my $column_info = {};
+
+    if ( $self->can( 'fetch_column_info' ) ) {
+        $column_info =  $self->fetch_column_info( $database , $schema , $table );
+    }
+
     if ( ! exists $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table} ) {
-        
+
         my $sth = $self->prepare(
             "select * from " . $self->db_schema_table_string( $database, $schema, $table ) . " where 0=1" );
-        
-        $self->execute( $sth );
+
+        # Doesn't work for Teradata:
+        # my $sth = $self->dbh->column_info( $database , $schema , $table , undef );
+        # Some installations don't expose the required permissions to inspect the schema in this way, apparently
+
+        # $self->execute( $sth );
         
         my $column_names      = $sth->{NAME};
         my $column_types      = $sth->{TYPE};
@@ -824,15 +836,16 @@ sub fetch_column_type_info {
         $self->[ $IDX_COLUMN_PRECISION_CACHE ]->{$database}->{$schema}->{$table} = $precisions;
         
     }
-    
+
     if ( ! exists $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table} ) {
         
         $self->log->warn( "Couldn't locate metadata for column" );
         
-        return {
+        $return = {
             type_code           => undef
           , formatted_select    => $column
           , precision           => undef
+          , column_info         => $column_info->{ $column }
         };
         
     } else {
@@ -840,14 +853,24 @@ sub fetch_column_type_info {
         my $type_code = $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table}->{$unquoted_column};
         my $precision = $self->[ $IDX_COLUMN_PRECISION_CACHE ]->{$database}->{$schema}->{$table}->{$unquoted_column};
         
-        return {
+        $return = {
             type_code           => $type_code
           , formatted_select    => $self->formatted_select( $database , $schema , $table , $column , $type_code , $usage )
           , precision           => $precision
+          , column_info         => $column_info->{ $column }
         };
         
     }
-    
+
+}
+
+sub quote_column_in_expression {
+
+    my ( $self , $column , $expression ) = @_;
+
+    $expression =~ s/$column/"$column"/g;
+    return $expression;
+
 }
 
 sub formatted_select {

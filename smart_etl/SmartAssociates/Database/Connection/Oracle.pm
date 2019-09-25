@@ -90,4 +90,69 @@ sub create_expression_md5sum {
 
 }
 
+sub fetch_column_info {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    $table =~ s/"//g; # Strip out quotes - we quote reserved words in get_fields_from_table()
+
+    my $cached_field_metadata = $self->field_metadata_cache;
+
+    if ( ! exists $cached_field_metadata->{ $database }->{ $schema }->{ $table } ) {
+
+        my $sth = $self->prepare(
+            "select\n"
+          . "    COLUMN_NAME\n"
+          . "  , DATA_TYPE\n"
+          . "  , case when DATA_TYPE like '%CHAR%' then '(' || CHAR_LENGTH || ')'\n"
+          . "         when DATA_TYPE = 'NUMBER' then '(' || coalesce( DATA_PRECISION, 38 ) || ',' || DATA_SCALE || ')'\n"
+          . "         else ''\n"
+          . "    end as PRECISION\n"
+          . "  , case when NULLABLE = 'Y' then 1 else 0 end as NULLABLE\n"
+          . "  , DATA_DEFAULT        as COLUMN_DEFAULT\n"
+          . "from\n"
+          . "    all_tab_columns\n"
+          . "where\n"
+          . "    OWNER = ? and TABLE_NAME = ?\n"
+          . "order by\n"
+          . "    COLUMN_ID" )
+            || $self->log->fatal( "Failed to fetch column info for [" . $self->db_schema_table_string( $database , $schema , $table ) . "]!" . $self->dbh->errstr );
+
+        $self->execute( $sth, [ $schema , $table ] )
+            || $self->log->fatal( "Failed to fetch column info for [" . $self->db_schema_table_string( $database , $schema , $table ) . "]!" . $self->dbh->errstr );
+
+        my $field_metadata = $sth->fetchall_hashref( "COLUMN_NAME" );
+
+        $sth->finish();
+
+        $cached_field_metadata->{ $database }->{ $schema }->{ $table } = $field_metadata;
+
+        $self->field_metadata_cache( $cached_field_metadata );
+
+    }
+
+    return $cached_field_metadata->{ $database }->{ $schema }->{ $table };
+
+}
+
+sub fetch_column_type_info {
+
+    my ( $self, $database, $schema, $table, $column , $usage ) = @_;
+
+    # This part blows. Oracle doesn't make clear distinctions between things like DATE, DATETIME, and TIMESTAMP column types.
+    # As a result, when we fetch the column type codes in this method, we always get a TIMESTAMP ( 93 - SQL_TYPE_TIMESTAMP ).
+    # This in turn frigs our formatted_select logic, as Oracle doesn't let us use a timestamp format string on a date column.
+
+    my $column_type_info = $self->SUPER::fetch_column_type_info( $database , $schema , $table , $column , $usage );
+
+    if ( $column_type_info->{column_info}->{DATA_TYPE} eq 'DATE' ) {
+        $self->log->warn( "Oracle hack: Swapping type code for [$column] to the DATE constant ..." );
+        $column_type_info->{type_code}        = &SmartAssociates::Database::Connection::Base::SQL_TYPE_DATE;
+        $column_type_info->{formatted_select} = $self->formatted_select( $database , $schema , $table , $column , $column_type_info->{type_code} , $usage )
+    }
+
+    return $column_type_info;
+
+}
+
 1;
