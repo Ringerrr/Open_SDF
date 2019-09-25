@@ -1,10 +1,14 @@
+# We need to remove the appdir, apparently ...
+rm -rf appdir
+
 # build:
 flatpak-builder appdir biz.smartassociates.open.sdf.json \
- --force-clean \
- --disable-updates \
  --default-branch=1.0 \
  --gpg-sign=8EBEF79FB7AE4E2C639F31E0D0A4417042E32759 \
  --gpg-homedir=../gpg
+
+# --disable-updates \
+# --force-clean \
 
 #flatpak-builder appdir biz.smartassociates.open.sdf.json --force-clean --default-branch=1.0 --gpg-sign=B89B8C100C905AEFDF2F8B966BD12AFEBB8EC6C1
 #flatpak-builder appdir biz.smartassociates.open.sdf.json --force-clean
