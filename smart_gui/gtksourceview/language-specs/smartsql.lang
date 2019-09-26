@@ -71,7 +71,7 @@
     </context>
     
     <context id="smartsql-complex-tokens" style-ref="smart-complex">
-      <keyword>(COMPLEX_[\w:]*)</keyword>
+      <keyword>(COMPLEX_[\w:=]*)</keyword>
     </context>
 
     
