@@ -430,11 +430,12 @@ sub execute {
     
     my $retries = 0;
     my $success = 0;
-    
+
+    my $error_strings_to_downgrade = $self->error_strings_to_downgrade();
+
     while ( $retries < 5 && ! $success ) {
         
         if ( $retries ) {
-            
             my $sleep_seconds = $retries * 5;
             $self->log->info( "Retrying after a serialization error ... first sleeping for [$sleep_seconds] seconds ..." );
             sleep( $sleep_seconds );
@@ -463,9 +464,8 @@ sub execute {
                 $retries ++;
                 
             } else {
-                
-                # Any error that's not a serialization issue is fatal ( and should be caught by a caller )
-                
+
+                # Any other error is fatal ( and should be caught by a caller )
 #                croak( $sth->errstr, $line );
                 croak( $error, $line );
                 
@@ -483,6 +483,16 @@ sub execute {
     
     return $response;
     
+}
+
+sub error_strings_to_downgrade {
+
+    my $self = shift;
+
+    my @error_strings;
+
+    return \@error_strings;
+
 }
 
 sub do {
@@ -633,8 +643,11 @@ sub get_fields_from_table {
         $sth->finish();
         
     }
-    
-    return $self->[ $IDX_FIELDS_CACHE ]->{ $db_schema_table };
+
+    # We make a copy to pass back, otherwise if our caller plays with the items, they get modified in our cached copy
+    my @fields = @{ $self->[ $IDX_FIELDS_CACHE ]->{ $db_schema_table } };
+
+    return \@fields;
     
 }
 
@@ -1029,6 +1042,26 @@ sub simple_select {
         return undef;
     }
     
+}
+
+sub does_table_exist {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    $self->log->debug( "Checking if db.schema.table [$database.$schema.$table] exists ..." );
+
+    my $sth = $self->prepare(
+        $self->does_table_exist_string( $database , $schema , $table )
+    ) || $self->log->fatal( "Failed to check if table exists!\n" . DBI->errstr );
+
+    $self->execute( $sth , [] );
+
+    if ( my $row = $sth->fetchrow_array ) {
+        return 1;
+    } else {
+        return 0;
+    }
+
 }
 
 sub dbh                     { return $_[0]->accessor( $IDX_DBH,                     $_[1] ); }

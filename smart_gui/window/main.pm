@@ -3131,12 +3131,14 @@ sub create_package {
     eval {
 
         if ( ! -d $snapshot_dir ) {
+            print "Target directory [$snapshot_dir] doesn't exist ... creating ...\n";
             my @created = make_path(
                 $snapshot_dir
               , {
                     verbose     => 1
                 }
             );
+            print "Created:\n" . to_json( \@created , { pretty => 1 } );
         }
 
         my $full_snapshot_path = $snapshot_dir . $snapshot_name;

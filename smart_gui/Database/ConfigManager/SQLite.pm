@@ -153,9 +153,9 @@ sub repo_path {
         }
     } else {
         if ( $repo eq 'core' ) {
-            return $ENV{"HOME"} . "/SDF_Persisted/packages/core/";
+            return $ENV{"HOME"} . "/SDF_persisted/packages/core/";
         } else {
-            return $ENV{"HOME"} . "/SDF_Persisted/packages/";
+            return $ENV{"HOME"} . "/SDF_persisted/packages/";
         }
     }
     

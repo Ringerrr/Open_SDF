@@ -1,0 +1,29 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'SQL_Q_PARAMS'"
+      ],
+      "data" : [
+         {
+            "template_name" : "SQL_Q_PARAMS",
+            "class" : "SQL::Q_Params",
+            "repository" : "core",
+            "template_text" : "#P_SQL#",
+            "template_desc" : "First row of query results are available as #Q_# parameters to subsequent steps"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQL_Q_PARAMS'"
+      ],
+      "data" : [
+         {
+            "template_name" : "SQL_Q_PARAMS",
+            "param_desc" : null,
+            "param_default" : null,
+            "param_name" : "#P_SQL#"
+         }
+      ]
+   }
+}

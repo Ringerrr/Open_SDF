@@ -9,8 +9,9 @@ my $IDX_TOP_LEVEL_TEMPLATES                     =  SmartAssociates::Base::FIRST_
 my $IDX_TARGET_DATABASES                        =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 1;
 my $IDX_DBH                                     =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 2;
 my $IDX_PROCESSING_GROUP_NAME                   =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 3;
+my $IDX_ROOT_STEP_NUMBER                        =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 4;
 
-use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 4;
+use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 5;
 
 # Base class of processing groups. Everything ( at the moment )
 # other than Ingestion uses the base class
@@ -99,16 +100,21 @@ sub getMetadata {
 sub getRegisteredTemplates {
     
     my $self = shift;
-    
+
     # Here we build a hierarchy of templates to execute
+
     # If a template is defined as an iterator, then we search for templates
     # underneath it.
-    
+
+    # If we're passed a root step id via json-encoded job args, we only
+    # fetch steps underneath that root step.
+    #
     # First we get a list of template ID, load config IDs, and classes,
     # in the order we're going to execute them in ...
-    
-    my $sth = $self->[ $IDX_DBH ]->prepare(
-        "select\n"
+
+    my $bind_values = [ $self->[ $IDX_PROCESSING_GROUP_NAME ] ];
+
+    my $sql = "select\n"
      . "    CONFIG.SEQUENCE_ORDER\n"
      . "  , CONFIG.PARENT_SEQUENCE_ORDER\n"
      . "  , TEMPLATE.TEMPLATE_NAME\n"
@@ -120,16 +126,25 @@ sub getRegisteredTemplates {
      . "            CONFIG.TEMPLATE_NAME                = TEMPLATE.TEMPLATE_NAME\n"
      . "where\n"
      . "    CONFIG.PROCESSING_GROUP_NAME = ?\n"
-     . "and CONFIG.DISABLE_FLAG = 0\n"
-     . "order by\n"
-     . "    CONFIG.SEQUENCE_ORDER"
-    );
-    
+     . "and CONFIG.DISABLE_FLAG = 0\n";
+
+     my $root_step_id = $self->globals->JOB->job_arg( 'ROOT_STEP_ID' );
+
+     if ( $root_step_id ) {
+         $sql .= "and parent_sequence_order = ?\n";
+         push @{$bind_values} , $root_step_id;
+     }
+
+     $sql .= "order by\n"
+     . "    CONFIG.SEQUENCE_ORDER";
+
+    my $sth = $self->[ $IDX_DBH ]->prepare( $sql );
+
     $self->[ $IDX_DBH ]->execute(
         $sth
-      , [ $self->[ $IDX_PROCESSING_GROUP_NAME ] ]
+      , $bind_values
     );
-    
+
     # Then we loop through the list, and construct the appropriate objects to
     # do the actual work, based on the TEMPLATE.CLASS
     
@@ -151,9 +166,11 @@ sub getRegisteredTemplates {
 
         $templates_by_sequence->{ $template_rec->{SEQUENCE_ORDER} } = $template;
         
-        if ( ! $template_rec->{PARENT_SEQUENCE_ORDER} ) {
+        if ( ! $template_rec->{PARENT_SEQUENCE_ORDER}
+            || $template_rec->{PARENT_SEQUENCE_ORDER} == $root_step_id ) {
             
-            # top-level templates go straight onto the array of top-level templates
+            # top-level templates ( or for forked children, templates directly under their root step id )
+            # go straight onto the array of top-level templates
             push @{$self->[ $IDX_TOP_LEVEL_TEMPLATES ]}, $template;
             
         } else {
@@ -162,8 +179,12 @@ sub getRegisteredTemplates {
             # Note that it should be safe to do this here ( as opposed to waiting until
             # we've created all templates ) because we're ordering by SEQUENCE_ORDER, which
             # is how things will be executed, so the parent will already have been created 
-            
-            $templates_by_sequence->{ $template_rec->{PARENT_SEQUENCE_ORDER} }->add_child_template_config( $template );
+
+            if ( exists $templates_by_sequence->{ $template_rec->{PARENT_SEQUENCE_ORDER} } ) {
+                $templates_by_sequence->{ $template_rec->{PARENT_SEQUENCE_ORDER} }->add_child_template_config( $template );
+            } else {
+                $self->log->warn( "Parent step number [" . $template_rec->{PARENT_SEQUENCE_ORDER} . "] not loaded - probably out of scope ( ie we're a forked child process )" );
+            }
             
         }
         
@@ -273,5 +294,6 @@ sub complete {
 
 sub dbh                         { return $_[0]->accessor( $IDX_DBH,                         $_[1] ); }
 sub name                        { return $_[0]->accessor( $IDX_PROCESSING_GROUP_NAME,       $_[1] ); }
+sub processing_group_name       { return $_[0]->accessor( $IDX_PROCESSING_GROUP_NAME,       $_[1] ); } # We need this name as well as the above
 
 1;

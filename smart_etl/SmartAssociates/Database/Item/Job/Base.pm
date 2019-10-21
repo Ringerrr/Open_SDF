@@ -258,7 +258,19 @@ sub insert {
     my $sth = $self->dbh->prepare( $sql );
     
     my $job_args = defined $constructor_args->{JOB_ARGS} ? JSON::encode_json( $constructor_args->{JOB_ARGS} ) : undef;
-    
+
+    my $batch_obj = $self->globals->BATCH;
+    if ( ! $batch_obj ) {
+        $self->globals->BATCH(
+            SmartAssociates::Database::Item::Batch::Base::generate(
+                $self->globals
+              , undef
+              , undef
+              , $self->globals->JOB->field( FLD_BATCH_ID )
+            )
+        );
+    }
+
     my $bind_values = [
         $self->key_value
       , $self->globals->BATCH->key_value

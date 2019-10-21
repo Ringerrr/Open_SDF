@@ -210,6 +210,17 @@ sub startChildProcess {
     
 }
 
+sub captureExitingChildByPID {
+
+    my ( $self , $pid ) = @_;
+
+    my $returned_pid = waitpid( $pid , 0 )
+        || $self->log->fatal( "waitpid failed!\n" . $! );;
+
+    $self->handleExitingChild( $pid );
+
+}
+
 sub captureExitingChild {
     
     my $self = shift;
@@ -218,6 +229,14 @@ sub captureExitingChild {
 
     my $pid = wait
         || $self->log->fatal( "wait failed!\n" . $! );
+
+    $self->handleExitingChild( $pid );
+
+}
+
+sub handleExitingChild {
+
+    my ( $self , $pid ) = @_;
 
     my $pid_to_job_id_mapping = $self->globals->PID_TO_JOB_ID_MAPPING();
 

@@ -1,0 +1,29 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'COLLECT_CHILD'"
+      ],
+      "data" : [
+         {
+            "template_name" : "COLLECT_CHILD",
+            "template_text" : "Waits for child job: #P_CHILD_JOB_NAME# to complete",
+            "class" : "CollectChild",
+            "repository" : "core",
+            "template_desc" : "Waits for a given child job to exit"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'COLLECT_CHILD'"
+      ],
+      "data" : [
+         {
+            "param_name" : "#P_CHILD_JOB_NAME#",
+            "param_default" : null,
+            "param_desc" : "The name of the job to wait for. This is set in the FORK_CHILD_JOB step.",
+            "template_name" : "COLLECT_CHILD"
+         }
+      ]
+   }
+}

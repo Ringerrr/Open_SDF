@@ -1,0 +1,18 @@
+{
+   "release_packages" : [
+      {
+         "object_changed" : 1,
+         "package_type" : "template",
+         "release_name" : "2019-09-30_10-43-14_SQL_Q_Params_cleanup",
+         "release_package" : "SQL_Q_PARAMS.2019-09-30_10-43-49.dkasak.json",
+         "object_name" : "SQL_Q_PARAMS"
+      }
+   ],
+   "release" : {
+      "release_base" : null,
+      "release_name" : "2019-09-30_10-43-14_SQL_Q_Params_cleanup",
+      "package_datetime" : "2019-09-30 11:08:14.229655",
+      "release_open" : 0,
+      "repository" : "core"
+   }
+}

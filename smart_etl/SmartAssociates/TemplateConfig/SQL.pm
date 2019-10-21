@@ -22,13 +22,6 @@ sub execute {
     
     # Detokenize the source & target database
     
-    # Unpack job args from JSON string
-    if ( $template_config->{JOB_ARGS} ) {
-        $template_config->{UNPACKED_JOB_ARGS} = decode_json( $template_config->{JOB_ARGS} );
-    } else {
-        $template_config->{UNPACKED_JOB_ARGS} = {};
-    }
-    
     # Recursive parameter substitution in DB names as well ...
     my $source_db_name     = $self->detokenize( $template_config->{SOURCE_DB_NAME} );
     my $source_schema_name = $self->detokenize( $template_config->{SOURCE_SCHEMA_NAME} );
@@ -115,26 +108,45 @@ sub execute_sql {
     my $template_config = $self->template_record;
     
     eval {
-        
+
+        $self->log->info( 'Preparing SQL for execution' );
         $self->perf_stat_start( 'Template SQL preparing in database engine' );
-        
+
         $sth = $self->target_database->prepare( $TEMPLATE_TEXT )
             || die( $self->target_database->errstr );
 
         $self->perf_stat_stop( 'Template SQL preparing in database engine' );
-        
+        $self->log->info( 'Statement handle successfully prepared from SQL' );
+
         if ( ! $template_config->{UNPACKED_JOB_ARGS}->{simulate} ) {
             
             $self->perf_stat_start( 'Template SQL execution in database engine' );
 
-           $record_count = $sth->execute()
-               || die( $sth->errstr );
+           # $record_count = $sth->execute()
+           #     || die( $sth->errstr );
             
-            # $record_count = $sth->execute();
-            #
-            # if ( my $sth_errstr = $sth->errstr ) {
-            #     die( $sth_errstr );
-            # }
+            $record_count = $sth->execute();
+            my $sth_errstr = $sth->errstr;
+
+            if ( $sth_errstr ) {
+                $self->log->info( "Caught error message:\n$sth_errstr" );
+                # See if this was an error flagged to downgrade to a warning.
+                my $error_strings_to_downgrade = $self->target_database->error_strings_to_downgrade();
+                my $success = 0;
+                foreach my $err_str ( @{$error_strings_to_downgrade} ) {
+                    $self->log->info( "Testing pattern to downgrade for this DB: [$err_str]" );
+                    if ( $sth_errstr =~ /$err_str/gi ) {
+                        $self->log->warn( "Matched an 'error' message string: [$err_str] that we've been instructed to downgrade to a warning. Full error from database:\n$sth_errstr" );
+                        $success = 1;
+                        last;
+                    } else {
+                        $self->log->info( "Pattern [$err_str] did NOT match ..." );
+                    }
+                }
+                if ( ! $success ) {
+                    die( $sth_errstr );
+                }
+            }
             
             $self->perf_stat_stop( 'Template SQL execution in database engine' );
             
@@ -159,7 +171,9 @@ sub execute_sql {
         } elsif ( $record_count eq &SmartAssociates::Database::Connection::Base::PERL_ZERO_RECORDS_INSERTED && $return_value ) {  # mysql returns 0 when we force mysql_use_result=1
             $record_count = $return_value;
         }
-        
+
+        $self->execution_completion();
+
     }
     
     if ( $sth ) {
@@ -179,6 +193,14 @@ sub execution_preparation {
     
     return;
     
+}
+
+sub execution_completion {
+
+    my $self = shift;
+
+    return;
+
 }
 
 sub handle_executed_sth {

@@ -182,7 +182,14 @@ sub getMetadata {
     $self->[ $IDX_TEMPLATE_RECORD ]->{JOB_ARGS} = $self->globals->JOB->field(
         &SmartAssociates::Database::Item::Job::Base::FLD_JOB_ARGS
     );
-    
+
+    # Unpack job args from JSON string
+    if ( $self->[ $IDX_TEMPLATE_RECORD ]->{JOB_ARGS} ) {
+        $self->[ $IDX_TEMPLATE_RECORD ]->{UNPACKED_JOB_ARGS} = decode_json( $self->[ $IDX_TEMPLATE_RECORD ]->{JOB_ARGS} );
+    } else {
+        $self->[ $IDX_TEMPLATE_RECORD ]->{UNPACKED_JOB_ARGS} = {};
+    }
+
     # First get a list of populated PARAM_VALUEs
     $sth = $dbh->prepare(
         "select\n"
@@ -258,11 +265,11 @@ sub detokenize {
 
     my $parameter_recursion_limit = $self->globals->PARAMETER_RECURSION_LIMIT;
 
-    my @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:]+#/g;
+    my @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:=,]+#/g;
 
     while ( ( $self->[ $IDX_RECURSION_COUNTER ] < $parameter_recursion_limit ) && @substitution_parameters ) {
         
-        @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:]+#/g;
+        @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:=,]+#/g;
         
         foreach my $parameter ( @substitution_parameters ) {
             
@@ -309,7 +316,7 @@ sub resolve_parameter {
     
     while ( $self->[ $IDX_RECURSION_COUNTER ] < $parameter_recursion_limit && $is_token ) {
 
-        my @substitution_parameters = $parameter =~ /#["'a-zA-Z0-9_\.:]+#/g;
+        my @substitution_parameters = $parameter =~ /#["'a-zA-Z0-9_\.:=,]+#/g;
         
         # One parameter can expand into multiple, and in this case, we
         # use detokenize() to deal with them
@@ -350,6 +357,7 @@ sub resolve_parameter {
                 $value = $query_parameters->{ $column_name };
             } else {
                 $self->log->info( "resolve_parameter didn't find any value for the user-query parameter [$parameter]. Returning undef ( which will equate to EMPTY STRING )." );
+                $value = '';
             }
             
         } elsif ( $parameter =~ /^#I_([\w]*)\.([\w]*)#$/ ) {
@@ -446,7 +454,7 @@ sub resolveComplexParameter {
 
     my ( $method_name , $return_value , $modifier );
 
-    if ( $parameter =~ /^#([\w_]*):*([\w_]*)#$/ ) {
+    if ( $parameter =~ /^#([\w_]*):*([\w_=,]*)#$/ ) {
         ( $method_name , $modifier ) = ( $1 , $2 );
     } else {
         $self->log->fatal( "Failed to parse method name from complex parameter: [$parameter]" );
@@ -460,8 +468,6 @@ sub resolveComplexParameter {
             $return_value = $resolver->$method_name( $modifier , $self , $parameters );
             $resolver_found = 1;
             last;
-        } else {
-            $self->log->debug( "Complex token [$parameter] logic not found in [" . $resolver->name() . "]" );
         }
     }
 

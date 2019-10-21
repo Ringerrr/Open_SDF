@@ -75,7 +75,7 @@ sub COMPLEX_COLUMNS_FROM_SOURCE {
         my $filtered_list;
 
         foreach my $item (@{$column_names}) {
-            if (!exists $ignore_keys{ uc($item) }) { # force to upper case
+            if ( ! exists $ignore_keys{ uc( $item ) } ) { # force to upper case
                 push @{$filtered_list}, $item;
             }
         }
@@ -112,7 +112,7 @@ sub COMPLEX_COLUMNS_FROM_SOURCE {
         }
 
         # TODO - we need to copy @{$column_names} to @final_columns if this is set
-        foreach my $column_array(@columns) {
+        foreach my $column_array ( @columns ) {
 
             # Now apply formatting & manipulations from the database
             my $column_info = $template_config->target_database->fetch_column_type_info(
@@ -132,7 +132,11 @@ sub COMPLEX_COLUMNS_FROM_SOURCE {
                 && $this_expression !~ /.*\sas\s$original_column_name$/       # don't add > 1 alias
                 && $usage ne 'migration_import'                               # don't add alias for import expresssions
             ) {
-                $this_expression .= " as ".$$column_array[1];
+                $this_expression .= " as " . $$column_array[1];
+            }
+
+            if ( $modifier =~ /QUOTE_COLUMNS/ ) {
+                $this_expression = $template_config->target_database->quote_column_in_expression( $original_column_name , $this_expression );
             }
 
             push @final_columns, $this_expression;
@@ -142,6 +146,12 @@ sub COMPLEX_COLUMNS_FROM_SOURCE {
     } else {
 
         @final_columns = @{$column_names};
+
+        if ( $modifier =~ /QUOTE_COLUMNS/ ) {
+            foreach my $col ( @final_columns ) {
+                $col = $template_config->target_database->quote_column_in_expression( $col , $col );
+            }
+        }
 
     }
 
@@ -222,7 +232,7 @@ sub COMPLEX_COLUMNS_FROM_TARGET {
 
     {
         no warnings 'uninitialized';
-        @ignore_columns = split( ',', $ignore_columns );
+        @ignore_columns = split( ',' , $ignore_columns );
     }
 
     foreach my $item ( @ignore_columns ) {
@@ -235,6 +245,10 @@ sub COMPLEX_COLUMNS_FROM_TARGET {
 
         if ( grep { $_ eq $field } @ignore_columns ) {
             next; # next item in foreach
+        }
+
+        if ( $modifier =~ /QUOTE_COLUMNS/ ) {
+            $field = $template_config->target_database->quote_column_in_expression( $field , $field );
         }
 
         push @final_columns, $field;

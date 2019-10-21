@@ -35,6 +35,7 @@ use SmartAssociates::WorkCollection::Harvest;
 
 use SmartAssociates::TemplateConfig::Base;
 use SmartAssociates::TemplateConfig::SQL;
+use SmartAssociates::TemplateConfig::ForkChildJob;
 
 $| = 1; # disable output buffering
 
@@ -48,7 +49,7 @@ my  $P_EXTRACT_DATE;                                        # Arg: the date ( of
 my  $P_MAX_CONCURRENT               = 10;                   # Arg: a default number of concurrent processes ( that we can spawn - NOT the max total )
 my  $P_MAX_ERRORS;                                          # Arg: max number of errors for a single file import
 my  $JOB_ID;                                                # Arg: the job to process
-my  $P_PARAMETER_RECURSION_LIMIT    = 20;                    # Arg: the maximum recursion limit when resolving parameters
+my  $P_PARAMETER_RECURSION_LIMIT    = 20;                   # Arg: the maximum recursion limit when resolving parameters
 
 my  $p_processing_group;                                    # Arg: run a process group
 my  $p_extract_group;                                       # Arg: run an extract group

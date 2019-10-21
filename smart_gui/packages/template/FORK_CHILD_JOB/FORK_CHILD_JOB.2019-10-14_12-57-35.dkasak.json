@@ -1,0 +1,29 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'FORK_CHILD_JOB'"
+      ],
+      "data" : [
+         {
+            "template_name" : "FORK_CHILD_JOB",
+            "template_text" : "All steps placed inside this one will be executed in a forked job, and processing will continue until a COLLECT_CHILD template step.\n\nThe COLLECT_CHILD step must be given the child job name: #P_CHILD_JOB_NAME# ( so it knows which job to wait for ).",
+            "template_desc" : "All steps placed inside this one will be executed in a forked job, and processing will continue until a COLLECT_CHILD template step",
+            "repository" : "core",
+            "class" : "ForkChildJob"
+         }
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "param_default" : null,
+            "param_desc" : "The name of the job ( which you will later pass to a COLLECT_CHILD step )",
+            "param_name" : "#P_CHILD_JOB_NAME#",
+            "template_name" : "FORK_CHILD_JOB"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'FORK_CHILD_JOB'"
+      ]
+   }
+}

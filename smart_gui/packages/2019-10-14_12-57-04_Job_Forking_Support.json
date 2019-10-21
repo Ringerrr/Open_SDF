@@ -1,0 +1,25 @@
+{
+   "release_packages" : [
+      {
+         "release_package" : "COLLECT_CHILD.2019-10-14_12-57-51.dkasak.json",
+         "release_name" : "2019-10-14_12-57-04_Job_Forking_Support",
+         "object_name" : "COLLECT_CHILD",
+         "package_type" : "template",
+         "object_changed" : 1
+      },
+      {
+         "object_name" : "FORK_CHILD_JOB",
+         "release_name" : "2019-10-14_12-57-04_Job_Forking_Support",
+         "package_type" : "template",
+         "release_package" : "FORK_CHILD_JOB.2019-10-14_12-57-35.dkasak.json",
+         "object_changed" : 1
+      }
+   ],
+   "release" : {
+      "release_open" : 0,
+      "package_datetime" : "2019-10-14 12:58:44.935251",
+      "release_name" : "2019-10-14_12-57-04_Job_Forking_Support",
+      "repository" : "core",
+      "release_base" : null
+   }
+}

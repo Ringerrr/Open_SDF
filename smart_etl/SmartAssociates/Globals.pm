@@ -43,8 +43,9 @@ my $IDX_USER_PROFILE                            =  SmartAssociates::Base::FIRST_
 my $IDX_CURRENT_TEMPLATE_CONFIG                 =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 30;
 my $IDX_COMMAND_LINE_ARGS                       =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 31;
 my $IDX_RESOLVERS                               =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 32;
+my $IDX_CHILDREN_BY_JOB_NAME                    =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 33;
 
-use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 33;
+use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 34;
 
 # This class is the base class of all other objects in the SmartAssociates ETL framework.
 # It holds global variables, accessor methods, and other handy stuff for
@@ -66,6 +67,7 @@ sub new {
     $self->ITERATORS( {} );
     $self->ACTIVE_PROCESSES( 0 );
     $self->[ $IDX_RESOLVERS ] = [];
+    $self->[ $IDX_CHILDREN_BY_JOB_NAME ] = {};
 
     return $self;
     
@@ -277,6 +279,33 @@ sub CONNECTION_NAME_TO_DB_TYPE {
         
     }
     
+}
+
+sub CHILD_JOB_TO_PID {
+
+    my ( $self, $job_name, $pid ) = @_;
+
+    # Here we implement a simple child job <==> PID manager
+
+    if ( ! $pid ) {
+
+        if ( exists $self->[ $IDX_CHILDREN_BY_JOB_NAME ]->{ $job_name } ) {
+
+            return $self->[ $IDX_CHILDREN_BY_JOB_NAME ]->{ $job_name };
+
+        } else {
+
+            $self->LOG->fatal( "Attempt to access undefined child job: [$job_name]" );
+
+        }
+
+    } else {
+
+        $self->[ $IDX_CHILDREN_BY_JOB_NAME ]->{ $job_name } = $pid;
+        return $self->[ $IDX_CHILDREN_BY_JOB_NAME ]->{ $job_name };
+
+    }
+
 }
 
 sub ETL_PATH {
