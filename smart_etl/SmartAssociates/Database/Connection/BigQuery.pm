@@ -213,31 +213,31 @@ sub _table_schema_from_Salesforce {
 }
 
 sub BIGQUERY_EXECUTE_SQL {
-
+    
     my ( $self, $template_config_class ) = @_;
-
+    
     # This method executes SQL, as we'd normally do via a $dbh->execute() call, but uses BigQuery's REST API
     # to submit it. Unfortunately this is required for full functionality:
     #  - maximumBillingTier is only exposed via the REST API, so some queries will simply fail if they require us raising the billing tier
     #  - google only even claim to "support" queries submitted via the REST API, where we've captured a job ID.
     #    ( Google refuses to even consider issues with BigQuery for SQL executed via Simba's ODBC driver )
-
+    
     # First the required ones ( all others are optional and have default values )...
     my $dataset_id          = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
     my $max_billing_tier    = $template_config_class->resolve_parameter( '#P_MAX_BILLING_TIER#' );
-
+    
     my $template_text       = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
-
+    
     my $response;
-
+    
     $self->log->debug( "Submitting SQL to Google via the only method they even claim to support ..." );
-
+    
     $template_config_class->perf_stat_start( 'BigQuery SQL via REST API' );
-
+    
     eval {
-
+        
         # The docs say this creates a table, but it creates a FUCKING VIEW THAT YOU CAN'T QUERY!
-
+        
         #$self->[ $IDX_REST_CLIENT ]->create_table( # return 1 (success) or 0 (error)
         #    project_id      => $self->[ $IDX_PROJECT_ID ]   # required if default project is not set
         #  , dataset_id      => $dataset_id                  # required if default project is not set
@@ -248,7 +248,7 @@ sub BIGQUERY_EXECUTE_SQL {
         #  , schema          => undef                        # optional
         #  , view            => $sql                         # optional
         #);
-
+        
         $response = $self->[ $IDX_REST_CLIENT ]->request(
               resource            => 'jobs'                       # BigQuery API resource
             , method              => 'insert'                     # BigQuery API method
@@ -267,29 +267,29 @@ sub BIGQUERY_EXECUTE_SQL {
             }
             , data                => undef
         ) || die( $self->rest_client->errstr );
-
+        
     };
-
+    
     my $err = $@;
-
+    
     if ( $response->{status}->{errors} ) {
         no warnings "uninitialized";
         $err .= "\n" . to_json( $response->{status}, { pretty => 1 } );
     }
-
+    
     if ( $response->{error} ) {
         no warnings "uninitialized";
         $err .= "\n" . to_json( $response->{error}, { pretty => 1 } );
     }
-
+    
     $template_config_class->perf_stat_stop( 'BigQuery SQL via REST API' );
-
+    
     return {
           template_text       => $template_text
         , record_count        => ( $err ? 0 : 1 )
         , error               => $err
     };
-
+    
 }
 
 sub BIGQUERY_TABLE_FROM_SQL {

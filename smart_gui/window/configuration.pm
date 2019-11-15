@@ -206,6 +206,8 @@ sub new {
                                         }
             ]
           , on_row_select           => sub { $self->on_configured_option_select( @_ ) }
+          , before_insert           => sub { $self->before_configured_odbc_driver_option_insert( @_ ) }
+          , on_insert               => sub { $self->on_configured_odbc_driver_option_insert( @_ ) }
           , on_apply                => sub { $self->generate_odbcinstini_string() }
           , vbox                    => $self->{builder}->get_object( 'driver_options_box' )
           , auto_tools_box          => TRUE
@@ -244,55 +246,84 @@ sub new {
         }
     );
 
-    $self->{all_config_options} = Gtk3::Ex::DBI::Datasheet->new(
-        {
-            dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
-          , column_sorting          => 1
-          , read_only               => TRUE
-          , on_row_select           => sub { $self->refresh_global_driver_options( @_ ) }
-          , sql                     => {
-                                            select      => "type , option_name"
-                                          , from        => "odbc_driver_options"
-                                          , order_by    => "case when type = 'global' then 1 else 2 end , type , option_name"
-                                       }
-          , fields                  => [
+    my $control_dbh = $self->{globals}->{config_manager}->sdf_connection( "CONTROL" , { suppress_dialog => 1 } );
+
+    if ( $control_dbh ) {
+
+        $self->{all_config_options} = Gtk3::Ex::DBI::Datasheet->new(
+            {
+                dbh                     => $control_dbh
+              , column_sorting          => 1
+              , read_only               => TRUE
+              , on_row_select           => sub { $self->refresh_global_driver_options( @_ ) }
+              , sql                     => {
+                                                select      => "type , option_name"
+                                              , from        => "odbc_driver_options"
+                                              , order_by    => "case when type = 'global' then 1 else 2 end , type , option_name"
+                                           }
+              , fields                  => [
+                                            {
+                                                name        => "type"
+                                              , x_percent   => 35
+                                            }
+                                          , {
+                                                name        => "option_name"
+                                              , x_percent   => 65
+                                            }
+                                           ]
+              , vbox                    => $self->{builder}->get_object( 'all_config_options' )
+            }
+        );
+
+        $self->{all_odbc_driver_options} = Gtk3::Ex::DBI::Form->new(
+            {
+                dbh                     => $control_dbh
+              , sql                     => {
+                                               select => "*"
+                                             , from   => "odbc_driver_options"
+                                             , where  => "0=1"
+                                           }
+              , builder                 => $self->{builder}
+              , widget_prefix           => "global_odbc_editor."
+              , on_apply                => sub { $self->{all_config_options}->query() }
+              , on_delete               => sub { $self->{all_config_options}->query() }
+              , recordset_tools_box     => $self->{builder}->get_object( 'global_odbc_editor.editor_tools_box' )
+              , recordset_tool_items    => [ "label" , "insert" , "undo" , "delete" , "apply" , "package" ]
+              , recordset_extra_tools   => {
+                    package => {
+                             type        => 'button'
+                           , markup      => "<span color='blue'>package</span>"
+                           , icon_name   => 'gtk-save-as'
+                           , coderef     => sub { $self->package_odbc_options() }
+                    }
+                }
+            }
+        );
+
+        $self->{simple_config_config}  = Gtk3::Ex::DBI::Datasheet->new(
+            {
+                dbh             => $control_dbh
+              , sql             => {
+                                        select      => "KEY, VALUE"
+                                      , from        => "simple_config"
+                                   }
+              , primary_keys    => [ "KEY" ]
+              , fields          => [
                                         {
-                                            name        => "type"
+                                            name        => "key"
                                           , x_percent   => 35
                                         }
                                       , {
-                                            name        => "option_name"
+                                            name        => "value"
                                           , x_percent   => 65
                                         }
-                                       ]
-          , vbox                    => $self->{builder}->get_object( 'all_config_options' )
-        }
-    );
-
-    $self->{all_odbc_driver_options} = Gtk3::Ex::DBI::Form->new(
-        {
-            dbh                     => $self->{globals}->{config_manager}->sdf_connection( "CONTROL" )
-          , sql                     => {
-                                           select => "*"
-                                         , from   => "odbc_driver_options"
-                                         , where  => "0=1"
-                                       }
-          , builder                 => $self->{builder}
-          , widget_prefix           => "global_odbc_editor."
-          , on_apply                => sub { $self->{all_config_options}->query() }
-          , on_delete               => sub { $self->{all_config_options}->query() }
-          , recordset_tools_box     => $self->{builder}->get_object( 'global_odbc_editor.editor_tools_box' )
-          , recordset_tool_items    => [ "label" , "insert" , "undo" , "delete" , "apply" , "package" ]
-          , recordset_extra_tools   => {
-                package => {
-                         type        => 'button'
-                       , markup      => "<span color='blue'>package</span>"
-                       , icon_name   => 'gtk-save-as'
-                       , coderef     => sub { $self->package_odbc_options() }
-                }
+                                   ]
+              , vbox            => $self->{builder}->get_object( "simple_config_config" ) # yeah, not the best name, whatever
+              , auto_tools_box  => 1
             }
-        }
-    );
+        );
+
+    }
 
     $self->{simple_local_config}  = Gtk3::Ex::DBI::Datasheet->new(
         {
@@ -319,33 +350,6 @@ sub new {
           , auto_tools_box  => 1
         }
     );
-
-    if ( $self->{globals}->{connections}->{CONTROL} ) {
-
-        $self->{simple_config_config}  = Gtk3::Ex::DBI::Datasheet->new(
-            {
-                dbh             => $self->{globals}->{connections}->{CONTROL}
-              , sql             => {
-                                        select      => "KEY, VALUE"
-                                      , from        => "simple_config"
-                                   }
-              , primary_keys    => [ "KEY" ]
-              , fields          => [
-                                        {
-                                            name        => "key"
-                                          , x_percent   => 35
-                                        }
-                                      , {
-                                            name        => "value"
-                                          , x_percent   => 65
-                                        }
-                                   ]
-              , vbox            => $self->{builder}->get_object( "simple_config_config" ) # yeah, not the best name, whatever
-              , auto_tools_box  => 1
-            }
-        );
-
-    }
 
     $self->{gui_overlays} = Gtk3::Ex::DBI::Datasheet->new(
         {
@@ -660,6 +664,37 @@ sub package_odbc_options {
 
 }
 
+sub before_configured_odbc_driver_option_insert {
+
+    my $self = shift;
+
+    my $driver = $self->{configured_odbc_drivers}->get_column_value( "Driver" );
+
+    if ( ! $driver ) {
+        $self->dialog(
+            {
+                title   => "Select a driver first"
+              , type    => "error"
+              , text    => "To insert a driver option, you first need to select a driver"
+            }
+        );
+        return FALSE;
+    }
+
+    return TRUE;
+
+}
+
+sub on_configured_odbc_driver_option_insert {
+
+    my $self = shift;
+
+    my $driver = $self->{configured_odbc_drivers}->get_column_value( "Driver" );
+
+    $self->{configured_odbc_driver_options}->set_column_value( 'Driver' , $driver );
+
+}
+
 sub generate_odbcinstini_string {
 
     my $self = shift;
@@ -670,12 +705,23 @@ sub generate_odbcinstini_string {
     # kind of installation we can realistically support ), the home directory is *not* persisted ( apart from
     # ~/SDF_persisted ), and so we need to generate this file on launch.
 
+    my $odbcinst_ini_string = "# This file is generated by Smart Data Frameworks ( SDF ),\n"
+                            . "#  and will be re-generated when the next SDF process is launched.\n\n"
+                            . "[ODBC Drivers]\n";
+
+    my $drivers = $self->{globals}->{local_db}->select(
+        "select Driver from odbc_driver_options group by Driver"
+    );
+
+    foreach my $driver ( @{$drivers} ) {
+        $odbcinst_ini_string .= $driver->{Driver} . " = Installed\n";
+    }
+
+    $odbcinst_ini_string .= "\n\n";
+
     my $odbc_driver_options = $self->{globals}->{local_db}->select(
         "select * from odbc_driver_options order by Driver , case when Source = 'Global' then 1 else 2 end , OptionName"
     );
-
-    my $odbcinst_ini_string = "# This file is generated by Smart Data Frameworks ( SDF ),\n"
-                            . "#  and will be re-generated when the next SDF process is launched.\n";
 
     my $this_driver;
 
@@ -967,13 +1013,13 @@ sub on_DatabaseType_changed {
         return;
     }
     
-    my $dbh = Database::Connection::generate(
+    $self->{selected_dbh} = Database::Connection::generate(
         $self->{globals}
       , $auth_hash
       , 1
     );
     
-    my $connection_label_map = $dbh->connection_label_map;
+    my $connection_label_map = $self->{selected_dbh}->connection_label_map;
     
     foreach my $key ( keys %{$connection_label_map} ) {
         my $value = $connection_label_map->{$key};
@@ -984,12 +1030,8 @@ sub on_DatabaseType_changed {
             $self->{builder}->get_object( $key . '_frame' )->set_visible( 0 );
         }
     }
-    
-    # For SQLite, we need a browser for the database path ( Host )
 
-    my $db_type = $self->get_widget_value( 'DatabaseType' );
-
-    if ( $db_type eq 'SQLite' ) {
+    if ( $self->{selected_dbh}->connection_browse_title() ) {
        $self->{builder}->get_object( 'BrowseForLocation' )->set_visible( 1 );
     } else {
        $self->{builder}->get_object( 'BrowseForLocation' )->set_visible( 0 );
@@ -1000,10 +1042,12 @@ sub on_DatabaseType_changed {
 sub on_BrowseForLocation_clicked {
     
     my $self = shift;
-    
+
+    my $browse_title = $self->{selected_dbh}->connection_browse_title();
+
     my $path = $self->file_chooser(
         {
-            title       => "Select a SQLite database file"
+            title       => $browse_title
           , type        => "file"
         }
     );

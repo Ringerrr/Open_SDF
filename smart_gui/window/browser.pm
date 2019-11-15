@@ -1976,10 +1976,6 @@ sub on_execute_clicked {
     }
 
     my $target_chooser  = $self->{pages}->[ $page_index ]->{target_chooser};
-
-#    my $connection_name = $self->get_selected_by_object_type( CONNECTION_TYPE ) || return;
-#    my $connection      = $self->get_db_connection( $connection_name, $self->get_selected_by_object_type( DATABASE_TYPE ) );
-
     my $connection      = $target_chooser->get_db_connection;
     my $buffer          = $self->{pages}->[ $page_index ]->{sql_editor}->get_buffer;
     
@@ -2118,7 +2114,6 @@ sub on_execute_clicked {
         }
         
     }
-    
     
 }
 

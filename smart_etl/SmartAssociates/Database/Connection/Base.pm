@@ -25,8 +25,9 @@ my $IDX_CREDENTIALS                                 =  SmartAssociates::Base::FI
 my $IDX_CURRENT_DATABASE                            =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  7;
 my $IDX_SSH_TUNNEL                                  =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  8;
 my $IDX_FIELD_FORMATTING_CACHE                      =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  9;
+my $IDX_CONNECTION_NAME                             =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 10;
 
-use constant    FIRST_SUBCLASS_INDEX                => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 10;
+use constant    FIRST_SUBCLASS_INDEX                => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 11;
 
 use constant    PERL_ZERO_RECORDS_INSERTED          => '0E0';
 
@@ -170,8 +171,8 @@ sub new {
     
     my $self = $_[0]->SUPER::new( $_[1] );
     
-    my $connection_name         = $_[2]     || $self->log->fatal( "Missing arg: connection_name" );
-    my $database                = $_[3]     || $self->log->fatal( "Missing arg: database" );
+    $self->[ $IDX_CONNECTION_NAME ]         = $_[2]     || $self->log->fatal( "Missing arg: connection_name" );
+    my $database                            = $_[3]     || $self->log->fatal( "Missing arg: database" );
     
     $self->[ $IDX_FIELDS_CACHE ]            = {};
     $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]  = {};
@@ -183,7 +184,7 @@ sub new {
     if ( $self->DB_TYPE ne &SmartAssociates::Database::Connection::Memory::DB_TYPE ) {
         
         $auth_hash = $self->get_credentials(
-            $connection_name
+            $self->[ $IDX_CONNECTION_NAME ]
           , $self->DB_TYPE
         );
         
@@ -1064,11 +1065,12 @@ sub does_table_exist {
 
 }
 
-sub dbh                     { return $_[0]->accessor( $IDX_DBH,                     $_[1] ); }
-sub fields_cache            { return $_[0]->accessor( $IDX_FIELDS_CACHE,            $_[1] ); }
-sub field_metadata_cache    { return $_[0]->accessor( $IDX_FIELD_METADATA_CACHE,    $_[1] ); }
-sub column_type_code_cache  { return $_[0]->accessor( $IDX_COLUMN_TYPE_CODE_CACHE,  $_[1] ); }
-sub credentials             { return $_[0]->accessor( $IDX_CREDENTIALS,             $_[1] ); }
-sub current_database        { return $_[0]->accessor( $IDX_CURRENT_DATABASE,        $_[1] ); }
+sub dbh                     { return $_[0]->accessor( $IDX_DBH ,                    $_[1] ); }
+sub fields_cache            { return $_[0]->accessor( $IDX_FIELDS_CACHE ,           $_[1] ); }
+sub field_metadata_cache    { return $_[0]->accessor( $IDX_FIELD_METADATA_CACHE ,   $_[1] ); }
+sub column_type_code_cache  { return $_[0]->accessor( $IDX_COLUMN_TYPE_CODE_CACHE , $_[1] ); }
+sub credentials             { return $_[0]->accessor( $IDX_CREDENTIALS ,            $_[1] ); }
+sub current_database        { return $_[0]->accessor( $IDX_CURRENT_DATABASE ,       $_[1] ); }
+sub connection_name         { return $_[0]->accessor( $IDX_CONNECTION_NAME ,        $_[1] ); }
 
 1;

@@ -477,7 +477,7 @@ sub do_upgrades {
 
 sub sdf_connection {
 
-    my ( $self , $connection_name ) = @_;
+    my ( $self , $connection_name , $options ) = @_;
 
     # This is a convenience method for creating / returning our own connections.
     # Sometimes we won't have a CONTROL / LOG connection configured yet, so we can't assume we can always create
@@ -537,15 +537,15 @@ sub sdf_connection {
 
         print "\n\n$err";
 
-        $self->dialog(
-            {
-                title       => "Couldn't create the minimum required connections"
-              , type        => "error"
-              , text        => "Please check your database connectivity for the [$connection_name] connection"
-            }
-        );
-
-        $self->open_window( 'window::configuration' , $self->{globals} );
+        if ( ! $options->{suppress_dialog} ) {
+            $self->dialog(
+                {
+                    title       => "Couldn't create the minimum required connections"
+                  , type        => "error"
+                  , text        => "Please check your database connectivity for the [$connection_name] connection in the configuration screen"
+                }
+            );
+        }
 
         return undef;
 

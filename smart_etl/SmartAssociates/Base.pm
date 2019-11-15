@@ -245,13 +245,18 @@ sub handleExitingChild {
       , $pid_to_job_id_mapping->{ $pid }
     );
 
-    if ( $? ) {
+    if (
+           $? # The status returned by the last pipe close, backtick ( `` ) command, successful call to wait or waitpid, or from the system operator.
+        || $job->field( &SmartAssociates::Database::Item::Job::Base::FLD_STATUS ) ne &SmartAssociates::Database::Item::Job::Base::STATUS_COMPLETE
+    ) {
         $self->handleChildError( $pid , $job );
     } else {
         $self->handleChildSuccess( $pid , $job );
     }
 
     my $log_path = $job->field( &SmartAssociates::Database::Item::Job::Base::FLD_LOG_PATH );
+
+    $self->log->debug( "Opening completed log: [$log_path]" );
 
     eval {
 
@@ -295,7 +300,9 @@ sub handleChildError {
 
     # Note: we MUST have the leading ampersand here, to force these constants to resolve at run-time, otherwise
     # we have circular dependencies between SmartAssociates::Base and SmartAssociates::Database::Item::Job
-    
+
+    $self->log->info( "In SmartAssociates::Base::captureChildError() ..." );
+
     my $status = $job->field( &SmartAssociates::Database::Item::Job::Base::FLD_STATUS );
     
     # Only set the status to 'unhandled error' if it's currently 'complete'
@@ -318,7 +325,6 @@ sub handleChildSuccess {
 }
 
 sub globals                 { return $_[0]->accessor( $IDX_GLOBALS,                 $_[1] ); }
-
 sub log                     { return $_[0]->globals->LOG;                                    } # convenience ...
 
 1;

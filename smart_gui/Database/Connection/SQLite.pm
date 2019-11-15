@@ -474,6 +474,14 @@ sub all_odbc_drivers {
 
 }
 
+sub connection_browse_title {
+
+    my $self = shift;
+
+    return "Select a SQLite database file";
+
+}
+
 # NP To quickly show table, index etc information stored in memdb table to assist debugging.. There might be similar routines somewhere else...
 sub _get_all_memdb_tables {
     my $self = shift;

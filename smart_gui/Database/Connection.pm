@@ -2098,4 +2098,12 @@ sub reserved_words {
 
 }
 
+sub connection_browse_title {
+
+    my $self = shift;
+
+    return undef;
+
+}
+
 1;

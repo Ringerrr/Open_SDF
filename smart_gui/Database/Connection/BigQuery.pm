@@ -25,16 +25,16 @@ sub connection_label_map {
     
     return {
         Username        => "ClientEmail"
-      , Password        => "Private Key File ( PKC12 format )"
-      , Database        => "Catalog"
-      , Host_IP         => ""
+      , Password        => "" # Private Key File ( PKC12 format )"
+      , Database        => ""
+      , Host_IP         => "Private Key File ( PKC12 or JSON format )"
       , Port            => ""
-      , Attribute_1     => ""
+      , Attribute_1     => "Catalog"
       , Attribute_2     => ""
       , Attribute_3     => ""
-      , Attribute_4     => "UseNativeQuery"
-      , Attribute_5     => "SQLDialect( 0 or 1 ... 0=Legacy; 1=Standard )"
-      , ODBC_driver     => "ODBC Driver"
+      , Attribute_4     => "" # UseNativeQuery"
+      , Attribute_5     => "" # SQLDialect( 0 or 1 ... 0=Legacy; 1=Standard )"
+      , ODBC_driver     => "" # ODBC Driver"
     };
     
 }
@@ -45,17 +45,29 @@ sub build_connection_string {
     
     no warnings 'uninitialized';
     
-    my $string =
-          "dbi:ODBC:"
-        . "DRIVER="               . $auth_hash->{ODBC_driver}
-        . ";OAuthMechanism=0"
-        . ";Email="               . $auth_hash->{Username}
-        . ";KeyFilePath="         . $auth_hash->{Password}
-        . ";Catalog="             . $auth_hash->{Database}
-        . ";RefreshToken="        . $auth_hash->{Port}
-        . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
-        . ";SQLDialect="          . $auth_hash->{Attribute_5};
-    
+    # my $string =
+    #       "dbi:ODBC:"
+    #     . "DRIVER="               . $auth_hash->{ODBC_driver}
+    #     . ";OAuthMechanism=0"
+    #     . ";Email="               . $auth_hash->{Username}
+    #     . ";KeyFilePath="         . $auth_hash->{Password}
+    #     . ";Catalog="             . $auth_hash->{Database}
+    #     . ";RefreshToken="        . $auth_hash->{Port}
+    #     . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
+    #     . ";SQLDialect="          . $auth_hash->{Attribute_5};
+
+     # my $string =
+     #      "dbi:ODBC:"
+     #    . "DRIVER="               . $auth_hash->{ODBC_driver}
+     #    . ";OAuthMechanism=0"
+     #    . ";Email="               . $auth_hash->{Username}
+     #    . ";KeyFilePath="         . $auth_hash->{Password}
+     #    . ";Catalog="             . $auth_hash->{Attribute_1};
+
+    # $string = 'dbi:ODBC:DRIVER=Simba ODBC Driver for Google BigQuery;OAuthMechanism=0;Email=bigquery-service-account@api-project-438416064020.iam.gserviceaccount.com;KeyFilePath=/opt/BigQuery/api-project-438416064020-bf17df0b92a5.p12;Catalog=bigquery-public-data;';
+
+    my $string = "";
+
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
 }
@@ -83,22 +95,25 @@ sub connect_do {
         # executing queries well. Obviously, both are incomplete,
         # but combined, they just barely give us enough functionality
         # to do what we need.
-        
-        $self->{rest_connection} = Google::BigQuery::create(
+        $self->{rest_connection} = $self->{connection} = Google::BigQuery::create(
             client_email        => $auth_hash->{Username},
-            private_key_file    => $auth_hash->{Password},
-            project_id          => $auth_hash->{Database},
+            private_key_file    => $auth_hash->{Host},
+            project_id          => $auth_hash->{Attribute_1},
+            verbose             => 1,
+            debug               => 1
         ) || die( $@ );
-        
+
+        # $self->{rest_connection}->use_dataset( $auth_hash->{Attribute_1} );
+
         # Trigger a rebuild of the connection string
-        $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
+        # $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
         
-        $self->{connection} = DBI->connect(
-            $auth_hash->{ConnectionString}
-          , $auth_hash->{Username}
-          , $auth_hash->{Password}
-          #, $dbi_options_hash
-        ) || die( $DBI::errstr );
+        # $self->{connection} = DBI->connect(
+        #     $auth_hash->{ConnectionString}
+        #   , $auth_hash->{Username}
+        #   , $auth_hash->{Password}
+        #   #, $dbi_options_hash
+        # ) || die( $DBI::errstr );
         
     };
     
@@ -114,8 +129,7 @@ sub connect_do {
         );
         return undef;
     }
-    
-    
+
     return 1;
     
 }
@@ -129,11 +143,11 @@ sub db_schema_table_string {
     #    dont_quote      => 0
     #}
 
-    if ( $options->{dont_quote} ) {
+    # if ( $options->{dont_quote} ) {
         return $database . '.' . $table;
-    }else{
-        return '"' . $database .'"."' . $table . '"';
-    }
+    # } else {
+    #     return '"' . $database .'"."' . $table . '"';
+    # }
 
 }
 
@@ -361,6 +375,105 @@ sub _model_to_table_ddl {
     
 }
 
+sub sql_to_sqlite {
+
+    my ( $self, $sql, $progress_bar ) = @_;
+
+    $progress_bar->set_text( "Executing BigQuery query ..." );
+
+    Gtk3::main_iteration() while ( Gtk3::events_pending() );
+
+    # This function pulls records from BigQuery and pushes them into a SQLite DB
+    # Muhahahahahaha!
+
+    my ( $aoh , $columns ) = $self->selectall_aoh_and_columns(
+        query => $sql
+    );
+
+    my $sqlite_dbh = Database::Connection::SQLite->new(
+        $self->{globals}
+      , {
+            location    => ":memory:"
+        }
+    );
+
+    my $local_sql = "create table bigquery_table (\n    ";
+    my ( @column_def_strings, @placeholders );
+
+    foreach my $fieldname ( @{$columns} ) {
+        push @column_def_strings, $fieldname . " text";
+        push @placeholders, "?";
+    }
+
+    $local_sql .= join( "\n  , ", @column_def_strings ) . "\n)";
+
+    print "\n$local_sql\n";
+
+    $sqlite_dbh->do( $local_sql );
+
+    $sqlite_dbh->{AutoCommit} = 0;
+
+    $local_sql = "insert into bigquery_table (\n    " . join( "\n  , ", @{$columns} )
+        . "\n) values (\n    " . join( "\n  , ", @placeholders ) . "\n)";
+
+    my $insert_sth = $sqlite_dbh->prepare( $local_sql )
+        || die( $sqlite_dbh->errstr );
+
+    my $counter = 0;
+
+    eval {
+        foreach my $record ( @{$aoh} ) {
+            $counter ++;
+            if ( $counter % 500 == 0 ) {
+                $sqlite_dbh->{AutoCommit} = 1;
+                if ( $progress_bar ) {
+                    $progress_bar->set_text( $counter );
+                    $progress_bar->pulse;
+                    Gtk3::main_iteration while ( Gtk3::events_pending );
+                }
+                $sqlite_dbh->{AutoCommit} = 0;
+            }
+            my $row;
+            foreach my $column ( @{$columns} ) {
+                if ( ! exists $record->{$column} ) {
+                    die( "Didn't see column $column in returned recordset. You might have case sensitivity issues ( our implementation is case sensitive )" );
+                }
+                push @{$row}, $record->{$column};
+            }
+            $insert_sth->execute( @{$row} )
+                || confess( $insert_sth->errstr );
+        }
+    };
+
+    if ( $@ ) {
+        $self->dialog(
+            {
+	            title   => "Error loading recordset to SQLite!"
+              , type    => "error"
+              , text    => $@
+            }
+        );
+    }
+
+    $sqlite_dbh->{AutoCommit} = 1;
+
+    if ( $progress_bar ) {
+        $progress_bar->set_text( "" );
+        $progress_bar->set_fraction( 0 );
+    }
+
+    return ( $sqlite_dbh, "select * from bigquery_table" );
+
+}
+
+# sub is_sql_database {
+#
+#     my $self;
+#
+#     return FALSE;
+#
+# }
+
 sub can_execute_ddl {
     
     my $self = shift;
@@ -374,6 +487,14 @@ sub has_odbc_driver {
     my $self = shift;
 
     return TRUE;
+
+}
+
+sub connection_browse_title {
+
+    my $self = shift;
+
+    return "Select a PK12 or JSON key file";
 
 }
 

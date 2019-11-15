@@ -55,6 +55,7 @@ sub new {
     $self->get_window->maximize;
 
     $self->{icons}->{COMPLETE}              = $self->to_pixbuf( $self->get_icon_path( "/monitor/tick_16x16.png" ) );
+    $self->{icons}->{READY}                 = $self->to_pixbuf( $self->get_icon_path( "/monitor/waiting_16x16.png" ) );
     $self->{icons}->{COMPLETE_WITH_ERROR}   = $self->to_pixbuf( $self->get_icon_path( "/monitor/error_16x16.png" ) );
     $self->{icons}->{ERROR}                 = $self->{icons}->{COMPLETE_WITH_ERROR};
     $self->{icons}->{RUNNING}               = $self->to_pixbuf( $self->get_icon_path( "/monitor/running_16x16.png" ) );
@@ -65,6 +66,7 @@ sub new {
     $self->{images}->{FETCH}                = Gtk3::Image->new_from_pixbuf( $self->to_pixbuf( $self->get_icon_path( "/monitor/fetch_16x16.png" ) ) );
 
     $self->build_tree();
+    $self->build_tree_model();
     $self->build_steps_view();
     $self->build_steps_model();
 
@@ -95,7 +97,6 @@ sub new {
     {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
       , read_only               => 1
-      #, primary_keys            => [ "BATCH_ID" ]
       , auto_incrementing       => 0
       , column_sorting          => 1
       , force_upper_case_fields => 1
@@ -112,7 +113,6 @@ sub new {
     {
         dbh                     => $self->{globals}->{config_manager}->sdf_connection( "LOG" )
       , read_only               => 1
-      #, primary_keys            => [ "BATCH_ID" ]
       , auto_incrementing       => 0
       , column_sorting          => 1
       , force_upper_case_fields => 1
@@ -133,119 +133,19 @@ sub new {
     
 }
 
-sub get_completed_batches {
-    
-    my $self = shift;
-    
-    my $filter;
-    
-    if ( $self->{builder}->get_object( "BatchID_Filter" )->get_active ) {
-        
-        $filter = "where B.batch_id in ( " . $self->{builder}->get_object( "BatchID" )->get_text . " )";
-        
-    } elsif ( $self->{builder}->get_object( "Today" )->get_active ) {
-        
-        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
-                . "and now() - interval '1 days' <= B.START_TS";
-        
-    } elsif ( $self->{builder}->get_object( "ThisWeek" )->get_active ) {
-        
-        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
-                . "and now() - interval '7 days' <= B.START_TS";
-        
-    } else {
-        
-        $filter = "where  B.status in ( 'COMPLETE', 'COMPLETE_WITH_ERROR' )\n"
-        
-    }
-    
-    my $sql = "select B.batch_id , B.batch_identifier , B.start_ts , B.end_ts , B.status , B.processing_time , B.hostname\n"
-            . "from   batch_ctl B left join job_ctl J on B.batch_id = J.batch_id\n"
-            . "$filter\n"
-            . "group by B.batch_id , B.batch_identifier , B.start_ts , B.end_ts , B.status , B.processing_time , B.hostname";
-    
-    print "\n\n$sql\n\n";
-    
-    if ( $self->{batch_filter_sql} && $self->{batch_filter_sql} eq $sql ) {
-        # Don't requery with exactly the same args
-        return;
-    }
-    
-    $self->{batch_filter_sql} = $sql;
-    
-    my $dbh = $self->{globals}->{config_manager}->sdf_connection( "LOG" );
-    
-    my $sth = $dbh->prepare( $sql )
-        || return;
-    
-    $dbh->execute( $sth )
-        || return;
-    
-    $dbh->sth_2_sqlite(
-        $sth
-      , [
-            {
-                name    => "batch_id"
-              , type    => "number"
-            }
-          , {
-                name    => "batch_identifier"
-              , type    => "number"
-            }
-#          , {
-#                name    => "PROCESS_GRP_NME"
-#              , type    => "text"
-#            }
-          , {
-                name    => "start_ts"
-              , type    => "text"
-            }
-          , {
-                name    => "end_ts"
-              , type    => "text"
-            }
-          , {
-                name    => "status"
-              , type    => "text"
-            }
-          , {
-                name    => "processing_time"
-              , type    => "number"
-            }
-          , {
-                name    => "hostname"
-              , type    => "text"
-            }
-        ]
-      , $self->{mem_dbh}
-      , "complete_batches"
-    );
-    
-    if ( exists $self->{complete_batches} ) {
-        $self->{complete_batches}->query();
-        # Select the 1st row in the completed batches datasheet
-        my $model = $self->{complete_batches}->{treeview}->get_model;
-        my $iter = $model->get_iter_first;
-
-        if ( $iter ) {
-            my $treeselection = $self->{complete_batches}->{treeview}->get_selection;
-            $treeselection->select_iter( $iter );
-        }
-    }
-
-    $self->get_batches_and_jobs();
-
-}
-
 sub get_batches_and_jobs {
 
     my $self = shift;
 
     my $filter;
 
-    if ( $self->{builder}->get_object( "BatchID_Filter" )->get_active ) {
+    if ( $self->{builder}->get_object( "BatchID_Filter" )->get_active() ) {
 
-        $filter = "where B.batch_id in ( " . $self->{builder}->get_object( "BatchID" )->get_text . " )";
+        if ( $self->{builder}->get_object( "BatchID" )->get_text ne '' ) {
+            $filter = "where B.batch_id in ( " . $self->{builder}->get_object( "BatchID" )->get_text . " )";
+        } else {
+            $filter = "where 0=1";
+        }
 
     } elsif ( $self->{builder}->get_object( "Today" )->get_active ) {
 
@@ -261,10 +161,16 @@ sub get_batches_and_jobs {
 
     }
 
+    if ( $filter ne $self->{filter} ) { # rebuild the tree if the filter has changed ( ie delete all existing data
+        $self->build_tree_model();
+        $self->{filter} = $filter;
+    }
+
     my $sql = "select B.batch_id , B.batch_identifier             , B.start_ts as batch_start_ts , B.end_ts as batch_end_ts , B.status as batch_status , B.processing_time as batch_processing_time\n"
             . "     , J.job_id   , J.identifier as job_identifier , J.start_ts as job_start_ts   , J.end_ts as job_end_ts   , J.status as job_status   , J.processing_time as job_processing_time\n"
             . "from   batch_ctl B left join job_ctl J on B.batch_id = J.batch_id\n"
-            . "$filter\n";
+            . "$filter\n"
+            . "limit 1000\n";
 
     print "\n\n$sql\n\n";
 
@@ -287,7 +193,12 @@ sub get_batches_and_jobs {
             if ( $self->{model}->get( $batch_iter, ID_NO_COLUMN ) == $rec->{batch_id} ) {
                 # We found this batch in the tree. Update it and jobs underneath it
                 if ( ! $batches_updated->{ $rec->{batch_id} } ) { # Only update the batch once per requery
-                    $self->{model}->set( $batch_iter , STATUS_PIXBUF_COLUMN , $rec->{batch_status} );
+                    $self->{model}->set(
+                        $batch_iter
+                      , STATUS_PIXBUF_COLUMN
+                      , $rec->{batch_status}
+                      , SECS_COLUMN          , $rec->{batch_processing_time}
+                     );
                     $batches_updated->{ $rec->{batch_id} } = 1;
                 }
                 $self->update_job_in_tree( $batch_iter , $rec );
@@ -310,12 +221,36 @@ sub get_batches_and_jobs {
               , SECS_COLUMN          , $rec->{batch_processing_time}
               , TYPE_COLUMN          , 'BATCH'
             );
-            $self->update_job_in_tree( $batch_iter , $rec );
+            if ( $rec->{job_id} ) { # We can have a batch record with no job record ( ie the job hasn't been inserted yet )
+                $self->update_job_in_tree( $batch_iter , $rec );
+            }
         }
 
     }
 
     $self->{treeview}->expand_all;
+
+}
+
+sub on_Reset_Ready_Running_clicked {
+
+    my $self = shift;
+
+    my $answer = $self->dialog(
+        {
+            title  => "Reset ALL in-flight jobs?"
+          , type   => "question"
+          , markup => "This will reset <b><i>all</i></b> jobs in the READY or RUNNING state.\nThis is useful if some states haven't been correctly transitioned to ERROR.\n"
+        }
+    );
+
+    if ( lc($answer) ne 'yes' ) {
+        return;
+    }
+
+    $self->{log_dbh}->do(
+        "update job_ctl set status = 'ERROR' where status = 'READY' or status = 'RUNNING'"
+    );
 
 }
 
@@ -471,8 +406,6 @@ sub delete_batch {
     $dbh->do( "delete from job_ctl where batch_id = ?", [ $batch_id ] );
     
     $dbh->do( "delete from batch_ctl where batch_id = ?", [ $batch_id ] );
-    
-    $self->get_completed_batches();
     
 }
 
@@ -632,7 +565,7 @@ sub on_complete_filter_changed {
         return;
     }
     
-    $self->get_completed_batches();
+    $self->get_batches_and_jobs();
     
 }
 
@@ -765,92 +698,97 @@ sub on_StopAutoRefresh_clicked {
     
 }
 
+sub build_tree_model {
+
+    my $self = shift;
+
+    $self->{model} = Gtk3::TreeStore->new(
+        qw' Glib::String Glib::Int Glib::String Glib::Int Glib::String '
+    );
+
+    $self->{model}->set_sort_func( ID_NO_COLUMN , sub { $self->sort_id_column( @_ ) } , ID_NO_COLUMN );
+
+    $self->{treeview}->set_model( $self->{model} );
+
+}
+
 sub build_tree {
 
     my $self = shift;
 
-    if ( ! $self->{treeview} ) {
+    $self->{treeview} = $self->{builder}->get_object( 'batch_job_tree' );
 
-        $self->{model} = Gtk3::TreeStore->new(
-            qw' Glib::String Glib::Int Glib::String Glib::Int Glib::String '
-        );
+    my $renderer = Gtk3::CellRendererPixbuf->new;
 
-        $self->{treeview} = $self->{builder}->get_object( 'batch_job_tree' );
+    my $column = Gtk3::TreeViewColumn->new_with_attributes(
+        ""
+      , $renderer
+    );
 
-        my $renderer = Gtk3::CellRendererPixbuf->new;
+    $column->set_cell_data_func( $renderer, sub { $self->render_status_pixbuf_cell( @_ ); } );
 
-        my $column = Gtk3::TreeViewColumn->new_with_attributes(
-            ""
-          , $renderer
-        );
+    $self->{treeview}->append_column( $column );
 
-        $column->set_cell_data_func( $renderer, sub { $self->render_status_pixbuf_cell( @_ ); } );
+    # 1st visible column - ID
+    my $col_1_renderer = Gtk3::CellRendererText->new;
+    $col_1_renderer->set( xalign      => 1 );
+    $col_1_renderer->set( 'scale', 0.9 );
 
-        $self->{treeview}->append_column( $column );
+    # TODO: scaling of text and icons based on config?
+    #$col_1_renderer->set( 'scale', 0.9 );
 
-        # 1st visible column - ID
-        my $col_1_renderer = Gtk3::CellRendererText->new;
-        $col_1_renderer->set( xalign      => 1 );
-        $col_1_renderer->set( 'scale', 0.9 );
+    $self->{ID_NO_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
+        "id #",
+        $col_1_renderer,
+        'text'  => ID_NO_COLUMN
+    );
 
-        # TODO: scaling of text and icons based on config?
-        #$col_1_renderer->set( 'scale', 0.9 );
+    $self->{treeview}->append_column( $self->{ID_NO_COLUMN} );
 
-        $self->{ID_NO_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
-            "id #",
-            $col_1_renderer,
-            'text'  => ID_NO_COLUMN
-        );
+    $self->{ID_NO_COLUMN}->{_percent} = 7;
+    $self->{ID_NO_COLUMN}->{_renderer} = $col_1_renderer;
 
-        $self->{treeview}->append_column( $self->{ID_NO_COLUMN} );
+    # 2nd visible column - ID text
+    my $col_2_renderer = Gtk3::CellRendererText->new;
 
-        $self->{ID_NO_COLUMN}->{_percent} = 10;
-        $self->{ID_NO_COLUMN}->{_renderer} = $col_1_renderer;
-        $self->{ID_NO_COLUMN}->set_sort_column_id( ID_NO_COLUMN );
+    # TODO: scaling of text and icons based on config?
+    $col_2_renderer->set( 'scale', 0.9 );
 
-        # 2nd visible column - ID text
-        my $col_2_renderer = Gtk3::CellRendererText->new;
+    $self->{ID_TEXT_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
+        "identifier",
+        $col_2_renderer,
+        'text'  => ID_TEXT_COLUMN
+    );
 
-        # TODO: scaling of text and icons based on config?
-        $col_2_renderer->set( 'scale', 0.9 );
+    $self->{treeview}->append_column( $self->{ID_TEXT_COLUMN} );
 
-        $self->{ID_TEXT_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
-            "identifier",
-            $col_2_renderer,
-            'text'  => ID_TEXT_COLUMN
-        );
+    $self->{ID_TEXT_COLUMN}->{_percent} = 78;
+    $self->{ID_TEXT_COLUMN}->{_renderer} = $col_2_renderer;
+    $self->{ID_TEXT_COLUMN}->set_sort_column_id( ID_TEXT_COLUMN );
 
-        $self->{treeview}->append_column( $self->{ID_TEXT_COLUMN} );
+    # 3rd visible column - seconds
+    my $col_3_renderer = Gtk3::CellRendererText->new;
+    $col_3_renderer->set( xalign      => 1 );
 
-        $self->{ID_TEXT_COLUMN}->{_percent} = 75;
-        $self->{ID_TEXT_COLUMN}->{_renderer} = $col_2_renderer;
-        $self->{ID_TEXT_COLUMN}->set_sort_column_id( ID_TEXT_COLUMN );
+    $self->{SECS_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
+        "secs",
+        $col_3_renderer,
+        'text'  => SECS_COLUMN
+    );
 
-        # 3rd visible column - seconds
-        my $col_3_renderer = Gtk3::CellRendererText->new;
-        $col_3_renderer->set( xalign      => 1 );
+    $self->{treeview}->append_column( $self->{SECS_COLUMN} );
 
-        $self->{SECS_COLUMN} = Gtk3::TreeViewColumn->new_with_attributes(
-            "secs",
-            $col_3_renderer,
-            'text'  => SECS_COLUMN
-        );
+    $self->{SECS_COLUMN}->{_percent} = 5;
+    $self->{SECS_COLUMN}->{_renderer} = $col_3_renderer;
+    $self->{SECS_COLUMN}->set_sort_column_id( SECS_COLUMN );
 
-        $self->{treeview}->append_column( $self->{SECS_COLUMN} );
+    # $self->{treeview}->signal_connect( 'key_press_event'      => sub { $self->on_tree_key_press_event( @_ ) } );
 
-        $self->{SECS_COLUMN}->{_percent} = 5;
-        $self->{SECS_COLUMN}->{_renderer} = $col_3_renderer;
-        $self->{SECS_COLUMN}->set_sort_column_id( SECS_COLUMN );
+    $self->{treeview}->get_selection->signal_connect( changed  => sub { $self->on_tree_row_select( @_ ); } );
+    $self->{treeview}->signal_connect( 'button_press_event'   => sub { $self->on_tree_click( @_ ) } );
 
-        # $self->{treeview}->signal_connect( 'key_press_event'      => sub { $self->on_tree_key_press_event( @_ ) } );
-
-        $self->{treeview}->set_model( $self->{model} );
-        $self->{treeview}->get_selection->signal_connect( changed  => sub { $self->on_tree_row_select( @_ ); } );
-        $self->{treeview}->signal_connect( 'button_press_event'   => sub { $self->on_tree_click( @_ ) } );
-
-        $self->{ID_NO_COLUMN}->set_sort_order( 'GTK_SORT_DESCENDING' );
-
-    }
+    $self->{ID_NO_COLUMN}->set_sort_column_id( ID_NO_COLUMN );
+    $self->{ID_NO_COLUMN}->set_sort_order( 'GTK_SORT_DESCENDING' );
 
 }
 
@@ -1192,6 +1130,44 @@ sub build_context_menu {
     $self->{context_menu}->show;
 
     return FALSE;
+
+}
+
+sub sort_id_column {
+
+    my ( $self , $liststore , $itera , $iterb , $sortkey ) = @_;
+
+    my $a_type = $liststore->get( $itera , TYPE_COLUMN );
+    my $b_type = $liststore->get( $iterb , TYPE_COLUMN );
+
+    if ( $a_type ne $b_type ) {
+        print( "a is type [$a_type] but b is type [$b_type]!" );
+    }
+
+    my $a_id = $liststore->get( $itera , ID_NO_COLUMN );
+    my $b_id = $liststore->get( $iterb , ID_NO_COLUMN );
+
+    if ( $a_type eq 'BATCH' ) {
+        # batch ids - normal sorting ...
+        if ( $a_id < $b_id ) {
+            return -1;
+        } else {
+            return 1;
+        }
+    } else {
+        # job ids - we *always* want to sort these in ascending order
+        my ( $is_not_special_column_id , $sort_column_id , $sort_order )  = $liststore->get_sort_column_id();
+        my $return;
+        if ( $a_id < $b_id ) {
+            $return = -1;
+        } else {
+            $return = 1;
+        }
+        if ( $sort_order eq 'descending' ) {
+            $return = -$return;
+        }
+        return $return;
+    }
 
 }
 
