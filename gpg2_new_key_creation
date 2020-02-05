@@ -1,0 +1,53 @@
+[dkasak@nanginator Open_SDF]$ gpg2 --homedir gpg --quick-gen-key d.j.kasak.dk@gmail.com
+gpg: WARNING: unsafe permissions on homedir '/home/dkasak/src/Open_SDF/gpg'
+gpg: keybox '/home/dkasak/src/Open_SDF/gpg/pubring.kbx' created
+About to create a key for:
+    "d.j.kasak.dk@gmail.com"
+
+Continue? (Y/n) Y
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: /home/dkasak/src/Open_SDF/gpg/trustdb.gpg: trustdb created
+gpg: key D0A4417042E32759 marked as ultimately trusted
+gpg: directory '/home/dkasak/src/Open_SDF/gpg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/home/dkasak/src/Open_SDF/gpg/openpgp-revocs.d/8EBEF79FB7AE4E2C639F31E0D0A4417042E32759.rev'
+public and secret key created and signed.
+
+pub   rsa2048 2019-08-21 [SC] [expires: 2021-08-20]
+      8EBEF79FB7AE4E2C639F31E0D0A4417042E32759
+uid                      d.j.kasak.dk@gmail.com
+sub   rsa2048 2019-08-21 [E]
+
+[dkasak@nanginator Open_SDF]$ gpg2 --homedir gpg --quick-gen-key d.j.kasak.dk@gmail.com
+gpg: WARNING: unsafe permissions on homedir '/home/dkasak/src/Open_SDF/gpg'
+gpg: keybox '/home/dkasak/src/Open_SDF/gpg/pubring.kbx' created
+About to create a key for:
+    "d.j.kasak.dk@gmail.com"
+
+Continue? (Y/n) Y
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: /home/dkasak/src/Open_SDF/gpg/trustdb.gpg: trustdb created
+gpg: key 5165EB594EE5D544 marked as ultimately trusted
+gpg: directory '/home/dkasak/src/Open_SDF/gpg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/home/dkasak/src/Open_SDF/gpg/openpgp-revocs.d/76C6ED193465FBCDD5D036435165EB594EE5D544.rev'
+public and secret key created and signed.
+
+pub   rsa2048 2020-02-05 [SC] [expires: 2022-02-04]
+      76C6ED193465FBCDD5D036435165EB594EE5D544
+uid                      d.j.kasak.dk@gmail.com
+sub   rsa2048 2020-02-05 [E]
+
+[dkasak@nanginator Open_SDF]$

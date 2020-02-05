@@ -203,6 +203,9 @@ sub new {
     
     # The notebook that holds the SQL editors & results ...
     $self->{notebook} = Gtk3::Notebook->new();
+    if ( $self->{globals}->{config_manager}->simpleGet( 'window::browser::vertical_tabs' ) == 1 ) {
+        $self->{notebook}->set( 'tab-pos' , 'GTK_POS_LEFT' );
+    }
     $self->{notebook}->set_scrollable( TRUE);
     $self->{builder}->get_object( 'main_paned' )->add2( $self->{notebook} );
     $self->{notebook}->show;
@@ -386,11 +389,9 @@ sub populate_columns_datasheet {
 
 sub on_page_close_clicked {
 
-    my ( $self , $page_index ) = @_;
-
-    if ( ! defined $page_index ) {
-        $page_index = $self->{notebook}->get_current_page;
-    }
+    my ( $self ) = @_;
+    
+    my $page_index = $self->{notebook}->get_current_page();
     
     print "Closing page [$page_index]\n";
     
@@ -400,10 +401,10 @@ sub on_page_close_clicked {
     my $local_db = $self->{globals}->{local_db};
     
     $local_db->do( "delete from browser_pages where PageIndex = ?", [ $page_index ] );
-
+    
     # TODO: this doesn't appear to work all the time - we occasionally get gaps in our PageIndex, which puts us out of whack with the GtkNotebook page indexes
     $local_db->do( "update browser_pages set PageIndex = PageIndex - 1 where PageIndex > ?", [ $page_index ] );
-
+    
 }
 
 sub save_current_page {

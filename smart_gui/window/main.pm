@@ -45,65 +45,6 @@ sub new {
     
     $self->setup_header_bar;
 
-    if ( $self->{globals}->{STDOUT_READER} ) {
-
-        my $log_map = {
-            LogTextView   => {
-                                 filehandle => $self->{globals}->{STDOUT_READER}
-                               , tag        => 'blue'
-                             }
-          , ErrorTextView => {
-                                 filehandle => $self->{globals}->{STDERR_READER}
-                               , tag        => 'red'
-                             }
-        };
-
-        my $bold = Glib::Object::Introspection->convert_sv_to_enum("Pango::Weight", "bold");
-
-        foreach my $view_type ( keys %{$log_map} ) {
-
-            $self->{ $view_type } = $self->{builder}->get_object( $view_type )->get_buffer;
-            $self->{ $view_type . "_vadjustment" } = $self->{builder}->get_object( $view_type . '_scrolled_window' )->get_vadjustment;
-
-            foreach my $colour ( qw | red blue | ) {
-
-                $self->{ $view_type }->create_tag(
-                    $colour
-                  , 'weight'    => $bold
-                  , foreground  => $colour
-                );
-
-            }
-
-            Glib::IO->add_watch( fileno( $log_map->{ $view_type }->{filehandle} ) , ['in'] , sub {
-
-                my ( $fileno, $condition ) = @_;
-
-                my $lines;
-
-                sysread $log_map->{ $view_type }->{filehandle}, $lines, 65536;
-
-                foreach my $line ( split /\n/, $lines ) {
-
-                    $line .= "\n";
-
-                    $self->{ $view_type }->insert_with_tags_by_name( $self->{ $view_type }->get_end_iter, $line, $log_map->{ $view_type }->{tag} );
-
-                }
-
-                Glib::Idle->add( sub {
-                    $self->{ $view_type . "_vadjustment" }->set_value( $self->{  $view_type . "_vadjustment" }->get_upper - $self->{  $view_type . "_vadjustment" }->get_page_increment - $self->{  $view_type . "_vadjustment" }->get_step_increment );
-                    return FALSE; # uninstall callback
-                } );
-
-                return TRUE;  # continue without uninstalling
-
-            } );
-
-        }
-
-    }
-
     # Stack switcher for Job Config / Templates / Logs
     # We have to build this in code because other items in the header bar are added in code
     # and the order that we add them determines their position
@@ -3699,6 +3640,8 @@ sub on_main_destroy {
             $self->{ $item } = undef;
         }
     }
+    
+    $self->{closing} = 1;
     
     $self->close_window();
     

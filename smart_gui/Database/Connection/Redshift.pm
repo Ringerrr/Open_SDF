@@ -7,6 +7,8 @@ use warnings;
 
 use feature 'switch';
 
+use Glib qw | TRUE FALSE |;
+
 use Exporter qw ' import ';
 
 our @EXPORT_OK = qw ' UNICODE_FUNCTION LENGTH_FUNCTION SUBSTR_FUNCTION ';
@@ -17,9 +19,73 @@ use constant SUBSTR_FUNCTION    => 'substr';
 
 use constant DB_TYPE            => 'Redshift';
 
-# Greenplum is an MPP database, based on Postgres ( forked around the 8.x days )
+# Redshift is an MPP database, based on Postgres ( forked around the 8.x days )
 # As a result, we can *mostly* use our Postgres class, but there are a few differences,
 # which are handled below
+
+sub connection_label_map {
+
+    my $self = shift;
+    
+    return {
+        Username        => "DbUser"
+      , Password        => "Password"
+      , Database        => "Database"
+      , Host_IP         => "Server"
+      , Port            => "Port"
+      , Attribute_1     => ""
+      , Attribute_2     => ""
+      , Attribute_3     => ""
+      , Attribute_4     => ""
+      , Attribute_5     => ""
+      , ODBC_driver     => "ODBC Driver"
+    };
+    
+}
+
+sub build_connection_string {
+    
+    my ( $self, $auth_hash ) = @_;
+    
+    no warnings 'uninitialized';
+    
+    my $string =
+          "dbi:ODBC:"
+        . "DRIVER="               . $auth_hash->{ODBC_driver}
+#        . ";DbUser="              . $auth_hash->{Username}
+#        . ";Password="            . $auth_hash->{Password}
+        . ";Database="            . $auth_hash->{Database}
+        . ";Server="              . $auth_hash->{Host}
+        . ";Port="                . $auth_hash->{Port};
+    
+    print "Redshift.pm assembled connection string: $string\n";
+    
+    return $self->SUPER::build_connection_string( $auth_hash, $string );
+    
+}
+
+sub connect_post {
+    
+    my ( $self , $auth_hash , $options_hash ) = @_;
+    
+    $self->{connection}->{LongReadLen} = 65535 * 1024; # 64MB
+    $self->{connection}->{LongTruncOK} = 1;
+    $self->{connection}->{odbc_ignore_named_placeholders} = 1;
+    
+    return;
+    
+}
+
+sub fetch_server_version {
+
+    my $self = shift;
+ 
+    my $version_aoh = $self->select( "select version() as version_no" );
+    $self->{server_version} = $$version_aoh[0]->{VERSION_NO};
+
+    return $self->{server_version};
+   
+}
 
 sub fetch_materialized_view_list {
 
@@ -116,30 +182,22 @@ sub _model_to_table_ddl {
     
     my @pk_items;
     
-    if ( $distribution_keys ) {
+    if ( @{ $distribution_keys } ) {
         
         $sql .= " distkey ( ";
         
         my $column_count = 0;
         
         foreach my $row ( @{$distribution_keys} ) {
-            
             # Redshift has a limit of ONE for the number of columns in a distribution key:
             # http://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_TABLE_NEW.html
-
             $column_count ++;
-
             if ( $column_count > 1 ) {
-
                 push @warnings, "Skipping > 1 distribution key components for ["
                     . $object_recordset->{database} . "." . $object_recordset->{schema_name} . "." . $object_recordset->{table_name} . "]";
-
                 last;
-
             }
-            
             push @pk_items, $row->{column_name};
-            
         }
         
         $sql .= join( " , ", @pk_items ) . " )\n";
@@ -205,6 +263,14 @@ sub generate_migration_import_sequence {
 #        }
 #      , 1 # reset sequence order
 #    );
+    
+}
+
+sub has_odbc_driver {
+    
+    my $self = shift;
+    
+    return TRUE;
     
 }
 

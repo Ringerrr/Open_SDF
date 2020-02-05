@@ -1,0 +1,2 @@
+ostree --repo=SmartDataFramework config set core.min-free-space-percent 0
+

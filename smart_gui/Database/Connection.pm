@@ -108,9 +108,17 @@ sub AUTOLOAD {
     
 }
 
+sub get_info {
+
+    my ( $self , $type ) = @_;
+
+    return $self->{connection}->get_info( $type );
+
+}
+
 sub generate {
     
-    my ( $globals, $auth_hash, $dont_connect, $config_manager_type, $progress_bar, $options_hash ) = @_;
+    my ( $globals, $auth_hash, $dont_connect, $config_manager_type, $progress_bar, $options_hash , $dont_cache ) = @_;
     
     # This STATIC FUNCTION ( not a method ) will determine which subclass of
     # Database::Connection we need, and construct an object of that type
@@ -118,7 +126,19 @@ sub generate {
     my $connection_class        = $auth_hash->{DatabaseType};
     
     my $object_class            = 'Database::Connection::' . $connection_class;
-    
+
+    my $connection_key          = $auth_hash->{ConnectionName} . ":" . ( defined $auth_hash->{Database} ? $auth_hash->{Database} : $auth_hash->{Host} ); # For SQLite, the key we need to use is 'Host' ( path to file )
+
+    if (
+            defined $auth_hash->{ConnectionName}    # We can get called with no connection name, ie we're *just* building a connection class without connecting. In that case, skip the connection manager
+         && ! $dont_cache
+    ) {
+        # Check in user connections pool to see if we already have one of these ...
+        if ( exists $globals->{user_connections}->{ $connection_key } ) {
+            return $globals->{user_connections}->{ $connection_key };
+        }
+    }
+
     # Convert path name into relative path
     my $class_relative_path = $object_class;
     $class_relative_path =~ s/:/\//g;
@@ -149,16 +169,6 @@ sub generate {
         }
     }
     
-    #my $connection_object       = $object_class->new(
-    #    $globals
-    #  , $auth_hash
-    #  , $dont_connect
-    #  , $progress_bar
-    #  , {
-    #        dont_force_case     => 1
-    #    }
-    #);
-    
     my $connection_object       = $object_class->new(
         $globals
       , $auth_hash
@@ -179,7 +189,11 @@ sub generate {
         );
         
     }
-    
+
+    if ( ! $dont_connect && ! $dont_cache ) {
+        $globals->{user_connections}->{ $connection_key } = $connection_object;
+    }
+
     return $connection_object;
     
 }

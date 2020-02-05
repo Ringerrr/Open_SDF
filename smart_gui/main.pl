@@ -112,6 +112,7 @@ my $err_log_path = "$logdir/err_" . $timestamp . ".log";
 
 my ( $STDOUT_READER , $STDERR_READER );
 
+# if ( ! $no_redirect && $ENV{'GDK_BACKEND'} eq 'broadway' ) {
 if ( ! $no_redirect ) {
 
     say( "Redirecting:\nSTDOUT: $app_log_path\nSTDERR: $err_log_path" );
@@ -121,7 +122,7 @@ if ( ! $no_redirect ) {
     # open $STDOUT_READER , "<" , $app_log_path or die( "Can't open stdout log file!: $!" );
     open( $STDOUT_READER, "tail -f $app_log_path |" )
         || die( "Can't fork!\n" . $! );
-
+    
     # open $STDERR_READER , "<" , $err_log_path or die( "Can't open stderr log file!: $!" );
     open( $STDERR_READER, "tail -f $err_log_path |" )
         || die( "Can't fork!\n" . $! );
@@ -306,7 +307,9 @@ Gtk3::StyleContext::add_provider_for_screen ( $screen , $provider , Gtk3::STYLE_
         $globals->{gtksourceview_scheme} = $globals->{gtksourceview_style_schema_manager}->get_scheme( 'classic' );
         # $globals->{gtksourceview_scheme} = $globals->{gtksourceview_style_schema_manager}->get_scheme( 'solarized-dark' );
     }
-    
+
+    window::open_window( undef , 'window::gui_logs' , $globals );
+
     my $startup_window_class = 'window::' . $open;
     
     window::open_window( undef, $startup_window_class, $globals );

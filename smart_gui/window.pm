@@ -641,6 +641,16 @@ sub resize_dialog {
     
 }
 
+sub pulse_log_button {
+
+    my $self = shift;
+
+    $self->{log_progress_bar}->pulse();
+
+
+
+}
+
 sub open_window {
     
     my ( $self, $class, $globals, $options ) = @_;
@@ -961,7 +971,30 @@ sub setup_header_bar {
                 print "Overlay path [$this_overlay_path] didn't contain a menu_control.json file";
             }
         }
-        
+
+        my $log_button = Gtk3::Button->new( '' );
+        $log_button->signal_connect( "clicked" => sub {
+            my $gui_log_window = $self->{globals}->{windows}->{'window::gui_logs'};
+            if ( $gui_log_window->get_window->is_active() ) {
+                $gui_log_window->hide();
+            } else {
+                $gui_log_window->show();
+            }
+            # $self->open_window( 'window::gui_logs')
+        } );
+        my $box = Gtk3::Box->new( 'GTK_ORIENTATION_HORIZONTAL', 5 );
+        my $label = Gtk3::Label->new( 'Logs' );
+        my $log_progress_bar = Gtk3::ProgressBar->new();
+        $log_progress_bar->set_pulse_step( 1 );
+        $box->pack_start( $label , TRUE , TRUE , 2 );
+        $box->pack_end( $log_progress_bar , TRUE , TRUE , 2 );
+        $log_button->get_child->destroy();
+        $log_button->add( $box );
+
+        $header_bar->pack_start( $log_button );
+
+        $self->{log_progress_bar} = $log_progress_bar;
+
         foreach my $menu_control_path ( @menu_controls ) {
             
             open MENU_CONTROL, "<" . $menu_control_path
@@ -1034,7 +1067,7 @@ sub setup_header_bar {
         # $self->{progress} = Gtk3::ProgressBar->new;
         # $self->{progress}->set_show_text( TRUE );
         # $header_bar->pack_end( $self->{progress} );
-        
+
         $header_bar->show_all;
         
     }
@@ -1092,30 +1125,41 @@ sub close_window {
         }
         
         delete $self->{globals}->{windows}->{$class};
-
+        
         my @remaining_windows = keys %{$self->{globals}->{windows}};
-
+        
         say( "Remaining windows:\n    " . join( "\n  , ", @remaining_windows ) );
-
+        
         if ( ! @remaining_windows && ! $self->{globals}->{in_full_restart} ) {
-
+            
             say( "Last window closed ... exiting ..." );
-
+            
+            foreach my $key ( keys %{ $self->{globals}->{user_connections} } ) {
+                say( "Closing connection: [$key] ..." );
+                my $connection = $self->{globals}->{user_connections}->{ $key };
+                eval { $connection->disconnect(); };
+            }
+            
             if ( $self->{glbobals}->{self}->{flatpak} ) {
                 say( "Killing any tail processes ..." );
                 system( "killall tail" );
             }
-
+            
             Gtk3::main_quit();
             
         } elsif ( @remaining_windows == 1 ) {
-
+            
             # If there's only 1 window remaining ... make sure it's not hidden, or there will be no
             # way to unhide it. We sometimes hide windows ( eg we open the main ETL window, then hide it, in some cases )
             
             my $window = $self->{globals}->{windows}->{ $remaining_windows[0] };
-            $window->show();
 
+            if ( ref $window eq 'window::gui_logs' ) {
+                $self->close_all_windows();
+            } else {
+                $window->show();
+            }
+            
         }
         
     }
@@ -1169,6 +1213,7 @@ sub full_restart {
     $self->close_all_windows();
     
     exec( 'perl'
+        , '-I' , '/app/smart_gui'
         , $self->{globals}->{self}->{path}
         , $self->{globals}->{self}->{command_line_args}
     );
@@ -1267,11 +1312,6 @@ sub manage_widget_value {
     
     my $value = $self->restore_widget_value( $widget_name );
     
-    if ( $value eq '' && $default_value ) {
-        $value = $default_value;
-        $self->set_widget_value( $widget_name, $value );
-    }
-    
     my $widget = $self->{builder}->get_object( $widget_name );
     
     my $signal_name;
@@ -1288,7 +1328,12 @@ sub manage_widget_value {
     }
     
     $widget->signal_connect( $signal_name  => sub { print "$widget_name changing ..."; $self->remember_widget_value( $widget_name ); return FALSE; } );
-    
+
+    if ( ( ! defined $value || $value eq '' ) && $default_value ) {
+        $value = $default_value;
+        $self->set_widget_value( $widget_name, $value );
+    }
+
     return $value;
     
 }

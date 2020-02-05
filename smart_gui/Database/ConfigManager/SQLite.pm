@@ -42,6 +42,10 @@ sub new {
     $self->set_environment_variables();
     $self->manage_odbc_inst_ini();
 
+    if ( $self->simpleGet( 'window::configuration:autostart_postgres_cluster' ) ) {
+        $self->start_postgres_cluster();
+    }
+
     $self->{db_connection_cache} = {};
     
     return $self;
@@ -291,12 +295,12 @@ sub get_db_connection {
 }
 
 sub manage_odbc_inst_ini {
-
+    
     my $self = shift;
-
+    
     my $enable_odbcini_management_record = $self->simpleGet( "window::configuration:enable_odbcinst_ini_management" );
     my $odbcini_contents;
-
+    
     if ( $enable_odbcini_management_record ) {
         $odbcini_contents = $self->simpleGet( "window::configuration:odbcinst_ini_contents" );
         if ( $odbcini_contents ) {
@@ -316,15 +320,52 @@ sub manage_odbc_inst_ini {
             warn( "odbcinst.ini management enabled, but no file contents found!" );
         }
     }
-
+    
     if ( $self->{globals}->{self}->{flatpak} && ! ( $enable_odbcini_management_record && $odbcini_contents ) ) {
         say( "Legacy hard-coded odbcinst.ini handling: copying /app/etc/odbcinst.ini to ~/.odbcinst.ini" );
         copy( "/app/etc/odbcinst.ini", $ENV{"HOME"} . "/.odbcinst.ini" )
             || die( "Copy failed!\n" . $! );
     }
-
+    
     print "\n";
     
+}
+
+sub start_postgres_cluster {
+
+    my $self = shift;
+
+    say( "In Database::ConfigManager::SQLite::start_postgres_cluster ..." );
+
+    my $pg_base = $self->simpleGet( 'window::configuration:PG_BASEDIR' );
+
+    my $pid_file = $pg_base . "/postmaster.pid";
+
+    if ( ! -e $pid_file ) {
+        say( "No postmaster.pid file detected ... attempting to start cluster ..." );
+        my $pg_ctl_output = `pg_ctl -D $pg_base -l $pg_base/pg_log.txt start`;
+        say( "pg_ctl output:\n" . $pg_ctl_output );
+        return $pg_ctl_output;
+    } else {
+        return "Postgres was already running ( File [$pid_file] exists )";
+    }
+
+}
+
+sub stop_postgres_cluster {
+
+    my $self = shift;
+
+    say( "In Database::ConfigManager::SQLite::stop_postgres_cluster ..." );
+
+    my $pg_base = $self->simpleGet( 'window::configuration:PG_BASEDIR' );
+
+    my $pg_ctl_output = `pg_ctl -D $pg_base stop`;
+
+    say( "pg_ctl output:\n" . $pg_ctl_output );
+
+    return $pg_ctl_output;
+
 }
 
 1;

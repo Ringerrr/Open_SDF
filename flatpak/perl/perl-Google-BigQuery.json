@@ -1,11 +1,12 @@
 {
-    "name": "perl-Text-CSV-XS",
+    "name": "perl-Google-BigQuery",
     "cleanup": ["/bin"],
     "no-autogen": true,
+    "buildsystem": "simple",
     "sources": [
         {
             "type": "git",
-            "url": "https://github.com/Tux/Text-CSV_XS.git"
+            "url": "https://github.com/dankasak/Google-BigQuery.git"
         },
         {
             "type": "file",
@@ -13,7 +14,9 @@
             "dest-filename": "Makefile"
         }
     ],
-    "post-install": [
-        "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Text/CSV_XS/CSV_XS.so"
+    "build-commands": [
+        "perl Build.PL"
+      , "./Build"
+      , "./Build install"
     ]
 }

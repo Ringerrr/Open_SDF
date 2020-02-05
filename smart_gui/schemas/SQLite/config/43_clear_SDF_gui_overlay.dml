@@ -1,0 +1,5 @@
+delete from gui_overlays
+where
+    OverlayName = 'SDF_commercial'
+;
+

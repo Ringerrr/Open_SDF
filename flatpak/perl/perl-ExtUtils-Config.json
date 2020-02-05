@@ -1,0 +1,17 @@
+{
+    "name": "perl-ExtUtils-Config",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/L/LE/LEONT/ExtUtils-Config-0.008.tar.gz",
+            "sha256": "ae5104f634650dce8a79b7ed13fb59d67a39c213a6776cfdaa3ee749e62f1a8c"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

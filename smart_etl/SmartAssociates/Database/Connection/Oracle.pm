@@ -23,6 +23,14 @@ sub new {
     
 }
 
+sub default_port {
+
+    my $self = shift;
+
+    return 1521;
+
+}
+
 sub build_connection_string {
     
     my ( $self, $auth_hash ) = @_;

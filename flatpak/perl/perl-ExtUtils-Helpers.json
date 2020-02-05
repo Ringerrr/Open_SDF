@@ -1,0 +1,17 @@
+{
+    "name": "perl-ExtUtils-Helpers",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/L/LE/LEONT/ExtUtils-Helpers-0.026.tar.gz",
+            "sha256": "de901b6790a4557cf4ec908149e035783b125bf115eb9640feb1bc1c24c33416"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

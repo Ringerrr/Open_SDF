@@ -64,6 +64,29 @@ sub on_SDF_DB_PREFIX_save_clicked {
     $ENV{'SDF_DB_PREFIX'} = $sdf_db_prefix;
     $self->{globals}->{CONTROL_DB_NAME} = $sdf_db_prefix . "_CONTROL";
     $self->{globals}->{LOG_DB_NAME}     = $sdf_db_prefix . "_LOG";
+
+    # We also create the 'SDF_config' ( SQLite ) connection at this time ...
+    my $config_window = $self->open_window( 'window::configuration', $self->{globals} );
+
+    $config_window->{connections_list}->select_rows(
+        {
+            column_no   => $config_window->{connections_list}->column_from_sql_name( "ConnectionName" )
+          , operator    => "eq"
+          , value       => 'SDF_config'
+        }
+    );
+
+    if ( $config_window->{connections}->get_widget_value( "ConnectionName" ) ne 'SDF_config' ) {
+        $config_window->{connections}->insert();
+    }
+
+    my $sqlite_path = $self->{globals}->{paths}->{profile} . "/config.db";
+
+    $config_window->{connections}->set_widget_value( "ConnectionName", "SDF_config" );
+    $config_window->{connections}->set_widget_value( "DatabaseType", "SQLite" );
+    $config_window->{connections}->set_widget_value( "Host", $sqlite_path );
+    $config_window->{connections}->apply();
+    $config_window->close_window();
     
 }
 
@@ -82,22 +105,20 @@ sub on_Configure_METADATA_clicked {
     );
     
     if ( $config_window->{connections}->get_widget_value( "ConnectionName" ) ne 'METADATA' ) {
-    
         $config_window->{connections}->insert();
         $config_window->{connections}->set_widget_value( "ConnectionName", "METADATA" );
         $config_window->{connections}->set_widget_value( "DatabaseType", "Postgres" );
-        
     }
+
 }
 
-sub on_Open_Overlays_clicked {
-    
+sub on_Manage_Postgres_clicked {
+
     my $self = shift;
-    
+
     my $config_window = $self->open_window( 'window::configuration', $self->{globals} );
-    
-    # $config_window->{builder}->get_object( "configuration_notebook" )->set_current_page( 3 );
-    $config_window->{main_stack}->set_visible_child_name( 'overlays' );
+
+    $config_window->{main_stack}->set_visible_child_name( 'postgres_management' );
 
 }
 
@@ -112,12 +133,38 @@ sub on_FirstRunComplete_clicked {
     
 }
 
-sub on_Open_ReleaseManager_clicked {
-    
+sub on_DefaultConfig_clicked {
+
     my $self = shift;
-    
-    my $config_window = $self->open_window( 'window::release_manager', $self->{globals}, { apply_all => TRUE } );
-    
+
+    $self->dialog(
+        {
+            title   => "Preparing ..."
+          , type    => "info"
+          , text    => "SDF will now generate a default configuration for you. This will take about 15 seconds, and you will receive another dialog box when it's complete."
+        }
+    );
+
+    $self->on_SDF_DB_PREFIX_save_clicked();
+
+    my $config_window = $self->open_window( 'window::configuration', $self->{globals} );
+    $config_window->{main_stack}->set_visible_child_name( 'postgres_management' );
+    $config_window->on_Initialize_Postgres_Cluster_clicked();
+    $config_window->close_window();
+
+    $self->on_FirstRunComplete_clicked();
+
+    $self->dialog(
+        {
+            title   => "Done"
+          , type    => "info"
+          , text    => "A default configuration has been generated. A full restart will now occur. Note that this next application startup"
+                     . " will be slow, as SDF has to import all of its metadata that drives the application. Please be patient ..."
+        }
+    );
+
+    $self->full_restart();
+
 }
 
 sub on_1st_run_wizard_destroy {

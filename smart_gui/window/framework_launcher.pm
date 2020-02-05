@@ -94,7 +94,7 @@ sub on_Execute_clicked {
     my $execute_on_remote_host      = $self->{builder}->get_object( 'ExecuteOnRemoteHost' )->get_active;
     my $remote_host                 = $self->{builder}->get_object( 'RemoteHost' )->get_text;
     my $remote_username             = $self->{builder}->get_object( 'RemoteUsername' )->get_text;
-    
+
     my @args;
     
     my ( $app_path, $app_name );
@@ -106,10 +106,23 @@ sub on_Execute_clicked {
     
     $processing_group_str ="--processing-group=$processing_group_name";
     
-    if ( $custom_args ) {
-        $custom_args =~ s/\\/\\\\/g; # escape escapes
-        $custom_args =~ s/"/\\"/g;   # escape quotes
-        $custom_args =~ s/,/\\,/g;   # escape commas
+    if ( defined $custom_args ) {
+        my ( $leading_args , $json_args );
+        if ( $custom_args =~ /(.*)\s*(--args=.*)/ ) {
+            ( $leading_args , $json_args ) = ( $1 , $2 );
+            $leading_args =~ s/\s*$//;    # strip trailing spaces
+            $leading_args =~ s/\\/\\\\/g; # escape escapes
+            $leading_args =~ s/"/\\"/g;   # escape quotes
+            $leading_args =~ s/,/\\,/g;   # escape commas
+            $leading_args =~ s/\s/\\ /g;  # escape spaces
+            $json_args    =~ s/\\/\\\\/g; # escape escapes
+            $json_args    =~ s/"/\\"/g;   # escape quotes
+            $json_args    =~ s/,/\\,/g;   # escape commas
+            $json_args    =~ s/\s/\\ /g;  # escape spaces
+            $custom_args  = $leading_args . " " . $json_args;
+        } else {
+            warn "Failed to pass custom args: $custom_args";
+        }
         $processing_group_str .= " $custom_args";
     }
 

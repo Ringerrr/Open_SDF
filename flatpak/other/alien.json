@@ -1,0 +1,17 @@
+{
+    "name": "alien",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://fossies.org/linux/misc/alien_8.95.tar.gz",
+            "sha256": "09bfc1d7a7074b709ff13f5f1759b54586a99f54bd043f80f3bd2d2e577cf81f"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

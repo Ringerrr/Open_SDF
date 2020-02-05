@@ -2,7 +2,7 @@
 {
     "app-id": "biz.smartassociates.open.sdf",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.30",
+    "runtime-version": "3.34",
     "sdk": "org.gnome.Sdk",
     "command": "/app/launch_flatpak.sh",
     "rename-icon": "open.sdf",
@@ -111,6 +111,13 @@
         "perl/perl-Try-Tiny.json",
         "perl/perl-HTML-Form.json",
         "perl/perl-HTML-Tagset.json",
+        "perl/perl-ExtUtils-Config.json",
+        "perl/perl-ExtUtils-Helpers.json",
+        "perl/perl-ExtUtils-InstallPaths.json",
+        "perl/perl-Module-Build-Tiny.json",
+        "perl/perl-Class-Load.json",
+        "perl/perl-Google-BigQuery.json",
+        "other/alien.json",
 
         {
             "name": "sdf",

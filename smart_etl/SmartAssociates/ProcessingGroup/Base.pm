@@ -289,6 +289,12 @@ sub complete {
     my $job = $self->globals->JOB;
     $job->field( SmartAssociates::Database::Item::Job::Base::FLD_STATUS, SmartAssociates::Database::Item::Job::Base::STATUS_COMPLETE );
     $job->update();
+
+    foreach my $key ( keys %{ $self->[ $IDX_TARGET_DATABASES ] } ) {
+        $self->log->info( "Disconnecting from target database: [$key] ..." );
+        my $connection = $self->[ $IDX_TARGET_DATABASES ]->{ $key };
+        eval { $connection->disconnect(); };
+    }
     
 }
 

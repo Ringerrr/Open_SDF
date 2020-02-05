@@ -5,10 +5,10 @@ yum update
 yum install flatpak
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.gnome.Platform//3.32
+flatpak install flathub org.gnome.Platform//3.34
 
 # For the SDK, required for building:
-flatpak install flathub org.gnome.Sdk/x86_64/3.32
+flatpak install flathub org.gnome.Sdk/x86_64/3.34
 
 # Install SDF:
-flatpak install --from https://tesla.duckdns.org/SmartDataFramework/open.sdf-1.0.flatpakrepo
+flatpak install --from https://tesla.duckdns.org/SmartDataFramework/sdf-1.0.flatpakrepo

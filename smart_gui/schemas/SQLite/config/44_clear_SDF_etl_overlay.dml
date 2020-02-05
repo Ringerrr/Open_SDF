@@ -1,0 +1,5 @@
+delete from etl_overlays
+where
+    OverlayName = 'SFD_commercial'
+;
+

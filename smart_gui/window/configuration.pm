@@ -9,6 +9,8 @@ use JSON;
 
 use Glib qw( TRUE FALSE );
 
+use window::configuration::Connection;
+
 use Data::Dumper;
 
 sub new {
@@ -26,9 +28,12 @@ sub new {
     
     $self->{builder}->add_objects_from_file(
         $self->{options}->{builder_path}
+      , "ConnectTimeoutAdjustment"
       , "main"
     );
-    
+
+    $self->maximize();
+
     #$self->kick_gtk;
 
     # Stack switcher
@@ -110,7 +115,10 @@ sub new {
           , recordset_tools_box => $self->{builder}->get_object( 'connection_tools_box' )
           , on_changed          => sub { $self->on_connections_changed( @_ ) }
           , before_apply        => sub { print "applying ...\n" }
-          , on_current          => sub { $self->{builder}->get_object( 'Password' )->set_visibility( FALSE ); }
+          , on_current          => sub {
+                                            $self->{builder}->get_object( 'Password' )->set_visibility( FALSE );
+                                            $self->on_DatabaseType_changed();
+                                       }
           , on_apply            => sub { $self->{connections_list}->query }
           , auto_tools_box      => 1
         }
@@ -243,6 +251,21 @@ sub new {
           , auto_tools_box          => TRUE
           , on_row_select           => sub { $self->refresh_configured_odbc_driver_options( @_ ) }
           , on_apply                => sub { $self->on_apply_odbc_driver( @_ ) }
+          , recordset_tool_items    => [ "install" , "uninstall" ]
+          , recordset_extra_tools   => {
+                install => {
+                         type        => 'button'
+                       , markup      => "<span color='blue'>install ...</span>"
+                       , icon_name   => 'gtk-add'
+                       , coderef     => sub { $self->install_odbc_driver() }
+                }
+              , uninstall => {
+                         type        => 'button'
+                       , markup      => "<span color='red'>uninstall</span>"
+                       , icon_name   => 'gtk-delete'
+                       , coderef     => sub { $self->delete_odbc_driver() }
+                }
+            }
         }
     );
 
@@ -465,6 +488,11 @@ sub new {
     $self->manage_widget_value( "enable_odbcinst_ini_management" , FALSE );
     $self->manage_widget_value( "odbcinst_ini_contents" );
 
+    $self->manage_widget_value( "autostart_postgres_cluster" , FALSE );
+
+    my $defaut_pg_basedir = $ENV{"HOME"} . "/SDF_persisted/postgres";
+    $self->manage_widget_value( "PG_BASEDIR" , $defaut_pg_basedir );
+
     return $self;
     
 }
@@ -485,19 +513,60 @@ sub on_configured_option_select {
 
 }
 
-sub browse_for_driver {
+sub install_odbc_driver {
 
     my $self = shift;
 
-    my $path = $self->file_chooser(
+    my $all_supported_odbc_drivers = $self->fetch_all_supported_odbc_drivers(); # TODO: filter out drivers already installed
+
+    my $odbc_driver_name = $self->dialog(
         {
-            title       => "Locate the vendor ODBC driver"
-          , path        => $ENV{HOME} . "/SDF_persisted"
-          , type        => "file"
+            title       => "Select a driver type to install"
+          , type        => "options"
+          , orientation => "vertical"
+          , options     => $all_supported_odbc_drivers
+          , text        => "The below is a list of supported drivers. Select the type you'd like to install."
         }
     );
 
-    $self->{configured_odbc_driver_options}->set_column_value( "OptionValue" , $path );
+    if ( $odbc_driver_name ) {
+
+        my $installer = window::configuration::Connection::generate( $self->{globals} , $odbc_driver_name );
+        my $args_hash = $installer->install();
+        $self->{configured_odbc_drivers}->insert();
+        $self->{configured_odbc_drivers}->set_column_value( "Driver" , $odbc_driver_name );
+        $self->{configured_odbc_drivers}->apply();
+        foreach my $key ( keys %{$args_hash} ) {
+            $self->{configured_odbc_driver_options}->upsert_key(       'Option' , $key );
+            $self->{configured_odbc_driver_options}->set_column_value( $self->{configured_odbc_driver_options}->column_name_to_sql_name( 'Value' )  , $args_hash->{ $key } );
+        }
+        $self->{configured_odbc_driver_options}->apply();
+    }
+
+    return TRUE;
+
+}
+
+sub delete_odbc_driver {
+
+    my $self = shift;
+
+    $self->{configured_odbc_drivers}->delete();
+    $self->{configured_odbc_drivers}->apply();
+
+}
+
+sub on_ResetODBCDriverList_clicked {
+
+    my $self = shift;
+
+    $self->{globals}->{local_db}->do( "delete from odbc_drivers" );
+    
+    my $all_supported_odbc_drivers = $self->fetch_all_supported_odbc_drivers();
+#    foreach my $driver ( qw | Teradata::ODBC Snowflake SQLServer Netezza Hive DB2::ODBC Redshift | ) {
+    foreach my $driver ( @{$all_supported_odbc_drivers} ) {
+        $self->{globals}->{local_db}->do( "insert into odbc_drivers ( Driver ) values ( ? )" , [ $driver ] );
+    }
 
 }
 
@@ -563,37 +632,41 @@ sub fetch_all_supported_odbc_drivers {
 
     foreach my $driver_class ( @{$supported_drivers} ) {
 
-        my $connection = Database::Connection::generate(
-            $self->{globals}
-          , {
-                DatabaseType => $driver_class
+        eval { # In the 1st-run situation, loading commercial DB drivers can fail
+            my $connection = Database::Connection::generate(
+                $self->{globals}
+                  , {
+                        DatabaseType => $driver_class
+                    }
+                  , 1 # Don't connect
+            );
+            if ( $connection->has_odbc_driver() ) {
+                push @return , $driver_class;
+                # my $default_options = $self->{globals}->sdf_connection( 'CONTROL' )->select(
+                #     "select * from odbc_driver_options"
+                # );
+                #
+                # if ( $connection->can( 'odbc_config_options' ) ) {
+                #
+                #     my @odbc_options = $connection->odbc_config_options();
+                #
+                #     foreach my $option ( @odbc_options ) {
+                #
+                #         $self->{globals}->{local_db}->do(
+                #             "insert into odbc_driver_options ( Driver , OptionName , OptionValue , Help , Browse ) values ( ? , ? , ? , ? , ? )"
+                #             , [ $driver_class , $option->{OptionName} , $option->{OptionValue} , $option->{Help} , $option->{Browse} ]
+                #         );
+                #
+                #     }
+                #
+                # }
             }
-          , 1 # Don't connect
-        );
+        };
 
-        if ( $connection->has_odbc_driver() ) {
+        my $err = $@;
 
-            push @return , $driver_class;
-
-            # my $default_options = $self->{globals}->sdf_connection( 'CONTROL' )->select(
-            #     "select * from odbc_driver_options"
-            # );
-            #
-            # if ( $connection->can( 'odbc_config_options' ) ) {
-            #
-            #     my @odbc_options = $connection->odbc_config_options();
-            #
-            #     foreach my $option ( @odbc_options ) {
-            #
-            #         $self->{globals}->{local_db}->do(
-            #             "insert into odbc_driver_options ( Driver , OptionName , OptionValue , Help , Browse ) values ( ? , ? , ? , ? , ? )"
-            #             , [ $driver_class , $option->{OptionName} , $option->{OptionValue} , $option->{Help} , $option->{Browse} ]
-            #         );
-            #
-            #     }
-            #
-            # }
-
+        if ( $err ) {
+            warn "Failed to load $driver_class ... assuming we're in a 1st-run scenario. Error captured:\n$err"
         }
 
     }
@@ -917,7 +990,8 @@ sub get_auth_hash {
     my $self = shift;
     
     my $auth_hash = {
-        Username            => $self->{connections}->get_widget_value( "Username" )
+        ConnectionName      => $self->{connections}->get_widget_value( "ConnectionName" )
+      , Username            => $self->{connections}->get_widget_value( "Username" )
       , Password            => $self->{connections}->get_widget_value( "Password" )
       , Host                => $self->{connections}->get_widget_value( "Host" )
       , Port                => $self->{connections}->get_widget_value( "Port" )
@@ -987,6 +1061,11 @@ sub test_connection {
     my $dbh = Database::Connection::generate(
         $self->{globals}
       , $auth_hash
+      , undef
+      , undef
+      , undef
+      , undef
+      , 1 # dont_cache
     );
     
     if ( $dbh ) {
@@ -1000,6 +1079,8 @@ sub test_connection {
         );
         
     }
+
+    return TRUE;
     
 }
 
@@ -1024,7 +1105,7 @@ sub on_DatabaseType_changed {
     foreach my $key ( keys %{$connection_label_map} ) {
         my $value = $connection_label_map->{$key};
         if ( $value ne '' ) {
-            $self->{builder}->get_object( $key . '_lbl' )->set_text( $connection_label_map->{$key} );
+            $self->{builder}->get_object( $key . '_lbl' )->set_markup( "<b>" . $connection_label_map->{$key} . "</b>" );
             $self->{builder}->get_object( $key . '_frame' )->set_visible( 1 );
         } else {
             $self->{builder}->get_object( $key . '_frame' )->set_visible( 0 );
@@ -1143,15 +1224,17 @@ sub on_CreateMetadataDBs_clicked {
         $dbh->do( 'create database "' . $self->{globals}->{LOG_DB_NAME} . '"' );
         
     }
-    
-    $self->dialog(
-        {
-            title       => "Done"
-          , type        => "info"
-          , text        => "Done executing 'create database' commands ..."
-        }
-    );
-    
+
+    if ( ! exists $self->{_suppress_dialog} ) {
+        $self->dialog(
+            {
+                title       => "Done"
+              , type        => "info"
+              , text        => "Done executing 'create database' commands ..."
+            }
+        );
+    }
+
 }
 
 sub on_MaskUnmask_clicked {
@@ -1186,6 +1269,65 @@ sub setup_odbc_driver_combo {
 
     $widget->set_model( $model );
     $widget->set_entry_text_column( 0 );
+
+}
+
+sub on_Initialize_Postgres_Cluster_clicked {
+
+    my $self = shift;
+
+    my $basedir = $self->get_widget_value( 'PG_BASEDIR' );
+    my $init_cmd_output = `initdb -D $basedir`;
+    $self->set_widget_value( 'Postgres_Logs' , $init_cmd_output );
+
+    $self->set_widget_value( 'autostart_postgres_cluster' , TRUE );
+
+    my $output = $self->{globals}->{config_manager}->start_postgres_cluster();
+
+    $self->set_widget_value( 'Postgres_Logs' , $init_cmd_output . "\n" . $output );
+
+    $self->{connections_list}->select_rows(
+        {
+            column_no   => $self->{connections_list}->column_from_sql_name( "ConnectionName" )
+          , operator    => "eq"
+          , value       => 'METADATA'
+        }
+    );
+
+    if ( $self->{connections}->get_widget_value( "ConnectionName" ) ne 'METADATA' ) {
+        $self->{connections}->insert();
+    }
+
+    my $username = getpwuid($<);
+
+    $self->{connections}->set_widget_value( "ConnectionName", "METADATA" );
+    $self->{connections}->set_widget_value( "DatabaseType", "Postgres" );
+    $self->{connections}->set_widget_value( "Host" , "localhost" );
+    $self->{connections}->set_widget_value( "Username" , $username );
+    $self->{connections}->set_widget_value( "Password" , $username ); # Not used, but whatever
+    $self->{connections}->apply();
+
+    $self->{_suppress_dialog} = TRUE;
+    $self->on_CreateMetadataDBs_clicked();
+    delete $self->{_suppress_dialog};
+
+}
+
+sub on_Start_Postgres_Cluster_clicked {
+
+    my $self = shift;
+
+    my $output = $self->{globals}->{config_manager}->start_postgres_cluster();
+    $self->set_widget_value( 'Postgres_Logs' , $output );
+
+}
+
+sub on_Stop_Postgres_Cluster_clicked {
+
+    my $self = shift;
+
+    my $output = $self->{globals}->{config_manager}->stop_postgres_cluster();
+    $self->set_widget_value( 'Postgres_Logs' , $output );
 
 }
 

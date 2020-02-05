@@ -274,15 +274,35 @@ sub encrypt_expression {
     
 }
 
+sub POSTGRES_8_X_LOAD_REMOTE {
+
+    my ( $self, $template_config_class ) = @_;
+
+    return $self->POSTGRES_LOAD_REMOTE( $template_config_class );
+
+}
+
 sub POSTGRES_9_X_LOAD_REMOTE {
+
+    my ( $self, $template_config_class ) = @_;
+
+    return $self->POSTGRES_LOAD_REMOTE( $template_config_class );
+
+}
+
+sub POSTGRES_LOAD_REMOTE { # the SQL itself is different, but the custom stuff we do works for both 8_x and 9_x style COPY commands ...
 
     my ( $self, $template_config_class ) = @_;
 
     my $file_path           = $template_config_class->resolve_parameter( '#P_FILE_NAME#' )               || $self->log->fatal( "Missing #P_FILE_NAME#" );
 
+    $self->log->debug( "POSTGRES_LOAD_REMOTE opening path: [$file_path]" );
+
     open my $csv_file, "<$file_path"
         || $self->log->fatal( "Couldn't open file [$file_path]\n" . $! );
 
+    $self->log->debug( " ... path opened ..." );
+    
     my $template_text               = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
 
     my $dbh     = $template_config_class->target_database->dbh;

@@ -28,13 +28,23 @@ sub new {
     if ( ! $self ) {
         return undef;
     }
-
+    
     if ( $self->{connection} ) {
-        my $version_aoh = $self->select( "select current_setting('server_version_num') as version_no" );
-        $self->{server_version} = $$version_aoh[0]->{VERSION_NO};
+        $self->fetch_server_version();
     }
-
+    
     return $self;
+    
+}
+
+sub fetch_server_version {
+    
+    my $self = shift;
+    
+    my $version_aoh = $self->select( "select current_setting('server_version_num') as version_no" );
+    $self->{server_version} = $$version_aoh[0]->{VERSION_NO};
+    
+    return $self->{server_version};
     
 }
 
@@ -82,25 +92,29 @@ sub connect_pre {
 
 sub build_connection_string {
     
-    my ( $self, $auth_hash ) = @_;
+    my ( $self , $auth_hash , $string ) = @_;
     
-    if ( ! $auth_hash->{Database} || $auth_hash->{Database} eq '+ Add New Database' ) {
-        $auth_hash->{Database} = $self->default_database; # Postgres requires you to specify a database when connecting ...
+    if ( ! $string ) { # subclasses can build their own connection string - in this case, don't re-assemble one here ...
+    
+        if ( ! $auth_hash->{Database} || $auth_hash->{Database} eq '+ Add New Database' ) {
+            $auth_hash->{Database} = $self->default_database; # Postgres requires you to specify a database when connecting ...
+        }
+        
+        if ( ! $auth_hash->{Port} ) {
+            $auth_hash->{Port} = 5432;
+        }
+        
+        no warnings 'uninitialized';
+    
+        $string =
+            "dbi:Pg:dbname=" . $auth_hash->{Database}
+          . ";host="         . $auth_hash->{Host}
+          . ";port="         . $auth_hash->{Port};
+        
+        print "Postgres.pm assembled connection string: $string\n";
+        
     }
     
-    if ( ! $auth_hash->{Port} ) {
-        $auth_hash->{Port} = 5432;
-    }
-    
-    no warnings 'uninitialized';
-
-    my $string =
-        "dbi:Pg:dbname=" . $auth_hash->{Database}
-      . ";host="         . $auth_hash->{Host}
-      . ";port="         . $auth_hash->{Port};
-
-    print "Postgres.pm assembled connection string: $string\n";
-
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
 }
@@ -175,7 +189,12 @@ sub _db_connection {
         
         $auth_hash{Database} = $database;
         
-        $connection = Database::Connection::Postgres->new(
+#        $connection = Database::Connection::Postgres->new(
+#            $self->{globals}
+#          , \%auth_hash
+#        );
+        
+        $connection = Database::Connection::generate(
             $self->{globals}
           , \%auth_hash
         );
