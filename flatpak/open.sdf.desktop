@@ -3,6 +3,6 @@ Name=Smart Data Framework
 Comment=Smart Associates SDF and DB utilities
 Exec=/app/launch_flatpak.sh
 Icon=open.sdf
-Terminal=true
+Terminal=false
 Type=Application
 Categories=X-Programming,X-ETL,X-Databases;

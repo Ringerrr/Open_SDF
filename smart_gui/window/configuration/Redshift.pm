@@ -53,8 +53,8 @@ sub do_installation {
         $arch->list_reset(); # Reset Iterator
         my $tar_tmp_dir = $arch->tardir();
         my $driver_toplevel = $tar_tmp_dir . "/opt/amazon/redshiftodbc";
-        my $driver_target_path = $ENV{'HOME'} . "/SDF_persisted/.drivers/";
-        rmtree( $driver_target_path . "redshiftodbc" );
+        my $driver_target_path = $ENV{'HOME'} . "/SDF_persisted/.drivers";
+        rmtree( $driver_target_path . "/redshiftodbc" );
         my $move_output = `mv $driver_toplevel $driver_target_path/redshiftodbc`;
         say( $move_output );
 

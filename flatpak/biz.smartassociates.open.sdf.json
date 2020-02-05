@@ -117,6 +117,12 @@
         "perl/perl-Module-Build-Tiny.json",
         "perl/perl-Class-Load.json",
         "perl/perl-Google-BigQuery.json",
+        "perl/perl-File-Which.json",
+        "perl/perl-IPC-Run.json",
+        "perl/perl-IPC-Run3.json",
+        "perl/perl-Archive-Tar-Wrapper.json",
+        "perl/perl-Log-Log4perl.json",
+        "other/binutils.json",
         "other/alien.json",
 
         {

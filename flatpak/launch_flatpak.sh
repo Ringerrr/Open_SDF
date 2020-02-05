@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd /app/smart_gui
-perl -I . main.pl --flatpak --no-redirect
+perl -I . main.pl --flatpak
 

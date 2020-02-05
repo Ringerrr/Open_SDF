@@ -1,6 +1,5 @@
 {
     "name": "alien",
-    "cleanup": ["/bin"],
     "no-autogen": true,
     "sources": [
         {

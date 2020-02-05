@@ -92,7 +92,14 @@ sub install {
     #  - display dialog asking for a particular driver package
     #  - run any custom commands to unpack the driver and install it
     #  - set the installed path in the SQLite DB?
-
+    
+    my @created = make_path(
+        $ENV{'HOME'} . "/SDF_persisted/.drivers"
+      , {
+            verbose     => 1
+        }
+    );
+    
     $self->dialog(
         {
             title       => "External Download Instructions"
