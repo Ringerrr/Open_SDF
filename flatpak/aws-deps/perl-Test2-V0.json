@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/E/EX/EXODIST/Test2-Suite-0.000122.tar.gz",
+         "sha256" : "83828cf440ce2a7bfc2fe48f535931e44328e39810370b04c9e947db888a7442"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Test2-V0",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "3cd0debf7b6404127d5e0bb7fb78cfef9df5e2519d3d6ad7113b59ad1da9fa1d",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Specio-0.43.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "name" : "perl-Specio",
+   "cleanup" : [
+      "/bin"
+   ]
+}

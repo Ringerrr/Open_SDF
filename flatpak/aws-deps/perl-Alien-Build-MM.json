@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Alien-Build-1.78.tar.gz",
+         "type" : "archive",
+         "sha256" : "132c71bbf4248af401a4780308ac98d98471f6efae2f4f56aea5ef3677406fc9"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Alien-Build-MM",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

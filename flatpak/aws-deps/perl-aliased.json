@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/aliased-0.34.tar.gz",
+         "type" : "archive",
+         "sha256" : "c350524507cd827fab864e5d4c2cc350b1babaa12fa95aec0ca00843fcc7deeb"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-aliased",
+   "no-autogen" : true
+}

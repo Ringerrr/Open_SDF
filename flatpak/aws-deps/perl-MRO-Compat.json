@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-MRO-Compat",
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/H/HA/HAARG/MRO-Compat-0.13.tar.gz",
+         "sha256" : "8a2c3b6ccc19328d5579d02a7d91285e2afd85d801f49d423a8eb16f323da4f8"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ]
+}

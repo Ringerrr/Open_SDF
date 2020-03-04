@@ -35,103 +35,245 @@
         "*.la", "*.a"
     ],
     "modules": [
-        "perl/perl.json",
-        "perl/perl-module-build.json",
-        "perl/perl-archive-extract.json",
-        "perl/perl-text-patch.json",
-        "perl/perl-tie-simple.json",
-        "perl/perl-gettext.json",
-        "perl/perl-file-slurp.json",
-        "perl/perl-ipc-system-simple.json",
-        "perl/perl-Compress-Raw-Bzip2.json",
-        "perl/perl-SUPER.json",
-        "perl/perl-Test-Warnings.json",
-        "perl/perl-Test-MockModule.json",
-        "perl/perl-archive-zip.json",
-        "perl/perl-DBI.json",
-        "perl/perl-Net-SFTP-Foreign.json",
-        "perl/perl-XML-Simple.json",
-        "perl/perl-ExtUtils-PkgConfig.json",
-        "perl/perl-ExtUtils-Depends.json",
-        "perl/perl-Mail-Sendmail.json",
-        "perl/perl-Glib.json",
-        "perl/perl-Glib-Object-Introspection.json",
-        "perl/perl-Cairo.json",
-        "perl/perl-Cairo-GObject.json",
-        "perl/perl-Gtk3.json",
-        "perl/perl-XML-Parser.json",
-        "perl/perl-Canary-Stability.json",
-        "perl/perl-JSON.json",
-        "perl/perl-Image-Size.json",
-        "perl/perl-PDF-API2.json",
-        "other/Gtk3-SourceView.json",
-        "perl/perl-File-Find-Rule.json",
-        "perl/perl-Gtk3-SourceView.json",
-        "perl/perl-Text-CSV.json",
-        "perl/perl-Text-CSV-XS.json",
-        "perl/perl-DBD-SQLite.json",
-        "perl/perl-Gtk3-Ex-DBI.json",
-        "perl/perl-PDF-ReportWriter.json",
-        "database-support/postgres.json",
-        "perl/perl-DBD-Pg.json",
-        "database-support/mysql.json",
-        "perl/perl-Devel-CheckLib.json",
-        "perl/perl-DBD-MySQL.json",
-        "perl/perl-Text-Glob.json",
-        "perl/perl-Number-Compare.json",
-        "database-support/unixodbc.json",
-        "database-support/freetds.json",
-        "perl/perl-DBD-ODBC.json",
-        "other/openssh.json",
-        "perl/perl-Net-OpenSSH.json",
-        "perl/perl-WWW-Mechanize.json",
-        "other/bash.json",
-        "perl/perl-HTTP-Server-Simple.json",
-        "perl/perl-Data-UUID.json",
-        "perl/perl-Data-GUID.json",
-        "perl/perl-Sub-Install.json",
-        "perl/perl-Sub-Exporter.json",
-        "perl/perl-Data-OptList.json",
-        "perl/perl-Params-Util.json",
-        "perl/perl-HTTP-Request.json",
-        "perl/perl-URI.json",
-        "perl/perl-CGI.json",
-        "perl/perl-HTML-Entities.json",
-        "other/openjpeg.json",
-        "other/webp-pixbuf-loader.json",
-        "other/popplerdata.json",
-        "other/poppler.json",
-        "other/djvulibre.json",
-        "other/libgxps.json",
-        "other/gspell.json",
-        "other/evince.json",
-        "perl/perl-Encode-Locale.json",
-        "perl/perl-LWP.json",
-        "perl/perl-HTTP-Date.json",
-        "perl/perl-Try-Tiny.json",
-        "perl/perl-HTML-Form.json",
-        "perl/perl-HTML-Tagset.json",
-        "perl/perl-ExtUtils-Config.json",
-        "perl/perl-ExtUtils-Helpers.json",
-        "perl/perl-ExtUtils-InstallPaths.json",
-        "perl/perl-Module-Build-Tiny.json",
-        "perl/perl-Class-Load.json",
-        "perl/perl-Google-BigQuery.json",
-        "perl/perl-File-Which.json",
-        "perl/perl-IPC-Run.json",
-        "perl/perl-IPC-Run3.json",
-        "perl/perl-Archive-Tar-Wrapper.json",
-        "perl/perl-Log-Log4perl.json",
-        "other/binutils.json",
-        "other/alien.json",
+    "perl/perl.json"
+  , "perl/perl-module-build.json"
+  , "perl/perl-archive-extract.json"
+  , "perl/perl-text-patch.json"
+  , "perl/perl-tie-simple.json"
+  , "perl/perl-gettext.json"
+  , "perl/perl-file-slurp.json"
+  , "perl/perl-ipc-system-simple.json"
+  , "perl/perl-Compress-Raw-Bzip2.json"
+  , "perl/perl-SUPER.json"
+  , "perl/perl-Test-Warnings.json"
+  , "perl/perl-Test-MockModule.json"
+  , "perl/perl-archive-zip.json"
+  , "perl/perl-DBI.json"
+  , "perl/perl-Net-SFTP-Foreign.json"
+  , "perl/perl-XML-Simple.json"
+  , "perl/perl-ExtUtils-PkgConfig.json"
+  , "perl/perl-ExtUtils-Depends.json"
+  , "perl/perl-Mail-Sendmail.json"
+  , "perl/perl-Glib.json"
+  , "perl/perl-Glib-Object-Introspection.json"
+  , "perl/perl-Cairo.json"
+  , "perl/perl-Cairo-GObject.json"
+  , "perl/perl-Gtk3.json"
+  , "perl/perl-XML-Parser.json"
+  , "perl/perl-Canary-Stability.json"
+  , "perl/perl-JSON.json"
+  , "perl/perl-Image-Size.json"
+  , "perl/perl-PDF-API2.json"
+  , "other/Gtk3-SourceView.json"
+  , "perl/perl-File-Find-Rule.json"
+  , "perl/perl-Gtk3-SourceView.json"
+  , "perl/perl-Text-CSV.json"
+  , "perl/perl-Text-CSV-XS.json"
+  , "perl/perl-DBD-SQLite.json"
+  , "perl/perl-Gtk3-Ex-DBI.json"
+  , "perl/perl-PDF-ReportWriter.json"
+  , "database-support/postgres.json"
+  , "perl/perl-DBD-Pg.json"
+  , "database-support/mysql.json"
+  , "perl/perl-Devel-CheckLib.json"
+  , "perl/perl-DBD-MySQL.json"
+  , "perl/perl-Text-Glob.json"
+  , "perl/perl-Number-Compare.json"
+  , "database-support/unixodbc.json"
+  , "database-support/freetds.json"
+  , "perl/perl-DBD-ODBC.json"
+  , "other/openssh.json"
+  , "perl/perl-Net-OpenSSH.json"
+  , "perl/perl-WWW-Mechanize.json"
+  , "other/bash.json"
+  , "perl/perl-HTTP-Server-Simple.json"
+  , "perl/perl-Data-UUID.json"
+  , "perl/perl-Data-GUID.json"
+  , "perl/perl-Sub-Install.json"
+  , "perl/perl-Sub-Exporter.json"
+  , "perl/perl-Data-OptList.json"
+  , "perl/perl-Params-Util.json"
+  , "perl/perl-HTTP-Request.json"
+  , "perl/perl-URI.json"
+  , "perl/perl-CGI.json"
+  , "perl/perl-HTML-Entities.json"
+  , "other/openjpeg.json"
+  , "other/webp-pixbuf-loader.json"
+  , "other/popplerdata.json"
+  , "other/poppler.json"
+  , "other/djvulibre.json"
+  , "other/libgxps.json"
+  , "other/gspell.json"
+  , "other/evince.json"
+  , "perl/perl-Encode-Locale.json"
+  , "perl/perl-LWP.json"
+  , "perl/perl-HTTP-Date.json"
+  , "perl/perl-Try-Tiny.json"
+  , "perl/perl-HTML-Form.json"
+  , "perl/perl-HTML-Tagset.json"
 
-        {
+
+  , "perl/perl-Google-BigQuery.json"
+  , "perl/perl-IPC-Run.json"
+  , "perl/perl-File-Which.json"
+  , "perl/perl-Archive-Tar-Wrapper.json"
+  , "perl/perl-Log-Log4perl.json"
+
+  , "aws-deps/perl-Params-Validate.json"
+  , "aws-deps/perl-AnyEvent.json"
+  , "aws-deps/perl-Carp-Clan.json"
+  , "aws-deps/perl-Mozilla-CA.json"
+  , "aws-deps/perl-Compress-Raw-Zlib.json"
+  , "aws-deps/perl-IO-Uncompress-Gunzip.json"
+  , "aws-deps/perl-Test-RequiresInternet.json"
+  , "aws-deps/perl-Net-HTTPS.json"
+  , "aws-deps/perl-IO-Socket-SSL.json"
+  , "aws-deps/perl-Module-Runtime.json"
+  , "aws-deps/perl-LWP-Protocol-https.json"
+  , "aws-deps/perl-Module-Implementation.json"
+  , "aws-deps/perl-Test-Fatal.json"
+  , "aws-deps/perl-Test-Requires.json"
+  , "aws-deps/perl-Dist-CheckConflicts.json"
+  , "aws-deps/perl-Package-Stash-XS.json"
+  , "aws-deps/perl-Package-Stash.json"
+  , "aws-deps/perl-Sub-Name.json"
+  , "aws-deps/perl-Package-DeprecationManager.json"
+  , "aws-deps/perl-Scalar-Util.json"
+  , "aws-deps/perl-Test-More.json"
+  , "aws-deps/perl-Test-Needs.json"
+  , "aws-deps/perl-Class-Load.json"
+  , "aws-deps/perl-Class-Load-XS.json"
+  , "aws-deps/perl-Sub-Exporter-Progressive.json"
+  , "aws-deps/perl-Devel-GlobalDestruction.json"
+  , "aws-deps/perl-MRO-Compat.json"
+  , "aws-deps/perl-Sub-Identify.json"
+  , "aws-deps/perl-Devel-OverloadInfo.json"
+  , "aws-deps/perl-Devel-StackTrace.json"
+  , "aws-deps/perl-Eval-Closure.json"
+  , "aws-deps/perl-Module-Runtime-Conflicts.json"
+  , "aws-deps/perl-parent.json"
+  , "aws-deps/perl-Test-Deep.json"
+  , "aws-deps/perl-CPAN-Meta-Check.json"
+  , "aws-deps/perl-File-pushd.json"
+  , "aws-deps/perl-Variable-Magic.json"
+  , "aws-deps/perl-B-Hooks-EndOfScope.json"
+  , "aws-deps/perl-namespace-clean.json"
+  , "aws-deps/perl-Test-CleanNamespaces.json"
+  , "aws-deps/perl-Moose.json"
+  , "aws-deps/perl-Path-Class.json"
+  , "aws-deps/perl-Data-Stream-Bulk-Callback.json"
+  , "aws-deps/perl-DateTime.json"
+  , "aws-deps/perl-DateTime-Format-HTTP.json"
+  , "aws-deps/perl-Digest-HMAC_SHA1.json"
+  , "aws-deps/perl-Digest-MD5-File.json"
+  , "aws-deps/perl-Exporter-Tiny.json"
+  , "aws-deps/perl-LWP-UserAgent-Determined.json"
+  , "aws-deps/perl-MIME-Type.json"
+  , "aws-deps/perl-ExtUtils-Config.json"
+  , "aws-deps/perl-ExtUtils-Helpers.json"
+  , "aws-deps/perl-ExtUtils-InstallPaths.json"
+  , "aws-deps/perl-aliased.json"
+  , "aws-deps/perl-Module-Build-Tiny.json"
+  , "aws-deps/perl-namespace-autoclean.json"
+  , "aws-deps/perl-MooseX-Role-WithOverloading.json"
+  , "aws-deps/perl-MooseX-Role-Parameterized.json"
+  , "aws-deps/perl-Net-Amazon-S3.json"
+  , "aws-deps/perl-MooseX-StrictConstructor.json"
+  , "aws-deps/perl-Date-Parse.json"
+  , "aws-deps/perl-Class-Inspector.json"
+  , "aws-deps/perl-File-ShareDir-Install.json"
+  , "aws-deps/perl-File-ShareDir.json"
+  , "aws-deps/perl-Class-Data-Inheritable.json"
+  , "aws-deps/perl-Exception-Class.json"
+  , "aws-deps/perl-Role-Tiny.json"
+  , "aws-deps/perl-Sub-Quote.json"
+  , "aws-deps/perl-Specio.json"
+  , "aws-deps/perl-Capture-Tiny.json"
+  , "aws-deps/perl-IPC-Run3.json"
+  , "aws-deps/perl-Importer.json"
+  , "aws-deps/perl-Module-Pluggable.json"
+  , "aws-deps/perl-Scope-Guard.json"
+  , "aws-deps/perl-Sub-Info.json"
+  , "aws-deps/perl-Term-Table.json"
+  , "aws-deps/perl-Test2-V0.json"
+  , "aws-deps/perl-Test2-Plugin-NoWarnings.json"
+  , "aws-deps/perl-Test-Without-Module.json"
+  , "aws-deps/perl-Params-ValidationCompiler.json"
+  , "aws-deps/perl-Class-Tiny.json"
+  , "aws-deps/perl-Path-Tiny.json"
+  , "aws-deps/perl-File-Remove.json"
+  , "aws-deps/perl-YAML-Tiny.json"
+  , "aws-deps/perl-Module-ScanDeps.json"
+  , "aws-deps/perl-inc-Module-Install.json"
+  , "aws-deps/perl-Test-utf8.json"
+  , "aws-deps/perl-Test-File.json"
+  , "aws-deps/perl-File-Copy-Recursive.json"
+  , "aws-deps/perl-Test-File-ShareDir-Dist.json"
+  , "aws-deps/perl-DateTime-Locale.json"
+  , "aws-deps/perl-Class-Singleton.json"
+  , "aws-deps/perl-DateTime-TimeZone.json"
+  , "aws-deps/perl-DateTime-Format-Strptime.json"
+  , "aws-deps/perl-DateTime-Format-Builder.json"
+  , "aws-deps/perl-List-MoreUtils-XS.json"
+  , "aws-deps/perl-List-MoreUtils.json"
+  , "aws-deps/perl-Sub-Uplevel.json"
+  , "aws-deps/perl-Test-Exception.json"
+  , "aws-deps/perl-Test-MockTime.json"
+  , "aws-deps/perl-Test-NoWarnings.json"
+  , "aws-deps/perl-DateTime-Format-Flexible.json"
+  , "aws-deps/perl-Set-Infinite.json"
+  , "aws-deps/perl-DateTime-Set.json"
+  , "aws-deps/perl-DateTime-Event-Recurrence.json"
+  , "aws-deps/perl-DateTime-Event-ICal.json"
+  , "aws-deps/perl-DateTime-Format-ICal.json"
+  , "aws-deps/perl-Clone.json"
+  , "aws-deps/perl-Module-Util.json"
+  , "aws-deps/perl-boolean.json"
+  , "aws-deps/perl-DateTime-Format-Natural.json"
+  , "aws-deps/perl-Algorithm-Diff.json"
+  , "aws-deps/perl-Text-Diff.json"
+  , "aws-deps/perl-Test-Differences.json"
+  , "aws-deps/perl-Test-Warn.json"
+  , "aws-deps/perl-Test-Most.json"
+  , "aws-deps/perl-DateTimeX-Easy.json"
+  , "aws-deps/perl-Sub-Exporter-ForMethods.json"
+  , "aws-deps/perl-MooseX-Types.json"
+  , "aws-deps/perl-MooseX-Types-DateTime.json"
+  , "aws-deps/perl-Exporter-Lite.json"
+  , "aws-deps/perl-Time-Duration.json"
+  , "aws-deps/perl-Time-Duration-Parse.json"
+  , "aws-deps/perl-MooseX-Types-DateTime-MoreCoercions.json"
+  , "aws-deps/perl-Regexp-Common.json"
+  , "aws-deps/perl-XML-SAX-Exception.json"
+  , "aws-deps/perl-XML-NamespaceSupport.json"
+  , "aws-deps/perl-XML-SAX.json"
+  , "aws-deps/perl-FFI-CheckLib.json"
+  , "aws-deps/perl-File-chdir.json"
+  , "aws-deps/perl-Alien-Build-MM.json"
+  , "aws-deps/perl-Alien-Libxml2.json"
+  , "aws-deps/perl-XML-LibXML.json"
+  , "aws-deps/perl-Ref-Util-XS.json"
+  , "aws-deps/perl-Ref-Util.json"
+  , "aws-deps/perl-Net-SSLeay.json"
+  , "aws-deps/perl-Net-Amazon-EC2.json"        
+  , "other/binutils.json"
+  , "other/alien.json"
+  , "perl/perl-Term-ReadKey.json"
+  , "google-deps/perl-Crypt-OpenSSL-PKCS12.json"
+  , "google-deps/perl-JSON-WebToken.json"
+  , "google-deps/perl-Crypt-OpenSSL-Guess.json"
+  , "google-deps/perl-Crypt-OpenSSL-Random.json"
+  , "google-deps/perl-Crypt-OpenSSL-RSA.json"
+  , "other/pigz.json"
+
+  ,     {
             "name": "sdf",
             "no-autogen": true,
             "buildsystem": "simple",
             "build-commands": [
                 "cp -R smart_etl /app",
                 "cp -R smart_gui /app",
+                "cp -R broadway_session_manager /app",
                 "cp launch_flatpak.sh /app",
                 "cp flatpak_env.sh /app",
                 "cp launch_etl.sh /app",

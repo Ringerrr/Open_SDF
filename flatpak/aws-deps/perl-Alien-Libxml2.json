@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "name" : "perl-Alien-Libxml2",
+   "sources" : [
+      {
+         "sha256" : "926e43bfcdd70bc111795b78bc41dd3a5c80f466eec5841d32aa6a497228dcba",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Alien-Libxml2-0.09.tar.gz"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ]
+}

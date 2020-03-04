@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "8b09f6539f5e9c0df0e6135031699ed4ef9eef8165fc80aefeecc817ef997c33",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/DateTime-Format-ICal-0.09.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "name" : "perl-DateTime-Format-ICal",
+   "cleanup" : [
+      "/bin"
+   ]
+}

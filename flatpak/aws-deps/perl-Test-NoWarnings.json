@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "638a57658cb119af1fe5b15e73d47c2544dcfef84af0c6b1b2e97f08202b686c",
+         "url" : "https://cpan.metacpan.org/authors/id/A/AD/ADAMK/Test-NoWarnings-1.04.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "name" : "perl-Test-NoWarnings"
+}

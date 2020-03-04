@@ -1,0 +1,18 @@
+{
+    "name": "perl-IPC-Run",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/T/TO/TODDR/IPC-Run-20180523.0.tar.gz",
+            "sha256": "3850d7edf8a4671391c6e99bb770698e1c45da55b323b31c76310913349b6c2f"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}
+

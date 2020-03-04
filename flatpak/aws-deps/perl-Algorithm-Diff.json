@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "30e84ac4b31d40b66293f7b1221331c5a50561a39d580d85004d9c1fff991751",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/T/TY/TYEMQ/Algorithm-Diff-1.1903.tar.gz"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Algorithm-Diff"
+}

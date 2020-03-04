@@ -2,7 +2,6 @@
     "name": "perl-Google-BigQuery",
     "cleanup": ["/bin"],
     "no-autogen": true,
-    "buildsystem": "simple",
     "sources": [
         {
             "type": "git",
@@ -13,10 +12,5 @@
             "path": "perl-MakefilePL-Makefile",
             "dest-filename": "Makefile"
         }
-    ],
-    "build-commands": [
-        "perl Build.PL"
-      , "./Build"
-      , "./Build install"
     ]
 }

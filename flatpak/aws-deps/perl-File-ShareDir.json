@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "name" : "perl-File-ShareDir",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/R/RE/REHSACK/File-ShareDir-1.116.tar.gz",
+         "type" : "archive",
+         "sha256" : "59d90bfdf98c4656ff4173e62954ea8cf0de66565e35d108ecd7050596cb8328"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ]
+}

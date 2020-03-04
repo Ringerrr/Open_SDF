@@ -1,0 +1,22 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-Clone",
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/G/GA/GARU/Clone-0.41.tar.gz",
+         "sha256" : "e8c056dcf4bc8889079a09412af70194a54a269689ba72edcd91291a46a51518"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Clone/Clone.so"
+   ]
+}

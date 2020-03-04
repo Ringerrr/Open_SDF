@@ -1,0 +1,19 @@
+{
+   "name" : "perl-namespace-autoclean",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/namespace-autoclean-0.28.tar.gz",
+         "sha256" : "cd410a1681add521a28805da2e138d44f0d542407b50999252a147e553c26c39"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ]
+}

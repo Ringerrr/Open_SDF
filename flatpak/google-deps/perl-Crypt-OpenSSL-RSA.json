@@ -1,0 +1,20 @@
+{
+    "name": "perl-Crypt-OpenSSL-RSA",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/T/TO/TODDR/Crypt-OpenSSL-RSA-0.31.tar.gz",
+            "sha256": "4173403ad4cf76732192099f833fbfbf3cd8104e0246b3844187ae384d2c5436"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Crypt/OpenSSL/RSA/RSA.so"
+    ]
+}

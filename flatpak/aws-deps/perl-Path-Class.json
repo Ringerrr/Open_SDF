@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Path-Class",
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "654781948602386f2cb2e4473a739f17dc6953d92aabc2498a4ca2561bc248ce",
+         "url" : "https://cpan.metacpan.org/authors/id/K/KW/KWILLIAMS/Path-Class-0.37.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

@@ -1,0 +1,20 @@
+{
+    "name": "perl-Crypt-OpenSSL-PKCS12",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/J/JO/JONASBN/Crypt-OpenSSL-PKCS12-1.2.tar.gz",
+            "sha256": "4169ee7e002f130bfeec006bd167d56c9ed898b67e650c82d65923a275670eb2"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Crypt/OpenSSL/PKCS12/PKCS12.so"
+    ]
+}

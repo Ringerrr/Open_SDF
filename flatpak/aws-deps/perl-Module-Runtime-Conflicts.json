@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "sha256" : "707cdc75038c70fe91779b888ac050f128565d3967ba96680e1b1c7cc9733875",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Module-Runtime-Conflicts-0.003.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "name" : "perl-Module-Runtime-Conflicts",
+   "cleanup" : [
+      "/bin"
+   ]
+}

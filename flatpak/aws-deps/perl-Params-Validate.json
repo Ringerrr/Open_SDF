@@ -1,0 +1,21 @@
+{
+    "name": "perl-Params-Validate",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "buildsystem": "simple",
+    "build-commands": [
+        "perl Build.PL",
+        "./Build",
+        "./Build install"
+    ],
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Params-Validate-1.29.tar.gz",
+            "sha256": "49a68dfb430bea028042479111d19068e08095e5a467e320b7ab7bde3d729733"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Params/Validate/XS/XS.so"
+    ]
+}

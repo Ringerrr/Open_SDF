@@ -30,6 +30,7 @@ flatpak build-update-repo SmartDataFramework \
 # publish repo to raptor
 #rsync -av SmartDataFramework tesla.duckdns.org:/var/www/localhost/htdocs/
 rsync -av SmartDataFramework tesla.duckdns.org:/srv/http/tesla.duckdns.org/
+#rsync -av -e "ssh -i ~/.ssh/arch.pem" SmartDataFramework arch@ec2-3-85-105-136.compute-1.amazonaws.com:~
 
 # pull from raptor into flatpak
 flatpak update biz.smartassociates.open.sdf/x86_64/1.0

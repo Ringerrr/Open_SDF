@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/R/RO/ROKR/DateTimeX-Easy-0.089.tar.gz",
+         "sha256" : "17e6d202e7ac6049523048e97bb8f195e3c79208570da1504f4313584e487a79"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "no-autogen" : true,
+   "name" : "perl-DateTimeX-Easy"
+}

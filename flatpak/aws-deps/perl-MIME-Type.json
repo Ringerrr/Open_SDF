@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/M/MA/MARKOV/MIME-Types-2.17.tar.gz",
+         "type" : "archive",
+         "sha256" : "e04ed7d42f1ff3150a303805f2689c28f80b92c511784d4641cb7f040d3e8ff6"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-MIME-Type",
+   "no-autogen" : true
+}

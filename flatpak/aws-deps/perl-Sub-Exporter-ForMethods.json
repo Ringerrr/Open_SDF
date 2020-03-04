@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-Sub-Exporter-ForMethods",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/R/RJ/RJBS/Sub-Exporter-ForMethods-0.100052.tar.gz",
+         "type" : "archive",
+         "sha256" : "421fbba4f6ffcf13c4335f2c20630d709e6fa659c07545d094dbc5a558ad3006"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

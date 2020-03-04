@@ -1,0 +1,19 @@
+{
+   "name" : "perl-MooseX-Types",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "sha256" : "9cd87b3492cbf0be9d2df9317b2adf9fc30663770e69906654bea3f41b17cb08",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/MooseX-Types-0.50.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ]
+}

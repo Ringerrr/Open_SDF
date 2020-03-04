@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "sha256" : "522cc946cf84a1776304a5737a54b8822ec9e79b264d0ba0722a70473dbfb9e7",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/LWP-Protocol-https-6.07.tar.gz"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "name" : "perl-LWP-Protocol-https",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

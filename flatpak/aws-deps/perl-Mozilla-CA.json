@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-Mozilla-CA",
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/A/AB/ABH/Mozilla-CA-20180117.tar.gz",
+         "type" : "archive",
+         "sha256" : "f2cc9fbe119f756313f321e0d9f1fac0859f8f154ac9d75b1a264c1afdf4e406"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ]
+}

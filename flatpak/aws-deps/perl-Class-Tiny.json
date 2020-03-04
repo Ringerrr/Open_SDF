@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "name" : "perl-Class-Tiny",
+   "sources" : [
+      {
+         "sha256" : "2efcbd31528be51d3022c616768558b78c6172df5f03c5dc698939f65488cb4e",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/Class-Tiny-1.006.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ]
+}

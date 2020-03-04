@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/R/RJ/RJBS/Test-Deep-1.128.tar.gz",
+         "type" : "archive",
+         "sha256" : "852d7e836fba8269b0b755082051a24a1a309d015a8b76838790af9e3760092f"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile",
+         "type" : "file"
+      }
+   ],
+   "name" : "perl-Test-Deep",
+   "no-autogen" : true
+}

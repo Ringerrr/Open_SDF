@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Set-Infinite",
+   "sources" : [
+      {
+         "sha256" : "07bc880734492de40b4a3a8b5a331762f64e69b4629029fd9a9d357b25b87e1f",
+         "url" : "https://cpan.metacpan.org/authors/id/F/FG/FGLOCK/Set-Infinite-0.65.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

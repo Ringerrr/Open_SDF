@@ -1,0 +1,22 @@
+{
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/V/VP/VPIT/Variable-Magic-0.62.tar.gz",
+         "sha256" : "3f9a18517e33f006a9c2fc4f43f01b54abfe6ff2eae7322424f31069296b615c"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-Variable-Magic",
+   "no-autogen" : true,
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Variable/Magic/Magic.so"
+   ]
+}

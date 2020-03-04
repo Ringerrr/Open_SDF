@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/M/MA/MALLEN/Net-Amazon-EC2-0.36.tar.gz",
+         "sha256" : "4e283692e7f066c2418edae9233e3b62400f9355f4d521f99515e52f7b7d72f1"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-Net-Amazon-EC2",
+   "no-autogen" : true
+}

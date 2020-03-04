@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-Devel-StackTrace",
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Devel-StackTrace-2.04.tar.gz",
+         "sha256" : "cd3c03ed547d3d42c61fa5814c98296139392e7971c092e09a431f2c9f5d6855"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ]
+}

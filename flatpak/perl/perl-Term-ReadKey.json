@@ -1,0 +1,20 @@
+{
+    "name": "perl-Term-ReadKey",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/J/JS/JSTOWE/TermReadKey-2.38.tar.gz",
+            "sha256": "5a645878dc570ac33661581fbb090ff24ebce17d43ea53fd22e105a856a47290"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Term/ReadKey/ReadKey.so"
+    ]
+}

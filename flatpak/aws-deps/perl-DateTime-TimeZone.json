@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "79fadc0f24b6b23ffb560524544d9d200902578bf9e0943b9aa8fc5077ca8b02",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/DateTime-TimeZone-2.35.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-DateTime-TimeZone"
+}

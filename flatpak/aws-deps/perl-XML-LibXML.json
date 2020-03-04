@@ -1,0 +1,22 @@
+{
+   "name" : "perl-XML-LibXML",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/S/SH/SHLOMIF/XML-LibXML-2.0201.tar.gz",
+         "sha256" : "e008700732502b3f1f0890696ec6e2dc70abf526cd710efd9ab7675cae199bc2",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/XML/LibXML/LibXML.so"
+   ]
+}

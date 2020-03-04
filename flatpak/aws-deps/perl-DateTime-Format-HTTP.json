@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/C/CK/CKRAS/DateTime-Format-HTTP-0.42.tar.gz",
+         "type" : "archive",
+         "sha256" : "d04e769df45968dfd2d1bdc647a325c6877614069762786e6f137f1f5ec3d840"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "name" : "perl-DateTime-Format-HTTP"
+}
