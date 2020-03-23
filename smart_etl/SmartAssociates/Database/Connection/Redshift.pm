@@ -33,7 +33,7 @@ sub connect_post {
     my ( $self , $auth_hash , $options_hash ) = @_;
 
     $self->{connection}->{LongReadLen} = 65535 * 1024; # 64MB
-    $self->{connection}->{LongTruncOK} = 1;
+    $self->{connection}->{LongTruncOk} = 1;
     $self->{connection}->{odbc_ignore_named_placeholders} = 1;
 
     return;
