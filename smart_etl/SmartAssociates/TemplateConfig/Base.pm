@@ -571,7 +571,7 @@ sub resolveEnvironmentParameter {
 
         } elsif (   $parameter eq '#ENV_JOB_LOG_DIR#' ) {
 
-            $value = $self->log->log_dir . "/" . $self->globals->JOB->key_value;
+            $value = $self->log->log_dir . "/" . $self->globals->JOB->key_value . "/";
 
         } elsif (   $parameter eq '#ENV_HIGH_DATE#' ) {                                   # used to indicate a record is 'open'
 

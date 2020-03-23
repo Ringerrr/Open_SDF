@@ -111,14 +111,29 @@ sub on_Execute_clicked {
         if ( $custom_args =~ /(.*)\s*(--args=.*)/ ) {
             ( $leading_args , $json_args ) = ( $1 , $2 );
             $leading_args =~ s/\s*$//;    # strip trailing spaces
-            $leading_args =~ s/\\/\\\\/g; # escape escapes
-            $leading_args =~ s/"/\\"/g;   # escape quotes
-            $leading_args =~ s/,/\\,/g;   # escape commas
-            $leading_args =~ s/\s/\\ /g;  # escape spaces
+            # Now break the leading args into an array. We want to escape spaces in job ( processing group ) names,
+            # but we *don't* want to escape the spaces between args
+            my @all_leading_args = split( "--", $leading_args );
+            foreach my $this_arg ( @all_leading_args ) {
+                next if ( ! defined $this_arg || $this_arg eq '' );
+                $this_arg =~ s/\s*$//g;   # strip trailing spaces
+                $this_arg =~ s/\\/\\\\/g; # escape escapes
+                $this_arg =~ s/"/\\"/g;   # escape quotes
+                $this_arg =~ s/,/\\,/g;   # escape commas
+                $this_arg =~ s/\s/\\ /g;  # escape spaces
+                $this_arg = "--" . $this_arg;
+            }
+            $leading_args = join( " " , @all_leading_args );
+            # $leading_args =~ s/\\/\\\\/g; # escape escapes
+            # $leading_args =~ s/"/\\"/g;   # escape quotes
+            # $leading_args =~ s/,/\\,/g;   # escape commas
+            # $leading_args =~ s/\s/\\ /g;  # escape spaces
             $json_args    =~ s/\\/\\\\/g; # escape escapes
             $json_args    =~ s/"/\\"/g;   # escape quotes
             $json_args    =~ s/,/\\,/g;   # escape commas
             $json_args    =~ s/\s/\\ /g;  # escape spaces
+            $json_args    =~ s/\(/\\\(/g; # escape (
+            $json_args    =~ s/\)/\\\)/g; # escape )
             $custom_args  = $leading_args . " " . $json_args;
         } else {
             warn "Failed to pass custom args: $custom_args";

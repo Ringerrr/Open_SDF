@@ -51,6 +51,7 @@ sub execute {
     
     # First the required ones ...
     my $filename                    = $self->resolve_parameter( '#P_FILE_NAME#' )               || $self->log->fatal( "Missing param #P_FILE_NAME#" );
+    my $max_issues                  = $self->resolve_parameter( '#P_MAX_ISSUES#' );
     my $input_eol_character         = $self->resolve_parameter( '#P_INPUT_EOL_CHARACTER#' );
     my $input_binary                = $self->resolve_parameter( '#P_INPUT_BINARY#' );
     my $quote_chararacter           = $self->resolve_parameter( '#P_QUOTE_CHARACTER#' );
@@ -302,7 +303,7 @@ sub execute {
             
         }
         
-        my ( $validated_records , $rejected_records ) = ( 0 , 0 );
+        my ( $validated_records , $rejected_records , $issues_count ) = ( 0 , 0 , 0 );
         
         while ( my $row = $csv_reader->getline( $input ) ) {
             
@@ -379,6 +380,8 @@ sub execute {
                                     . "Data Item:       [" . $data . "]\n\n$this_error";
                         
                         $issues_array->[ $column_position ]->{ $this_error_code } ++;
+                        
+                        $issues_count ++;
                         
                     }
                     
@@ -657,6 +660,13 @@ sub execute {
         
         die( $error );
         
+    }
+    
+    if ( $issues_count > $max_issues ) {
+        if ( $error ) {
+            $error .= "\n";
+        }
+        $error .= "Max issues count [$max_issues] exceeded ... detected [$issues_count] issues";
     }
     
     $self->globals->JOB->log_execution(

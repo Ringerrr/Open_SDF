@@ -172,7 +172,7 @@ sub new {
     my $self = $_[0]->SUPER::new( $_[1] );
     
     $self->[ $IDX_CONNECTION_NAME ]         = $_[2]     || $self->log->fatal( "Missing arg: connection_name" );
-    my $database                            = $_[3]     || $self->log->fatal( "Missing arg: database" );
+    my $database                            = $_[3];
     
     $self->[ $IDX_FIELDS_CACHE ]            = {};
     $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]  = {};

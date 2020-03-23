@@ -177,6 +177,8 @@ sub new {
                         , "ParamDefaultValue"
                         , "template_text_read_only"
                         , "template.template_text"
+                        , "param_editor.param_desc"
+                        , "param_editor.param_default"
     ) {
         
         my $view_buffer = Gtk3::SourceView::Buffer->new_with_language( $self->{globals}->{gtksourceview_language} );
@@ -207,7 +209,7 @@ sub new {
                                               select        => "*"
                                             , from          => "template"
             }
-          , debug                   => TRUE
+#          , debug                   => TRUE
           , widget_prefix           => "template."
           , builder                 => $self->{builder}
           , on_current              => sub { $self->on_template_current( @_ ) }
@@ -240,39 +242,53 @@ sub new {
 
     $self->pulse( "Creating Gtk3::Ex::DBI::Datasheet - {PARAM}" );
 
-    $self->{param} = Gtk3::Ex::DBI::Datasheet->new(
+    $self->{param_list} = Gtk3::Ex::DBI::Datasheet->new(
         {
             dbh                 => $control_db_connection
           , sql                 => {
-                                          select        => "template_name , param_name , param_desc , param_default"
+                                          select        => "template_name , param_name"
                                         , from          => "param"
                                         , order_by      => "param_name"
                                    }
-          , auto_incrementing       => 0
-          , fields                  => [
-            {
-                name            => "template_name"
-              , renderer        => "hidden"
-              , dont_update     => 1
-              }
-            , {
-                name            => "param_name"
-              , x_percent       => 30
-              }
-            , {
-                name            => "param_desc"
-              , x_percent       => 40
-              }
-            , {
-                name            => "param_default"
-              , x_percent       => 30
-            }
-        ]
-            , vbox                    => $self->{builder}->get_object( "param" )
-            , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
-            , before_insert           => sub { $self->before_param_insert }
-            , on_insert               => sub { $self->on_param_insert }
+          , read_only           => 1
+          , auto_incrementing   => 0
+          , fields              => [
+                                        {
+                                            name            => "template_name"
+                                          , renderer        => "hidden"
+                                          , dont_update     => 1
+                                        }
+                                      , {
+                                            name            => "param_name"
+                                          , header_markup   => "<span color='blue'><b>Parameter Name</b></span>"
+                                          , x_percent       => 100
+                                        }
+                                   ]
+            , vbox              => $self->{builder}->get_object( "param_list" )
+            , on_row_select     => sub { $self->on_param_list_row_select( @_ ) }
+            # , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
+            # , before_insert           => sub { $self->before_param_insert }
+            # , on_insert               => sub { $self->on_param_insert }
         } );
+
+    $self->{param} = Gtk3::Ex::DBI::Form->new(
+        {
+            dbh             => $control_db_connection
+          , sql             => {
+                                    select       => "*"
+                                  , from         => "param"
+                                  , where        => "0=1"
+                               }
+          , widget_prefix           => "param_editor."
+          , builder                 => $self->{builder}
+          , status_label            => "record_status"
+          , auto_apply              => TRUE
+          , before_insert           => sub { $self->before_param_insert }
+          , on_initial_changed      => sub { $self->on_param_insert }
+          , apeture                 => 1
+          , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
+        }
+    );
 
     $self->on_template_current();
 
@@ -296,7 +312,7 @@ sub new {
       , on_delete               => sub { $self->on_config_delete() }
       , before_delete           => sub { $self->before_config_delete() }
       , on_initial_changed      => sub { $self->on_config_insert() }
-      , debug                   => TRUE
+#      , debug                   => TRUE
       , apeture                 => 1
       , recordset_tools_box     => $self->{builder}->get_object( "config_recordset_tools" )
     } );
@@ -314,7 +330,7 @@ sub new {
       , widget_prefix           => "harvest_control."
       , builder                 => $self->{builder}
       , on_initial_changed      => sub { $self->on_harvest_control_insert() }
-      , debug                   => TRUE
+#      , debug                   => TRUE
       , apeture                 => 1
       , recordset_tools_box     => $self->{builder}->get_object( "harvest_control_toolsbox" )
     } );
@@ -380,7 +396,7 @@ sub new {
       , on_apply                => sub { $self->on_param_value_apply( @_ ) }
       , on_delete               => sub { $self->on_param_value_delete( @_ ) }
       , on_initial_changed      => sub { $self->on_param_value_initial_changed( @_ ) }
-      , debug                   => TRUE
+#      , debug                   => TRUE
       , recordset_tools_box     => $self->{builder}->get_object( "param_value_recordset_tools" )
       , recordset_tool_items    => [ qw ' label undo delete apply strip fullscreen' ]
       , recordset_extra_tools   => {
@@ -464,7 +480,7 @@ sub new {
       , auto_incrementing       => FALSE
       , builder                 => $self->{builder}
       , widget_prefix           => "pgf."
-      , debug                   => 1
+#      , debug                   => 1
       , recordset_tools_box     => $self->{builder}->get_object( "pgf_recordset_tools" )
       , recordset_tool_items    => [ "label" , "insert", "undo", "delete", "apply", "package", "rename", "clone" ]
       , recordset_extra_tools   => {
@@ -533,6 +549,7 @@ sub new {
             }
           , {
                 name            => "Template"
+              , header_markup   => "Seed Job"
               , x_absolute      => 80
               , renderer        => "toggle"
             }
@@ -1959,13 +1976,43 @@ sub on_template_current {
     
     my $self = shift;
     
-    $self->{param}->query(
+    $self->{param_list}->query(
         {
             where       => "template_name = ?"
           , bind_values => [ $self->{template}->get_widget_value( "template_name" ) ]
         }
     );
-    
+
+    my $model = $self->{param_list}->{treeview}->get_model;
+    my $iter = $model->get_iter_first;
+
+    if ( $iter ) {
+        $self->{param_list}->{treeview}->get_selection->select_iter( $iter );
+    } else {
+        $self->{param}->query(
+            {
+                where       => "0=1"
+              , bind_values => []
+            }
+        );
+    }
+
+}
+
+sub on_param_list_row_select {
+
+    my $self = shift;
+
+    $self->{param}->query(
+        {
+            where       => "template_name = ? and param_name = ?"
+          , bind_values => [
+                                $self->{param_list}->get_column_value( "template_name" )
+                              , $self->{param_list}->get_column_value( "param_name" )
+            ]
+        }
+    );
+
 }
 
 sub on_template_insert {
@@ -2133,7 +2180,7 @@ sub on_config_current {
         . "order by\n"
         . "    param.param_name";
     
-    print "\n\n" . $self->{config_params_list}->{sql}->{pass_through} . "\n\n";
+    # print "\n\n" . $self->{config_params_list}->{sql}->{pass_through} . "\n\n";
     
     $self->{config_params_list}->query();
     
@@ -2260,7 +2307,7 @@ sub on_processing_groups_select {
         return 0;
     }
     
-    print "filter triggered a requery ...\n";
+    # print "filter triggered a requery ...\n";
 
     $self->{processing_group_form}->query(
         {
@@ -2446,7 +2493,7 @@ sub on_param_insert {
         return FALSE;
     }
     
-    $self->{param}->set_column_value( "template_name", $template_name );
+    $self->{param}->set_widget_value( "template_name", $template_name );
     
 }
 
@@ -2464,12 +2511,12 @@ sub on_PopulateParamaters_clicked {
     # and looking for parameters in the template sql
     # We're also looking for things that are in the model that are NOT in the template sql
     
-    my $model = $self->{param}->{treeview}->get_model;
+    my $model = $self->{param_list}->{treeview}->get_model;
     my $iter = $model->get_iter_first;
     my %model_params;
     
     while ( $iter ) {
-        my $param_name = $model->get( $iter, $self->{param}->column_from_column_name( "param_name" ) );
+        my $param_name = $model->get( $iter, $self->{param_list}->column_from_column_name( "param_name" ) );
         $model_params{ $param_name } = 0;
         foreach my $param ( keys %parameters_hash ) {
             if ( $param eq $param_name ) {
@@ -2498,8 +2545,9 @@ sub on_PopulateParamaters_clicked {
                     }
                 ) eq 'yes'
             ) {
-                $self->{param}->insert;
-                $self->{param}->set_column_value( "param_name", $param );
+                $self->{param}->insert();
+                $self->{param}->set_widget_value( "param_name", $param );
+                $self->{param}->apply();
             }
         }
     }
@@ -2517,14 +2565,14 @@ sub on_PopulateParamaters_clicked {
                     }
                 ) eq 'yes'
             ) {
-                $self->{param}->select_rows(
+                $self->{param_list}->select_rows(
                     {
-                        column_no   => $self->{param}->column_from_column_name( "param_name" )
+                        column_no   => $self->{param_list}->column_from_column_name( "param_name" )
                       , operator    => "=="
                       , value       => $param
                     }
                 );
-                $self->{param}->delete;
+                $self->{param}->delete();
             }
         }
     }

@@ -105,7 +105,7 @@ sub new {
     $self->{connections}        = Gtk3::Ex::DBI::Form->new(
         {
             dbh                 => $self->{globals}->{local_db}
-          , debug               => 1
+#          , debug               => 1
           , sql                 => {
                                         select          => "*"
                                       , from            => "connections"
@@ -492,7 +492,22 @@ sub new {
 
     my $defaut_pg_basedir = $ENV{"HOME"} . "/SDF_persisted/postgres";
     $self->manage_widget_value( "PG_BASEDIR" , $defaut_pg_basedir );
-
+    
+    # Hide hacks from the SDF_commercial overlay that we don't need
+    # if we don't have the SDF_commercial overlay installed
+    my $overlays = $self->{globals}->{config_manager}->all_gui_repositories();
+    my $has_sdf_commercial_overlay;
+    foreach my $overlay ( @{$overlays} ) {
+        if ( $overlay eq 'SDF_commercial' ) {
+            $has_sdf_commercial_overlay = 1;
+        }
+    }
+    
+    if ( ! $has_sdf_commercial_overlay ) {
+        $self->{builder}->get_object( 'odbcinst_management_frame' )->hide();
+        $self->{builder}->get_object( 'reset_odbc_drivers_list_frame' )->hide();
+    }
+    
     return $self;
     
 }

@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "template_name" : "S3_PUT",
+            "repository" : "core",
+            "template_desc" : "Upload file to S3 bucket",
+            "class" : "SQL::DatabaseMethod",
+            "template_text" : "Uploading [#P_SOURCE_FILE_PATH#] to bucket: [#P_BUCKET_NAME#], key: [#P_TARGET_KEY#]"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'S3_PUT'"
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'S3_PUT'"
+      ],
+      "data" : [
+         {
+            "template_name" : "S3_PUT",
+            "param_desc" : "The name of the bucket you want to file to be uploaded to.",
+            "param_name" : "#P_BUCKET_NAME#",
+            "param_default" : null
+         },
+         {
+            "template_name" : "S3_PUT",
+            "param_name" : "#P_CONTENT_TYPE#",
+            "param_desc" : "The content type of the file, defaul is 'text/plain'",
+            "param_default" : "text/plain"
+         },
+         {
+            "param_desc" : "The path to the file you want to upload.",
+            "param_name" : "#P_SOURCE_FILE_PATH#",
+            "template_name" : "S3_PUT",
+            "param_default" : null
+         },
+         {
+            "param_default" : null,
+            "template_name" : "S3_PUT",
+            "param_desc" : "The path within the bucket you want to upload to.",
+            "param_name" : "#P_TARGET_KEY#"
+         }
+      ]
+   }
+}

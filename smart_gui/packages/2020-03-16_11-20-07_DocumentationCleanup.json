@@ -1,0 +1,32 @@
+{
+   "release" : {
+      "release_name" : "2020-03-16_11-20-07_DocumentationCleanup",
+      "package_datetime" : "2020-03-16 11:23:10.933617",
+      "repository" : "core",
+      "release_open" : 0,
+      "release_base" : null
+   },
+   "release_packages" : [
+      {
+         "object_name" : "DATACOP",
+         "release_name" : "2020-03-16_11-20-07_DocumentationCleanup",
+         "release_package" : "DATACOP.2020-03-16_11-22-26.dkasak.json",
+         "package_type" : "template",
+         "object_changed" : 1
+      },
+      {
+         "package_type" : "template",
+         "object_changed" : 1,
+         "release_name" : "2020-03-16_11-20-07_DocumentationCleanup",
+         "object_name" : "SQLSERVER_BCP_READER",
+         "release_package" : "SQLSERVER_BCP_READER.2020-03-16_11-22-14.dkasak.json"
+      },
+      {
+         "release_name" : "2020-03-16_11-20-07_DocumentationCleanup",
+         "object_name" : "SQLSERVER_BCP_WRITER",
+         "release_package" : "SQLSERVER_BCP_WRITER.2020-03-16_11-22-08.dkasak.json",
+         "package_type" : "template",
+         "object_changed" : 1
+      }
+   ]
+}

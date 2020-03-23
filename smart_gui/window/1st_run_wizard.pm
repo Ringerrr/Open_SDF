@@ -40,7 +40,8 @@ sub new {
     
     # Set flatpak-specific stuff if we've been started in flatpak mode
     if ( $self->{globals}->{self}->{flatpak} ) {
-        $self->{globals}->{config_manager}->simpleSet( 'ENV:FLATPAK', 1 );
+        $self->{globals}->{config_manager}->simpleSet( 'ENV:FLATPAK' , 1 );
+        $self->{globals}->{config_manager}->simpleSet( 'window::configuration:enable_odbcinst_ini_management' , 1 );
         # $self->{globals}->{config_manager}->simpleSet( 'ENV:ODBCINSTINI', '/app/etc/odbcinst.ini' );
     }
     
@@ -131,6 +132,17 @@ sub on_FirstRunComplete_clicked {
       , 1
     );
     
+    $self->dialog(
+        {
+            title   => "Done"
+          , type    => "info"
+          , text    => "Initial configuration complete. A full restart will now occur. Note that this next application startup"
+                     . " will be slow, as SDF has to import all of its metadata that drives the application. Please be patient ..."
+        }
+    );
+    
+    $self->full_restart();
+    
 }
 
 sub on_DefaultConfig_clicked {
@@ -153,18 +165,7 @@ sub on_DefaultConfig_clicked {
     $config_window->close_window();
 
     $self->on_FirstRunComplete_clicked();
-
-    $self->dialog(
-        {
-            title   => "Done"
-          , type    => "info"
-          , text    => "A default configuration has been generated. A full restart will now occur. Note that this next application startup"
-                     . " will be slow, as SDF has to import all of its metadata that drives the application. Please be patient ..."
-        }
-    );
-
-    $self->full_restart();
-
+    
 }
 
 sub on_1st_run_wizard_destroy {

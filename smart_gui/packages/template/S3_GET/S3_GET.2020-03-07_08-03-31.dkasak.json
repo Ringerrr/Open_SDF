@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'S3_GET'"
+      ],
+      "data" : [
+         {
+            "repository" : "core",
+            "template_name" : "S3_GET",
+            "template_desc" : "Download file from S3 bucket",
+            "class" : "SQL::DatabaseMethod",
+            "template_text" : "Downloading with the following args:\n                      key => [#P_SOURCE_KEY#]\n                in bucket => [#P_BUCKET_NAME#]\n                       to => [#P_TARGET_PATH#]\nwith directory flattening => [#P_FLATTEN_DIRECTORY#]"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'S3_GET'"
+      ],
+      "data" : [
+         {
+            "param_name" : "#P_BUCKET_NAME#",
+            "param_desc" : "The name of the bucket you want to file to be uploaded to.",
+            "template_name" : "S3_GET",
+            "param_default" : null
+         },
+         {
+            "param_default" : "0",
+            "param_name" : "#P_FLATTEN_DIRECTORY#",
+            "param_desc" : "If this is set, files will be downloaded with the directory component of the S3 key removed. Otherwise, the full directory structure will be created.",
+            "template_name" : "S3_GET"
+         },
+         {
+            "param_default" : null,
+            "template_name" : "S3_GET",
+            "param_desc" : "The key in the S3 bucket to download",
+            "param_name" : "#P_SOURCE_KEY#"
+         },
+         {
+            "param_default" : "#ENV_JOB_LOG_DIR#",
+            "param_desc" : "The directory and/or path ( ie can include filename ) to download to",
+            "param_name" : "#P_TARGET_PATH#",
+            "template_name" : "S3_GET"
+         }
+      ]
+   }
+}

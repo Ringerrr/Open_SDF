@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="gtksourceview" version="4.0"/>
@@ -94,17 +94,32 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">5</property>
                         <child>
-                          <object class="GtkLabel" id="label17">
-                            <property name="width_request">200</property>
+                          <object class="GtkExpander">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">This form includes a builder that constructs the &lt;b&gt;connection string&lt;/b&gt; below. For this to work, you should first select a &lt;b&gt;Database Type&lt;/b&gt;, which instructs the builder to use a particular driver ( included in the connection string ). Note that you can manually edit the connection string if you want to, however some functionality in the GUI and ETL framework will &lt;b&gt;only&lt;/b&gt; work with supported database types ( ie are in the &lt;b&gt;Database Type&lt;/b&gt; combo ).
+                            <property name="can_focus">True</property>
+                            <child>
+                              <object class="GtkLabel" id="label17">
+                                <property name="width_request">200</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Down the left of the screen is a list of configured connections. Select one to edit, and it will be loaded in the details section below. To add a new connection, use the 'Insert' button at the bottom of the screen.
 
-For connections that utilise an &lt;b&gt;ODBC driver&lt;/b&gt;, you will have to first configure your ODBC environment, in the next page ( &lt;b&gt;ODBC Configuration&lt;/b&gt; ). When you edit your ODBC configuration, the 'ODBC Driver' combo box on this page will be refreshed to display all configured ODBC drivers.</property>
-                            <property name="use_markup">True</property>
-                            <property name="wrap">True</property>
-                            <property name="width_chars">20</property>
-                            <property name="max_width_chars">20</property>
+For connections that utilise an &lt;b&gt;ODBC driver&lt;/b&gt;, you will have to first configure your ODBC environment, in the next page ( &lt;b&gt;ODBC Configuration&lt;/b&gt; ). When you edit your ODBC configuration, the 'ODBC Driver' combo box on this page will be refreshed to display all configured ODBC drivers.
+
+&lt;span color='blue'&gt;&lt;b&gt;Driver Missing?&lt;/b&gt;&lt;/span&gt; - Note that the open-source version of Smart Data Framework includes only a subset of available drivers in the commercial framework. Contact 'Smart Associates' ( google us ) to get access to the various commercial plugins available, which add support for a wide variety of database platforms, and includes our point-and-click anything-to-anything data migration and reconciliation utilities.</property>
+                                <property name="use_markup">True</property>
+                                <property name="wrap">True</property>
+                                <property name="width_chars">20</property>
+                                <property name="max_width_chars">20</property>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">How to ( click to expand ) ...</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -197,6 +212,7 @@ For connections that utilise an &lt;b&gt;ODBC driver&lt;/b&gt;, you will have to
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">1</property>
                             <property name="homogeneous">True</property>
                             <child>
                               <object class="GtkFrame" id="frame10">
@@ -277,7 +293,7 @@ For connections that utilise an &lt;b&gt;ODBC driver&lt;/b&gt;, you will have to
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>
@@ -1478,7 +1494,10 @@ From your host operating system, this will be in a location such as:
  ~/.var/app/biz.smartassociates.open.sdf/SDF_persisted
 
 When you add a driver, some 'global' options and also some driver-specific options will be automatically added.
-You can edit these if you like. These default options come from metadata, in the next tab: ( ODBC Global Options Configuration ).&lt;/big&gt;</property>
+You can edit these if you like. These default options come from metadata, in the final tab: ( ODBC Global Options Configuration ).
+
+&lt;b&gt;Note that you must restart the GUI after adding a new ODBC driver, as the odbcinst.ini file will have been regenerated,
+but unixODBC caches the contents of this file inside the scope of a running application.&lt;/b&gt;&lt;/big&gt;</property>
                             <property name="use_markup">True</property>
                             <property name="wrap">True</property>
                           </object>
@@ -1501,7 +1520,7 @@ You can edit these if you like. These default options come from metadata, in the
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkFrame" id="odbcinst_management_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -1564,7 +1583,7 @@ This is because SDF doesn't currently import existing configurations ( ie we cre
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkFrame" id="reset_odbc_drivers_list_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
@@ -2198,148 +2217,215 @@ Simple Config</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
-              <object class="GtkLabel" id="label6">
+              <object class="GtkNotebook">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">&lt;span color='blue'&gt;&lt;b&gt;Overlays&lt;/b&gt;&lt;/span&gt; are a way of developing plug-ins to the Smart Framework, while keeping them in a separate directory structure.</property>
-                <property name="use_markup">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="border_width">10</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">60</property>
+                    <child>
+                      <object class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;big&gt;&lt;big&gt;&lt;span color='blue'&gt;&lt;b&gt;Overlays&lt;/b&gt;&lt;/span&gt; are a way of developing plug-ins to Smart Data Framework. There are 3 main use-cases:&lt;/big&gt;
+
+&lt;span color='blue'&gt;&lt;b&gt;(1)&lt;/b&gt;&lt;/span&gt; GUI overlays are used as a storage repository for exporting all work done in SDF ( ETL jobs and templates ). From inside the SDF GUI, developers can save their work as JSON files which are managed inside the GUI overlay. These can then be added to git if required, diffs between versions can be generated, and individual versions of objects can be restored via the GUI ( as well as point-in-time rollbacks ). To deploy ETL jobs to a different environment, install the overlay and update its contents ( eg via a git pull or deploying via some other method ).
+
+&lt;span color='blue'&gt;&lt;b&gt;(2)&lt;/b&gt;&lt;/span&gt; Organisations can add functionality to SDF by developing their own overlays. The types of augmentation possible is detailed below.
+
+&lt;span color='blue'&gt;&lt;b&gt;(2)&lt;/b&gt;&lt;/span&gt; Commercial repositories are also available. Smart Associates hosts repositories that contain additional database drivers, step templates, ETL logic, GUI plugins, database migration wizards, and other functionality.
+
+
+
+After installing a GUI overlay, you will have to restart the GUI for the overlay to be initialised.
+
+For more information on adding functionality via overlays, see the developer documentation.&lt;/big&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label27">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;span color='purple'&gt;GUI&lt;/span&gt; overlays support the following asset types:&lt;/b&gt;&lt;/big&gt;
+
+ &lt;span color='blue'&gt;&lt;b&gt;/window/*.pm&lt;/b&gt;&lt;/span&gt; files - code that drives windows
+ &lt;span color='blue'&gt;&lt;b&gt;/builder/*.glade&lt;/b&gt;&lt;/span&gt; files - Gtk3 builder files that define window layouts
+&lt;span color='blue'&gt;&lt;b&gt; /Database/Connection/*.pm&lt;/b&gt;&lt;/span&gt; files - code that adds support for additional database platforms
+ &lt;span color='blue'&gt;&lt;b&gt;/icons/*&lt;/b&gt;&lt;/span&gt; files - icons that can be located via window::get_icon_path()&lt;/big&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;span color='green'&gt;ETL&lt;/span&gt; overlays support the following asset types:&lt;/b&gt;&lt;/big&gt;
+
+ &lt;span color='blue'&gt;&lt;b&gt;/SmartAssociates/WorkCollection/*.pm&lt;/b&gt;&lt;/span&gt; files - code that augments how ETL jobs are launched
+ &lt;span color='blue'&gt;&lt;b&gt;/SmartAssociates/Database/Connection/*.pm&lt;/b&gt;&lt;/span&gt; files - code that adds support for additional database platforms
+ &lt;span color='blue'&gt;&lt;b&gt;/SmartAssociates/TemplateConfig/*.pm&lt;/b&gt;&lt;/span&gt; files - these classes implement logic specific by a template, and are the basic building block of functionality in ETL jobs&lt;/big&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Introduction</property>
+                  </object>
+                  <packing>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkBox" id="gui_overlays">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;b&gt;&lt;span color='purple'&gt;GUI Overlays&lt;/span&gt;&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkBox" id="etl_overlays">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;b&gt;&lt;span color='green'&gt;ETL Overlays&lt;/span&gt;&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Installation</property>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkFrame">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label_xalign">0</property>
-                <child>
-                  <object class="GtkAlignment">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="left_padding">12</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel" id="label27">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Currently supported object types in &lt;b&gt;&lt;span color='purple'&gt;GUI&lt;/span&gt;&lt;/b&gt; overlays include:
-
- &lt;span color='blue'&gt;&lt;b&gt;/window/*.pm&lt;/b&gt;&lt;/span&gt; files - perl code that drives windows
- &lt;span color='blue'&gt;&lt;b&gt;/builder/*.glade&lt;/b&gt;&lt;/span&gt; files - Gtk3 builder files that define window layouts
- &lt;span color='blue'&gt;&lt;b&gt;/Database/Connection/*.pm&lt;/b&gt;&lt;/span&gt; files - perl code that adds support for additional database back-ends
- &lt;span color='blue'&gt;&lt;b&gt;/icons/*&lt;/b&gt;&lt;/span&gt; files - icons that can be located via window::get_icon_path</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="gui_overlays">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">&lt;b&gt;&lt;span color='purple'&gt;GUI Overlays&lt;/span&gt;&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkFrame">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label_xalign">0</property>
-                <child>
-                  <object class="GtkAlignment">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="left_padding">12</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel" id="label5">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Currently supported object types in &lt;b&gt;&lt;span color='green'&gt;ETL&lt;/span&gt;&lt;/b&gt; overlays include:
-
- &lt;span color='blue'&gt;&lt;b&gt;/SmartAssociates/WorkCollection/*.pm&lt;/b&gt;&lt;/span&gt; files - perl code that augments how ETL jobs are launched
- &lt;span color='blue'&gt;&lt;b&gt;/SmartAssociates/Database/Connection/*.pm&lt;/b&gt;&lt;/span&gt; files - perl code that adds support for additional database back-ends</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="etl_overlays">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">&lt;b&gt;&lt;span color='green'&gt;ETL Overlays&lt;/span&gt;&lt;/b&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
               </packing>
             </child>
           </object>

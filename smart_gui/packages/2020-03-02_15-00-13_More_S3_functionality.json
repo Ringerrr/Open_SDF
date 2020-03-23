@@ -1,0 +1,32 @@
+{
+   "release_packages" : [
+      {
+         "release_name" : "2020-03-02_15-00-13_More_S3_functionality",
+         "object_changed" : 1,
+         "package_type" : "template",
+         "release_package" : "S3_GET.2020-03-07_08-03-31.dkasak.json",
+         "object_name" : "S3_GET"
+      },
+      {
+         "object_name" : "S3_ITERATOR",
+         "package_type" : "template",
+         "release_package" : "S3_ITERATOR.2020-03-07_08-03-38.dkasak.json",
+         "object_changed" : 1,
+         "release_name" : "2020-03-02_15-00-13_More_S3_functionality"
+      },
+      {
+         "object_name" : "S3_PUT",
+         "package_type" : "template",
+         "release_package" : "S3_PUT.2020-03-07_08-03-45.dkasak.json",
+         "object_changed" : 1,
+         "release_name" : "2020-03-02_15-00-13_More_S3_functionality"
+      }
+   ],
+   "release" : {
+      "package_datetime" : "2020-03-07 08:03:53.848318",
+      "release_name" : "2020-03-02_15-00-13_More_S3_functionality",
+      "release_open" : 0,
+      "release_base" : null,
+      "repository" : "core"
+   }
+}

@@ -77,20 +77,27 @@ sub new {
 
                 sysread $log_map->{ $view_type }->{filehandle}, $lines, 65536;
 
+                my $updated;
+
                 foreach my $line ( split /\n/, $lines ) {
-                    $line .= "\n";
-                    $self->{ $view_type }->insert_with_tags_by_name( $self->{ $view_type }->get_end_iter, $line, $log_map->{ $view_type }->{tag} );
+                    if ( $line !~ /^GLib-GObject-WARNING \*\*:/ ) {
+                        $line .= "\n";
+                        $self->{ $view_type }->insert_with_tags_by_name( $self->{ $view_type }->get_end_iter, $line, $log_map->{ $view_type }->{tag} );
+                        $updated = 1;
+                    }
                 }
 
-                Glib::Idle->add( sub {
-                    $self->{ $view_type . "_vadjustment" }->set_value( $self->{  $view_type . "_vadjustment" }->get_upper - $self->{  $view_type . "_vadjustment" }->get_page_increment - $self->{  $view_type . "_vadjustment" }->get_step_increment );
-                    return FALSE; # uninstall callback
-                } );
+                if ( $updated ) {
+                    Glib::Idle->add( sub {
+                        $self->{ $view_type . "_vadjustment" }->set_value( $self->{  $view_type . "_vadjustment" }->get_upper - $self->{  $view_type . "_vadjustment" }->get_page_increment - $self->{  $view_type . "_vadjustment" }->get_step_increment );
+                        return FALSE; # uninstall callback
+                    } );
 
-                foreach my $open_window_name ( keys %{ $self->{globals}->{windows} } ) {
-                    my $this_window = $self->{globals}->{windows}->{ $open_window_name };
-                    if ( $this_window->get_window->is_active() ) {
-                        $this_window->pulse_log_button();
+                    foreach my $open_window_name ( keys %{ $self->{globals}->{windows} } ) {
+                        my $this_window = $self->{globals}->{windows}->{ $open_window_name };
+                        if ( $this_window->get_window->is_active() ) {
+                            $this_window->pulse_log_button();
+                        }
                     }
                 }
 

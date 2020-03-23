@@ -27,6 +27,8 @@ sub execute {
     my $delete_original  = $self->resolve_parameter( '#P_DELETE_ORIGINAL#' );
     
     my $template_text    = $self->detokenize( $template_config->{TEMPLATE_TEXT} );
+
+    $filename =~ s/\/\//\//g; # remove double slashes - we might need to handle paths "properly"
     
     eval {
         
@@ -35,7 +37,7 @@ sub execute {
         if ( $compression_type eq 'gzip' ) {
             
             # First check for pigz - a parallel compression utility
-            $app_path = "/usr/bin/pigz";
+            $app_path = "/app/bin/pigz";
             
             if ( -f $app_path ) {
                 
@@ -53,7 +55,7 @@ sub execute {
                 
             } else {
                 
-                $app_path = "/bin/gzip";
+                $app_path = "/usr/bin/gzip";
                                 
                 if ( -f $app_path ) {
                     
@@ -77,7 +79,7 @@ sub execute {
             
         } elsif ( $compression_type eq 'bzip2' ) {
             
-            $app_path = "/bin/bzip2";
+            $app_path = "/usr/bin/bzip2";
             
             if ( -f $app_path ) {
                 
@@ -126,7 +128,7 @@ sub execute {
             
         }
         
-        if ( $delete_original ) {
+        if ( $delete_original && -e $filename ) {
             
             unlink $filename
                 or die( "Could not unlink $filename: $!" );

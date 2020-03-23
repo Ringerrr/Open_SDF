@@ -1,0 +1,125 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'DATACOP'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "Whether to allow broken CSVs wrt quotes",
+            "template_name" : "DATACOP",
+            "param_name" : "#P_ALLOW_LOOSE_QUOTES#",
+            "param_default" : "0"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "Set the 'allow unquoted escape' flag in Text::CSV",
+            "param_default" : "1",
+            "param_name" : "#P_ALLOW_UNQUOTED_ESCAPE#"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "The column delimiter",
+            "param_default" : ",",
+            "param_name" : "#P_DELIMITER#"
+         },
+         {
+            "param_name" : "#P_ESCAPE_CHAR#",
+            "param_default" : "\\",
+            "template_name" : "DATACOP",
+            "param_desc" : "The escape character"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "The input file name",
+            "param_name" : "#P_FILE_NAME#",
+            "param_default" : null
+         },
+         {
+            "param_default" : null,
+            "param_name" : "#P_GLOBAL_SUB_REPLACE#",
+            "param_desc" : "Global Replace: regex to replace with",
+            "template_name" : "DATACOP"
+         },
+         {
+            "param_name" : "#P_GLOBAL_SUB_SEARCH#",
+            "param_default" : null,
+            "template_name" : "DATACOP",
+            "param_desc" : "Global Replace: regex to search for"
+         },
+         {
+            "param_name" : "#P_INCLUDES_HEADERS#",
+            "param_default" : "1",
+            "param_desc" : "Whether the source file has a header or or not",
+            "template_name" : "DATACOP"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "Whether the CSV should be read in binary mode ( required for loose quotes )",
+            "param_default" : "0",
+            "param_name" : "#P_INPUT_BINARY#"
+         },
+         {
+            "param_name" : "#P_INPUT_ENCODING#",
+            "param_default" : "latin9",
+            "param_desc" : "The ( perl ) input encoding",
+            "template_name" : "DATACOP"
+         },
+         {
+            "param_default" : "\\n",
+            "param_name" : "#P_INPUT_EOL_CHARACTER#",
+            "template_name" : "DATACOP",
+            "param_desc" : "The end-of-line character"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "Whether to strip off excess columns ( excess according to the database )",
+            "param_name" : "#P_MANGLE_COLUMN_COUNT#",
+            "param_default" : "0"
+         },
+         {
+            "template_name" : "DATACOP",
+            "param_desc" : "The maximum number of issues to allow before returning a fatal error",
+            "param_name" : "#P_MAX_ISSUES#",
+            "param_default" : "5"
+         },
+         {
+            "param_name" : "#P_OUTPUT_DELIMITER#",
+            "param_default" : "#P_DELIMITER#",
+            "param_desc" : "The column delimiter of the output file",
+            "template_name" : "DATACOP"
+         },
+         {
+            "param_name" : "#P_OUTPUT_ENCODING#",
+            "param_default" : "latin9",
+            "param_desc" : "The ( perl ) output encoding",
+            "template_name" : "DATACOP"
+         },
+         {
+            "param_default" : "\"",
+            "param_name" : "#P_QUOTE_CHARACTER#",
+            "template_name" : "DATACOP",
+            "param_desc" : "The quote character"
+         },
+         {
+            "param_name" : "#P_REQUIRE_TRAILING_NEWLINE#",
+            "param_default" : "1",
+            "param_desc" : "Whether to fail if a file we're parsing doesn't have a trailing newline character",
+            "template_name" : "DATACOP"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "template_desc" : "Split a CSV into 'good' and 'bad' streams, based on a target table to load into",
+            "template_text" : "This template fetches column metadata from a target table,\nand then validates all columns + fields in a CSV. Validated\ndata goes into a 'good' stream, and everything else into a\n'bad' stream. Both get a header record. At the end, a summary\nis inserted into the DATACOP table.",
+            "repository" : "core",
+            "template_name" : "DATACOP",
+            "class" : "DataCop"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'DATACOP'"
+      ]
+   }
+}

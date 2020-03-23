@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="1st_run_wizard">
@@ -54,7 +54,7 @@ Otherwise, navigate to the next page, using the navigation tabs at the top of th
               </object>
               <packing>
                 <property name="expand">True</property>
-                <property name="fill">False</property>
+                <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -99,7 +99,7 @@ Otherwise, navigate to the next page, using the navigation tabs at the top of th
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -213,7 +213,7 @@ If you just want to use the Database Browser, and not deal with ETL jobs at the 
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -306,7 +306,7 @@ Otherwise, simply continue to the next screen.&lt;/big&gt;</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -413,7 +413,7 @@ When you've finished setting up your &lt;b&gt;METADATA&lt;/b&gt; connection, ret
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -503,7 +503,7 @@ Click the button below to indicate that you don't wish this window to appear
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>

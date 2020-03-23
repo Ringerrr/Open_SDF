@@ -5,7 +5,9 @@ use warnings;
 
 use base 'SmartAssociates::Database::Connection::Base';
 
-use constant DB_TYPE            => 'Postgres';
+use constant FIRST_SUBCLASS_INDEX   => SmartAssociates::Database::Connection::Base::FIRST_SUBCLASS_INDEX + 0;
+
+use constant DB_TYPE                => 'Postgres';
 
 sub default_port {
     
@@ -35,10 +37,13 @@ sub connect_pre {
     my ( $self, $auth_hash , $options_hash ) = @_;
     
     $auth_hash->{ConnectionString} = '';
-    
-    $options_hash->{dbi_options_hash} = {
-      FetchHashKeyName  => 'NAME_uc' # TODO - *only* do this for our metadata + logging connections
-    };
+
+    if ( $auth_hash->{ConnectionName} eq 'METADATA' ) {
+        $self->log->info( "Forcing UPPER CASE hash keys for METADATA connection ..." );
+        $options_hash->{dbi_options_hash} = {
+            FetchHashKeyName => 'NAME_uc'
+        };
+    }
 
     return ( $auth_hash , $options_hash );
         

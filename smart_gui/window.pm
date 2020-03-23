@@ -1371,21 +1371,21 @@ sub kick_gtk {
     
     no warnings 'uninitialized';
 
-    print "In kick_gtk() ...\n";
-    print "GDK_BACKEND is: " . $ENV{GDK_BACKEND} . "\n";
+    # print "In kick_gtk() ...\n";
+    # print "GDK_BACKEND is: " . $ENV{GDK_BACKEND} . "\n";
 
     if ( $ENV{GDK_BACKEND} eq 'wayland' ) {
-        print "Not kicking gtk under wayland\n";
+        # print "Not kicking gtk under wayland\n";
         return;
     } elsif ( $ENV{GDK_BACKEND} eq 'broadway' ) {
-        print "Not kicking gtk under broadway\n";
+        # print "Not kicking gtk under broadway\n";
         return;
         # for my $i ( 1 .. 10 ) {
         #     warn ""
         #     Gtk3::main_iteration();
         # }
     } else {
-        print "KICKING GTK\n";
+        # print "KICKING GTK\n";
         Gtk3::main_iteration() while ( Gtk3::events_pending() );
     }
     

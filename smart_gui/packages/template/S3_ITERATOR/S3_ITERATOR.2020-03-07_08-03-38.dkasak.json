@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "param_desc" : "The S3 bucket name to list objects in",
+            "param_name" : "#P_BUCKET_NAME#",
+            "template_name" : "S3_ITERATOR",
+            "param_default" : null
+         },
+         {
+            "param_default" : null,
+            "template_name" : "S3_ITERATOR",
+            "param_name" : "#P_ITERATOR#",
+            "param_desc" : "The name of the iterator to generate"
+         },
+         {
+            "param_default" : null,
+            "param_desc" : "An optional prefix use to filter the list of keys",
+            "param_name" : "#P_PREFIX#",
+            "template_name" : "S3_ITERATOR"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'S3_ITERATOR'"
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'S3_ITERATOR'"
+      ],
+      "data" : [
+         {
+            "template_name" : "S3_ITERATOR",
+            "repository" : "core",
+            "class" : "SQL::DatabaseMethod",
+            "template_desc" : "Create an iterator from a list of objects in an S3 bucket. Access object paths via the OBJECT field in the generated iterator.",
+            "template_text" : "Create an Iterator containing a list of keys from the S3 bucket with the following args:\n      bucket => [#P_BUCKET_NAME#]\n    iterator => [#P_ITERATOR#]\n      prefix => [#P_PREFIX#]"
+         }
+      ]
+   }
+}

@@ -1,0 +1,35 @@
+{
+   "template" : {
+      "data" : [
+         {
+            "template_name" : "S3_ITERATOR",
+            "class" : "SQL::DatabaseMethod",
+            "repository" : "core",
+            "template_desc" : "Create an iterator from a list of objects in an S3 bucket. Access object paths via the OBJECT field in the generated iterator.",
+            "template_text" : "Create an iterator named [#P_ITERATOR#] from a list of objects in the S3 bucket: [#P_BUCKET#]"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'S3_ITERATOR'"
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'S3_ITERATOR'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "The S3 bucket name to list objects in",
+            "template_name" : "S3_ITERATOR",
+            "param_name" : "#P_BUCKET#",
+            "param_default" : null
+         },
+         {
+            "template_name" : "S3_ITERATOR",
+            "param_name" : "#P_ITERATOR#",
+            "param_desc" : "The name of the iterator to generate",
+            "param_default" : null
+         }
+      ]
+   }
+}

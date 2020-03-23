@@ -931,7 +931,8 @@ sub sth_2_sqlite {
                 $this_type = 'integer';
             }
             push @{$column_defs}, {
-                name        => uc( $fieldname )
+                # name        => uc( $fieldname )
+                name        => $fieldname
               , type        => $this_type
             };
             $counter ++;
