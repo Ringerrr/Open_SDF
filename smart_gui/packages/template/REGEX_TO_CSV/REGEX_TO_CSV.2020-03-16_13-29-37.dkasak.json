@@ -1,0 +1,71 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'REGEX_TO_CSV'"
+      ],
+      "data" : [
+         {
+            "param_default" : null,
+            "param_name" : "#P_ERROR_STATE_REGEX#",
+            "template_name" : "REGEX_TO_CSV",
+            "param_desc" : "This regex is used to detect non-standard 'error' lines that we don't want in the final output, BUT we also don't want to trigger a parser error"
+         },
+         {
+            "param_desc" : "The escape character in the CSV we encode",
+            "template_name" : "REGEX_TO_CSV",
+            "param_name" : "#P_ESCAPE_CHARACTER#",
+            "param_default" : "\\"
+         },
+         {
+            "param_desc" : "The filename to parse",
+            "template_name" : "REGEX_TO_CSV",
+            "param_name" : "#P_FILENAME#",
+            "param_default" : "#ENV_HARVEST_PATH#"
+         },
+         {
+            "param_default" : "utf8",
+            "param_name" : "#P_INPUT_ENCODING#",
+            "template_name" : "REGEX_TO_CSV",
+            "param_desc" : "The encoding of the input file"
+         },
+         {
+            "param_name" : "#P_MAX_PARSE_ERRORS#",
+            "param_default" : "0",
+            "param_desc" : "The maximum number of parse errors allowed before we trigger a job failure",
+            "template_name" : "REGEX_TO_CSV"
+         },
+         {
+            "template_name" : "REGEX_TO_CSV",
+            "param_desc" : "The encoding of the output file",
+            "param_default" : "utf8",
+            "param_name" : "#P_OUTPUT_ENCODING#"
+         },
+         {
+            "template_name" : "REGEX_TO_CSV",
+            "param_desc" : "The regular expression used to parse a file into columns.\nEach CAPTURE GROUP will be written to a column - items outside\na capture group will be ignored.",
+            "param_default" : "",
+            "param_name" : "#P_REGEX#"
+         },
+         {
+            "template_name" : "REGEX_TO_CSV",
+            "param_desc" : "This is just to store some comments on the regular expression",
+            "param_default" : null,
+            "param_name" : "#P_REGEX_DOCS#"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "repository" : "core",
+            "template_name" : "REGEX_TO_CSV",
+            "class" : "RegexToCSV",
+            "template_desc" : "Parse a complex file ( eg an HAProxy log file ), using regular expressions, and create a CSV from the results ( each new capture group will be a new column )",
+            "template_text" : "Parse file [#P_FILENAME#] to CSV [#P_FILENAME].csv using regular expression:\n\n#P_REGEX#\n\n"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'REGEX_TO_CSV'"
+      ]
+   }
+}

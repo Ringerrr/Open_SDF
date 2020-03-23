@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQLSERVER_BCP_READER'"
+      ],
+      "data" : [
+         {
+            "param_default" : "freebcp",
+            "param_desc" : "The name ( preferably full path ) of the bcp / freebcp utility",
+            "template_name" : "SQLSERVER_BCP_READER",
+            "param_name" : "#P_BCP_PATH#"
+         },
+         {
+            "param_desc" : "The delimiter",
+            "param_default" : null,
+            "param_name" : "#P_COLUMN_SEPARATOR#",
+            "template_name" : "SQLSERVER_BCP_READER"
+         },
+         {
+            "param_name" : "#P_DISABLE_FIFO#",
+            "template_name" : "SQLSERVER_BCP_READER",
+            "param_desc" : "Disables FIFO logic",
+            "param_default" : "1"
+         },
+         {
+            "template_name" : "SQLSERVER_BCP_READER",
+            "param_name" : "#P_FIFO_TIMEOUT#",
+            "param_default" : null,
+            "param_desc" : "The time to wait for a sibling process to signal to us before quitting"
+         },
+         {
+            "param_name" : "#P_FILE_PATH#",
+            "template_name" : "SQLSERVER_BCP_READER",
+            "param_desc" : "The path to the file to load via BCP",
+            "param_default" : null
+         },
+         {
+            "param_name" : "#P_FIRST_ROW#",
+            "template_name" : "SQLSERVER_BCP_READER",
+            "param_desc" : "The 1st row of the input file to be considered a part of the data to load",
+            "param_default" : "1"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "template_text" : "",
+            "template_desc" : "Load a CSV into SQLServer via BCP",
+            "class" : "SQL::BCP_Reader",
+            "template_name" : "SQLSERVER_BCP_READER",
+            "repository" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SQLSERVER_BCP_READER'"
+      ]
+   }
+}

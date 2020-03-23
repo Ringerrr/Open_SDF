@@ -1,0 +1,59 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "param_desc" : "The Postgres datestyle, eg YMD, DMY ...",
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "param_name" : "#P_DATESTYLE#",
+            "param_default" : "YMD"
+         },
+         {
+            "param_name" : "#P_DELIMITER#",
+            "param_default" : ",",
+            "param_desc" : "The column delimiter",
+            "template_name" : "POSTGRES_9_X_LOAD"
+         },
+         {
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "param_desc" : "The encoding of the source file",
+            "param_default" : "latin9",
+            "param_name" : "#P_ENCODING#"
+         },
+         {
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "param_desc" : "The escape character",
+            "param_default" : "\\",
+            "param_name" : "#P_ESCAPE_CHAR#"
+         },
+         {
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "param_desc" : "The full path to the source file",
+            "param_default" : null,
+            "param_name" : "#P_FILE_NAME#"
+         },
+         {
+            "param_default" : "1",
+            "param_name" : "#P_INCLUDES_HEADER#",
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "param_desc" : "A boolean, indicating whether the source file contains a header row"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_9_X_LOAD'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "repository" : "core",
+            "template_name" : "POSTGRES_9_X_LOAD",
+            "class" : "SQL",
+            "template_text" : "set DATESTYLE = ISO, '#P_DATESTYLE#';\n\ncopy   #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom   '#P_FILE_NAME#'\nwith (\n    format    'csv'\n  , delimiter E'#P_DELIMITER#'\n  , header    #P_INCLUDES_HEADER#\n  , encoding  #P_ENCODING#\n  , escape    '#P_ESCAPE_CHAR#'\n);\n\nset DATESTYLE = 'ISO, YMD';",
+            "template_desc" : "Load a local ( ie on the Postgres instance ) CSV to a Postgres 9.x database"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_9_X_LOAD'"
+      ]
+   }
+}

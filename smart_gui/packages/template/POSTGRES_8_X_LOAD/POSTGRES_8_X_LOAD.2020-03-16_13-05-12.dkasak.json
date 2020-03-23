@@ -1,0 +1,59 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_8_X_LOAD'"
+      ],
+      "data" : [
+         {
+            "class" : "SQL",
+            "repository" : "core",
+            "template_name" : "POSTGRES_8_X_LOAD",
+            "template_text" : "-- This is Postgres 8.x / Greenplum COPY syntax\n\nset DATESTYLE = ISO, '#P_DATESTYLE#';\n\ncopy   #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom   '#P_FILE_NAME#'\n\nwith\n    delimiter as E'#P_DELIMITER#'\n    #P_HEADER_STRING#\n    csv quote as E'#P_QUOTE_CHAR#'\n    escape    as E'#P_ESCAPE_CHAR#'\n;\n\nset DATESTYLE = 'ISO, YMD';",
+            "template_desc" : "Load a local ( ie on the Postgres instance ) CSV to Postgres 8.x / Greemplum"
+         }
+      ]
+   },
+   "param" : {
+      "data" : [
+         {
+            "param_name" : "#P_DATESTYLE#",
+            "param_default" : "YMD",
+            "param_desc" : "Postgres datestyle. Choose from DMY, MDY, YMD",
+            "template_name" : "POSTGRES_8_X_LOAD"
+         },
+         {
+            "param_default" : ",",
+            "param_name" : "#P_DELIMITER#",
+            "template_name" : "POSTGRES_8_X_LOAD",
+            "param_desc" : "The column delimiter"
+         },
+         {
+            "param_desc" : "The escape character",
+            "template_name" : "POSTGRES_8_X_LOAD",
+            "param_name" : "#P_ESCAPE_CHAR#",
+            "param_default" : "\\\\"
+         },
+         {
+            "param_name" : "#P_FILE_NAME#",
+            "param_default" : null,
+            "param_desc" : "The full path to the source file",
+            "template_name" : "POSTGRES_8_X_LOAD"
+         },
+         {
+            "template_name" : "POSTGRES_8_X_LOAD",
+            "param_desc" : "Set to string [ HEADER ] or leave blank if no CSV header record",
+            "param_default" : null,
+            "param_name" : "#P_HEADER_STRING#"
+         },
+         {
+            "template_name" : "POSTGRES_8_X_LOAD",
+            "param_desc" : "The quote character",
+            "param_default" : "\"",
+            "param_name" : "#P_QUOTE_CHAR#"
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_8_X_LOAD'"
+      ]
+   }
+}

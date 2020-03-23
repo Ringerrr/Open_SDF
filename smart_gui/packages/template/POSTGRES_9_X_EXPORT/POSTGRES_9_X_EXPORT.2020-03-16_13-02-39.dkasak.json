@@ -1,0 +1,65 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'POSTGRES_9_X_EXPORT'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "The column delimiter",
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "param_name" : "#P_DELIMITER#",
+            "param_default" : ","
+         },
+         {
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "param_desc" : "The encoding of the source file",
+            "param_default" : "latin9",
+            "param_name" : "#P_ENCODING#"
+         },
+         {
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "param_desc" : "The escape character",
+            "param_default" : "\\\\",
+            "param_name" : "#P_ESCAPE_CHAR#"
+         },
+         {
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "param_desc" : "A max event count value",
+            "param_default" : "1000",
+            "param_name" : "#P_EVENT_COUNT_LIMIT#"
+         },
+         {
+            "param_name" : "#P_EXPORT_DIRECTORY#",
+            "param_default" : "/opt/dql/export",
+            "param_desc" : "The directory to export to",
+            "template_name" : "POSTGRES_9_X_EXPORT"
+         },
+         {
+            "param_name" : "#P_INCLUDES_HEADER#",
+            "param_default" : "1",
+            "param_desc" : "A boolean, indicating whether the target file should contain a header row",
+            "template_name" : "POSTGRES_9_X_EXPORT"
+         },
+         {
+            "param_desc" : "The SQL to export",
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "param_name" : "#P_SQL#",
+            "param_default" : null
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'POSTGRES_9_X_EXPORT'"
+      ],
+      "data" : [
+         {
+            "template_desc" : "Export from Postgres 9.x or later",
+            "template_text" : "copy (\n#P_SQL#\n) to '#P_EXPORT_DIRECTORY#/#CONFIG_TARGET_TABLE_NAME#.csv'\nwith (\n    format    'csv'\n  , delimiter E'#P_DELIMITER#'\n  , header    #P_INCLUDES_HEADER#\n  , encoding  #P_ENCODING#\n  , escape    '#P_ESCAPE_CHAR#'\n);\n",
+            "repository" : "core",
+            "template_name" : "POSTGRES_9_X_EXPORT",
+            "class" : "SQL"
+         }
+      ]
+   }
+}

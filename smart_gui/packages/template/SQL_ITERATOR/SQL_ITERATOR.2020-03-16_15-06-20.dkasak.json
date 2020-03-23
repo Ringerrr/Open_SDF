@@ -1,0 +1,35 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'SQL_ITERATOR'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "The name of the iterator to construct",
+            "template_name" : "SQL_ITERATOR",
+            "param_name" : "#P_ITERATOR#",
+            "param_default" : ""
+         },
+         {
+            "template_name" : "SQL_ITERATOR",
+            "param_desc" : "The SQL used to fetch your records. You know what to do ...",
+            "param_default" : null,
+            "param_name" : "#P_SQL#"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "template_text" : "#P_SQL#",
+            "template_desc" : "Load records from some generic SQL into an iterator",
+            "class" : "SQL::Iterator",
+            "template_name" : "SQL_ITERATOR",
+            "repository" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'SQL_ITERATOR'"
+      ]
+   }
+}
