@@ -1214,14 +1214,17 @@ sub traverse_hierarchy_children {
     my $located;
 
     if ( $self->{group_tree_model}->iter_has_child( $iter ) ) {
-        my $number_of_children = $self->{group_tree_model}->iter_n_children( $iter );
-        for my $i ( 0 .. $number_of_children - 1 ) { # TODO: seems we might only need to hit the 1st child?
-            my $this_iter = $self->{group_tree_model}->iter_nth_child( $iter , $i );
-            if ( $self->select_sequence_in_treeview( $sequence , $this_iter ) ) {
-                last;
-            }
+        # iter_nth_child() will return a given child from the list of children ...
+        #  ... but we only need the 1st, as we then call select_sequence_in_treeview() which
+        #      in turn calls iter_next() ... which is another way to get at the rest of the children
+        #      on that level
+        my $first_child_iter = $self->{group_tree_model}->iter_nth_child( $iter , 0 );
+        if ( $self->select_sequence_in_treeview( $sequence , $first_child_iter ) ) {
+            return TRUE;
         }
     }
+
+    return FALSE;
 
 }
 
