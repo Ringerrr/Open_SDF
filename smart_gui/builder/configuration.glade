@@ -1467,7 +1467,6 @@ Management</property>
                 <property name="border_width">10</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
-                <property name="homogeneous">True</property>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>

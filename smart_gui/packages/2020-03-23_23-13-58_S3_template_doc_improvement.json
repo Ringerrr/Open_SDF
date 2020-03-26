@@ -1,0 +1,18 @@
+{
+   "release_packages" : [
+      {
+         "package_type" : "template",
+         "object_name" : "S3_ITERATOR",
+         "release_package" : "S3_ITERATOR.2020-03-23_23-14-53.dkasak.json",
+         "object_changed" : 1,
+         "release_name" : "2020-03-23_23-13-58_S3_template_doc_improvement"
+      }
+   ],
+   "release" : {
+      "package_datetime" : "2020-03-23 23:15:11.926119",
+      "repository" : "core",
+      "release_open" : 0,
+      "release_name" : "2020-03-23_23-13-58_S3_template_doc_improvement",
+      "release_base" : null
+   }
+}

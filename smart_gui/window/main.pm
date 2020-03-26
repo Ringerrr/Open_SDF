@@ -315,6 +315,15 @@ sub new {
 #      , debug                   => TRUE
       , apeture                 => 1
       , recordset_tools_box     => $self->{builder}->get_object( "config_recordset_tools" )
+      , recordset_tool_items    => [ "label" , "new", "undo", "delete", "apply" ]
+      , recordset_extra_tools   => {
+                new => {
+                         type        => 'button'
+                       , markup      => "<span color='green'>insert</span>"
+                       , icon_name   => 'document-new'
+                       , coderef     => sub { $self->insert_new_config() }
+                }
+        }
     } );
     
     $self->pulse( "Creating Gtk3::Ex::DBI::Form - {HARVEST_CONTROL}" );
@@ -1075,6 +1084,30 @@ sub on_processing_group_set_members {
 
 }
 
+sub insert_new_config {
+    
+    my $self = shift;
+    
+    # Fetch some stuff to copy to the new record ... this means users won't have to re-enter common things like source/target DBs ...
+    my $config = $self->{config}->{dbh}->select(
+        "select * from config where processing_group_name = ? and sequence_order = ?"
+      , [ $self->{config}->get_widget_value( "processing_group_name" )
+        , $self->{config}->get_widget_value( "sequence_order" )
+        ]
+    );
+    
+    $self->{config}->insert();
+    
+    foreach my $field ( qw ' processing_group_name source_db_name source_schema_name source_table_name
+                             target_db_name target_schema_name target_table_name template_name connection_name
+                             parent_sequence_order ' ) {
+        $self->{config}->set_widget_value( $field , $$config[0]->{ $field } );
+    }
+    
+    $self->{config}->apply();
+    
+}
+
 sub build_group_treeview {
     
     my $self = shift;
@@ -1136,21 +1169,32 @@ sub build_group_treeview {
 
 sub select_sequence_in_treeview {
     
-    my ( $self, $sequence ) = @_;
-    
+    my ( $self , $sequence , $iter ) = @_;
+
+    my $located;
+
     if ( $self->{group_tree_model} ) {
-        
-        my $iter = $self->{group_tree_model}->get_iter_first;
+
+        if ( ! $iter ) {
+            $iter = $self->{group_tree_model}->get_iter_first;
+        }
         
         while ( $iter ) {
-            
+
+            print "This sequence: " . $self->{group_tree_model}->get( $iter, 0 ) . "\n";
+
             if ( $self->{group_tree_model}->get( $iter, 0 ) == $sequence ) {
                 $self->{group_tree_view}->get_selection->select_iter( $iter );
                 my $path = $self->{group_tree_model}->get_path( $iter );
                 $self->{group_tree_view}->scroll_to_cell( $path, undef, TRUE, 0.5, 0.0 );
                 last;
             }
-            
+
+            if ( $self->traverse_hierarchy_children( $sequence , $iter ) ) {
+                $located = TRUE;
+                last;
+            }
+
             if ( ! $self->{group_tree_model}->iter_next( $iter ) ) {
                 last;
             }
@@ -1158,7 +1202,27 @@ sub select_sequence_in_treeview {
         }
         
     }
-    
+
+    return $located;
+
+}
+
+sub traverse_hierarchy_children {
+
+    my ( $self , $sequence , $iter ) = @_;
+
+    my $located;
+
+    if ( $self->{group_tree_model}->iter_has_child( $iter ) ) {
+        my $number_of_children = $self->{group_tree_model}->iter_n_children( $iter );
+        for my $i ( 0 .. $number_of_children - 1 ) { # TODO: seems we might only need to hit the 1st child?
+            my $this_iter = $self->{group_tree_model}->iter_nth_child( $iter , $i );
+            if ( $self->select_sequence_in_treeview( $sequence , $this_iter ) ) {
+                last;
+            }
+        }
+    }
+
 }
 
 sub on_hierarchy_select {
