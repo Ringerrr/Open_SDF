@@ -125,12 +125,9 @@ Otherwise, navigate to the next page, using the navigation tabs at the top of th
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">&lt;big&gt;To complete this wizard normally, it's safe to accept all defaults, clicking the action buttons at the bottom of each page, and navigating to the next page using the navigation buttons at the top of this screen. This will generate you a default profile identical to the above button, but will introduce you to configuration locations and concept so you know how to manage your instance.
+                <property name="label" translatable="yes">&lt;big&gt;To complete this wizard normally, it's safe to accept all defaults, clicking the action buttons at the bottom of each page, and navigating to the next page using the navigation buttons at the top of this screen. This will generate you a default profile identical to the above button, but will introduce you to configuration locations and concept so you know how to manage your instance. This process writes configuration data to SDF's SQLite-based configuration database.
 
-This process writes configuration data to SDF's SQLite-based configuration database.
-
-You can open this wizard at any time from the menu:
- &lt;b&gt;SDF core utilities ==&gt; 1st Run Wizard&lt;/b&gt;
+You can open this wizard at any time from the menu:  &lt;span color='blue'&gt;&lt;b&gt;SDF core utilities ==&gt; 1st Run Wizard&lt;/b&gt;&lt;/span&gt;
 
  The SQLite configuration database is for storing user settings, mainly related to SDF's GUI. It also stores all your database connection information. For this reason, you should be careful who has access to the database. Later 2 further databases will be configured, that store the rest of SDF's metadata and logging data. These 2 can be shared across a development team, and contain all the jobs and related metadata you create, as well as ETL logs and performance metrics.
 
