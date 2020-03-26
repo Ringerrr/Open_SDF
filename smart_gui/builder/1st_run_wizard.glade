@@ -136,13 +136,10 @@ The SQLite database is stored in a hidden directory in your home directory ( ~/.
 All the settings this wizard creates are accessible in the &lt;b&gt;SQLite Simple Config&lt;/b&gt; page of the Configuration window. You can open this window by selecting it from the menu item: &lt;b&gt;&lt;i&gt;SDF core utilities ==&gt; Configuration&lt;/i&gt;&lt;/b&gt;. You can change these settings at any time, but should think about the consequences of such changes 1st, of course.
 
 The 1st step is to define an &lt;b&gt;SDF_DB_PREFIX&lt;/b&gt; setting.  This is used to determine the names of 2 databases that SDF will use ( and optionally also create later ) - a config and log database.  The default below: &lt;b&gt;SDF&lt;/b&gt; will produce:
-
    config database: &lt;b&gt;SDF_CONFIG&lt;/b&gt;
    log database:       &lt;b&gt;SDF_LOG&lt;/b&gt;.
 
-The use of a prefix helps you keep different environments separated, but still hosted on the same database instance.
-
-If you just want to use the Database Browser, and not deal with ETL jobs at the moment, just accept the default ...&lt;/big&gt;</property>
+The use of a prefix helps you keep different environments separated, but still hosted on the same database instance. If you just want to use the Database Browser, and not deal with ETL jobs at the moment, just accept the default ...&lt;/big&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
