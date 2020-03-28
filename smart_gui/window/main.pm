@@ -285,8 +285,11 @@ sub new {
           , auto_apply              => TRUE
           , before_insert           => sub { $self->before_param_insert }
           , on_initial_changed      => sub { $self->on_param_insert }
+          , on_apply                => sub { $self->on_param_apply( @_ ) }
+          , on_delete               => sub { $self->on_param_apply( @_ ) } # yes same method as above
           , apeture                 => 1
           , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
+          , recordset_tool_items    => [ "label" , "insert", "undo", "delete", "apply" ]
         }
     );
 
@@ -2036,6 +2039,24 @@ sub on_template_delete {
     my $self = shift;
 
     $self->update_template_selector();
+    
+}
+
+sub on_param_apply {
+    
+    my $self = shift;
+    
+    my $param_name = $self->{param}->get_widget_value( "param_name" );
+    
+    $self->on_template_current();
+    
+    $self->{param_list}->select_rows(
+        {
+            column_no   => $self->{param_list}->column_from_column_name( "param_name" )
+          , operator    => "eq"
+          , value       => $param_name
+        }
+    );
     
 }
 
