@@ -15,6 +15,7 @@
         "--share=ipc",
         "--share=network",
         "--socket=x11",
+        "--socket=wayland",
         "--socket=pulseaudio",
         "--env=JAVA_HOME=/app/opt/jdk"
     ],
@@ -265,6 +266,13 @@
   , "google-deps/perl-Crypt-OpenSSL-Random.json"
   , "google-deps/perl-Crypt-OpenSSL-RSA.json"
   , "other/pigz.json"
+
+  , "perl/perl-Class-Accessor.json"
+  , "perl/perl-Curses.json"
+  , "perl/perl-Curses-UI.json"
+  , "perl/perl-Devel-PDB.json"
+  , "perl/perl-Tk.json"
+  , "perl/perl-Devel-ptkdb.json"
 
   ,     {
             "name": "sdf",

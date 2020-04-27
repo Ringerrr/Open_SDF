@@ -1,0 +1,17 @@
+{
+    "name": "perl-Devel-PDB",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/K/KO/KOCEASY/Devel-PDB-1.6.tar.gz",
+            "sha256": "4ec263980b11552d1e866bf87db0099c708e5df58f388d7671f36f6f41573f8a"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

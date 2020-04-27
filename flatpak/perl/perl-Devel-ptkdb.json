@@ -1,0 +1,17 @@
+{
+    "name": "perl-Devel-ptkdb",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/A/AE/AEPAGE/Devel-ptkdb-1.1091.tar.gz",
+            "sha256": "889bfc25d107f46718963023cc9662d3d779896a48d729d0327beec0502c226e"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ]
+}

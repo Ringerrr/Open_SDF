@@ -1,0 +1,20 @@
+{
+    "name": "perl-Tk",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/S/SR/SREZIC/Tk-804.034.tar.gz",
+            "sha256": "fea6b144c723528a2206c8cd9175844032ee9c14ee37791f0f151e5e5b293fe2"
+        },
+        {
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "post-install": [
+        "find /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/Tk -type f -exec chmod u+w {} \\;"
+    ]
+}
