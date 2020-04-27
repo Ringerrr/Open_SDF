@@ -148,7 +148,7 @@ sub repo_path {
     if ( ! defined $builtin_or_persisted ) {
         $builtin_or_persisted = ( $self->{globals}->{self}->{flatpak} ? 'persisted' : 'builtin' );
     }
-
+    
     if ( $builtin_or_persisted eq 'builtin' ) {
         if ( $repo eq 'core' ) {
             return $self->{globals}->{paths}->{app} . "/packages/";

@@ -1004,7 +1004,6 @@ sub on_processing_group_sets_apply {
             $dbh->do( "delete from param_value where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
             $dbh->do( "delete from config where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
             $dbh->do( "delete from processing_group where processing_group_name = ?", [ $processing_group->{processing_group_name} ] );
-            $dbh->do( "delete from md5_validation_control where src_job like '" . $processing_group->{processing_group_name} . "_-_%'", [] );
         }
         
         $dbh->do( "delete from processing_group_set_members where processing_group_set_name = ?"

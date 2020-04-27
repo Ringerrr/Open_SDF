@@ -31,10 +31,12 @@ sub build_connection_string {
 sub connect_post {
 
     my ( $self , $auth_hash , $options_hash ) = @_;
-
-    $self->{connection}->{LongReadLen} = 65535 * 1024; # 64MB
-    $self->{connection}->{LongTruncOk} = 1;
-    $self->{connection}->{odbc_ignore_named_placeholders} = 1;
+    
+    my $dbh = $self->dbh;
+    
+    $dbh->{LongReadLen} = 65535 * 1024; # 64MB
+    $dbh->{LongTruncOk} = 1;
+    $dbh->{odbc_ignore_named_placeholders} = 1;
 
     return;
 

@@ -308,10 +308,11 @@ sub fetch_view {
     my $connection = $self->_db_connection( $database );
     
     my $sth = $connection->prepare(
-        "select DEFINITION from _v_view where VIEWNAME = ?"
+        "select view_definition from information_schema.views\n"
+      . "where  table_schema = ? and table_name = ?"
     ) || return;
     
-    $connection->execute( $sth, [ $view ] )
+    $connection->execute( $sth, [ $schema , $view ] )
         || return;
     
     my $row = $sth->fetchrow_arrayref;

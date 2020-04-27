@@ -7,7 +7,6 @@
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
     <property name="default_width">1200</property>
-    <property name="icon">sa_icon.png</property>
     <property name="gravity">center</property>
     <signal name="destroy" handler="on_1st_run_wizard_destroy" after="yes" swapped="no"/>
     <child type="titlebar">

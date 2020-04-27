@@ -2158,8 +2158,8 @@ sub edit_object {
         }
         
         if ( $definition ) {
-            $self->{formatter}->query( $definition );
-            $definition = $self->{formatter}->beautify;
+#            $self->{formatter}->query( $definition );
+#            $definition = $self->{formatter}->beautify;
             $self->set_buffer_value( $self->{pages}->[ $self->{notebook}->get_current_page ]->{sql_editor}, $definition );
             if ( $object_type eq 'VIEW' ) {
                 $self->{pages}->[ $self->{notebook}->get_current_page ]->{page_label}->set_markup(
