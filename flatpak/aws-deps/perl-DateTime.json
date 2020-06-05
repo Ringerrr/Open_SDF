@@ -17,6 +17,6 @@
    "no-autogen" : true,
    "name" : "perl-DateTime",
    "post-install": [
-       "chmod 755 /app/lib/perl5/site_perl/5.30.1/x86_64-linux/auto/DateTime/DateTime.so"
+       "chmod 755 /app/lib/perl5/site_perl/5.30.2/x86_64-linux/auto/DateTime/DateTime.so"
    ]
 }

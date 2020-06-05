@@ -2,7 +2,7 @@
 {
     "app-id": "biz.smartassociates.open.sdf",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.34",
+    "runtime-version": "3.36",
     "sdk": "org.gnome.Sdk",
     "command": "/app/launch_flatpak.sh",
     "rename-icon": "open.sdf",
@@ -273,6 +273,7 @@
   , "perl/perl-Devel-PDB.json"
   , "perl/perl-Tk.json"
   , "perl/perl-Devel-ptkdb.json"
+  , "perl/perl-HTTP-Cookies.json"
 
   ,     {
             "name": "sdf",

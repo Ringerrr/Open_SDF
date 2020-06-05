@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "name" : "perl-HTTP-Cookies",
+   "sources" : [
+      {
+         "type" : "archive",
+         "sha256" : "49ebb73576eb41063c04bc079477df094496deec805ae033f3be338c23c3af59",
+         "url" : "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTTP-Cookies-6.08.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ]
+}

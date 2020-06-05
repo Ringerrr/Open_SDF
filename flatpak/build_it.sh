@@ -5,8 +5,9 @@ rm -rf appdir
 flatpak-builder appdir biz.smartassociates.open.sdf.json \
  --default-branch=1.0 \
  --gpg-sign=76C6ED193465FBCDD5D036435165EB594EE5D544 \
- --gpg-homedir=../gpg \
- --disable-updates
+ --gpg-homedir=../gpg
+
+# --disable-updates
 
 # --disable-updates \
 # --force-clean \
