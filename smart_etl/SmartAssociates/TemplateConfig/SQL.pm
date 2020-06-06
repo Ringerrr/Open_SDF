@@ -175,7 +175,13 @@ sub execute_sql {
         $self->execution_completion();
 
     }
-    
+
+    my $execution_stats = $self->target_database->capture_execution_info( $sth );
+
+    foreach my $stat_key ( keys %{$execution_stats} ) {
+        $self->perf_stat( $stat_key , $execution_stats->{ $stat_key } );
+    }
+
     if ( $sth ) {
         $sth->finish();
     }

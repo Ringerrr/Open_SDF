@@ -655,6 +655,7 @@ sub add_page {
     my $redo_button                 = $self->image_button( "Redo",                  'gtk-redo' );
     my $start_autorefresh_button    = $self->image_button( "Start Autorefresh ...", 'gtk-media-play' );
     my $stop_autorefresh_button     = $self->image_button( "Stop Autorefresh ...",  'gtk-media-stop' );
+    my $execute_direct_button       = $self->image_button( "Execute Direct\n( no prepare ) ...",  'gtk-execute' );
 
     # Up and Down pane buttons
     my $pane_up_button      = Gtk3::Button->new;
@@ -678,6 +679,7 @@ sub add_page {
     $hbox->pack_start( $undo_button, TRUE, TRUE, 2 );
     $hbox->pack_start( $redo_button, TRUE, TRUE, 2 );
     $hbox->pack_start( $execute_button, TRUE, TRUE, 2 );
+    $hbox->pack_start( $execute_direct_button, TRUE, TRUE, 2 );
     $hbox->pack_start( $start_autorefresh_button, TRUE, TRUE, 2 );
     $hbox->pack_start( $stop_autorefresh_button, TRUE, TRUE, 2 );
     $hbox->pack_start( $pane_down_button, FALSE, TRUE, 2 );
@@ -758,6 +760,7 @@ sub add_page {
     $self->{notebook}->set_current_page( $page_index );
     
     $execute_button->signal_connect_after(   'clicked'  => sub { $self->on_execute_clicked() } );
+    $execute_direct_button->signal_connect_after(   'clicked'  => sub { $self->on_execute_clicked( undef , TRUE ) } );
     $hash_expression->signal_connect_after( 'clicked'   => sub { $self->on_hash_expression_clicked() } );
     $undo_button->signal_connect_after( 'clicked'       => sub { $self->on_undo_clicked() } );
     $redo_button->signal_connect_after( 'clicked'       => sub { $self->on_redo_clicked() } );
@@ -1970,7 +1973,7 @@ sub on_redo_clicked {
 
 sub on_execute_clicked {
     
-    my ( $self, $page_index ) = @_;
+    my ( $self , $page_index , $direct ) = @_;
     
     if ( ! defined $page_index ) {
         $page_index = $self->{notebook}->get_current_page;
@@ -1998,8 +2001,13 @@ sub on_execute_clicked {
     
     $test_sql =~ s/^#.*\n//; # strip 1st line ( from $test_sql only ) if it starts with a hash ( these are BigQuery modifiers )
     
-    if ( $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info)/i # TODO: proper detection of SQL that returns a resultset
-      || ! $connection->is_sql_database
+    if (
+        (
+#                1
+                $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info)/i # TODO: proper detection of SQL that returns a resultset
+           || ! $connection->is_sql_database
+        )
+      && ! $direct
     ) {
         
         if ( exists $self->{pages}->[ $page_index ]->{results_viewer_datasheet} ) {

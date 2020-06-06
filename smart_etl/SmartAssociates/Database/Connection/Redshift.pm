@@ -42,4 +42,20 @@ sub connect_post {
 
 }
 
+sub capture_execution_info {
+
+    my ( $self , $sth ) = @_;
+
+    my $sth = $self->prepare( "select pg_last_query_id() as pg_last_query_id" );
+
+    $self->execute( $sth );
+
+    my $results = $sth->fetchrow_hashref();
+
+    return {
+        query_id    => $results->{pg_last_query_id}
+    };
+
+}
+
 1;

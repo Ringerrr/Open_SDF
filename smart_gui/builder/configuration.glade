@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="gtksourceview" version="4.0"/>
@@ -15,18 +15,6 @@
     <property name="window_position">center</property>
     <property name="gravity">center</property>
     <signal name="destroy" handler="on_main_destroy" after="yes" swapped="no"/>
-    <child type="titlebar">
-      <object class="GtkHeaderBar" id="HeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="title">Configuration</property>
-        <property name="has_subtitle">False</property>
-        <property name="show_close_button">True</property>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
     <child>
       <object class="GtkStack" id="main_stack">
         <property name="visible">True</property>
@@ -2229,7 +2217,7 @@ Simple Config</property>
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;big&gt;&lt;big&gt;&lt;span color='blue'&gt;&lt;b&gt;Overlays&lt;/b&gt;&lt;/span&gt; are a way of developing plug-ins to Smart Data Framework. There are 3 main use-cases:&lt;/big&gt;
+                        <property name="label" translatable="yes">&lt;big&gt;&lt;span color='blue'&gt;&lt;b&gt;Overlays&lt;/b&gt;&lt;/span&gt; are a way of developing plug-ins to Smart Data Framework. There are 3 main use-cases:&lt;/big&gt;
 
 &lt;span color='blue'&gt;&lt;b&gt;(1)&lt;/b&gt;&lt;/span&gt; GUI overlays are used as a storage repository for exporting all work done in SDF ( ETL jobs and templates ). From inside the SDF GUI, developers can save their work as JSON files which are managed inside the GUI overlay. These can then be added to git if required, diffs between versions can be generated, and individual versions of objects can be restored via the GUI ( as well as point-in-time rollbacks ). To deploy ETL jobs to a different environment, install the overlay and update its contents ( eg via a git pull or deploying via some other method ).
 
@@ -2241,7 +2229,7 @@ Simple Config</property>
 
 After installing a GUI overlay, you will have to restart the GUI for the overlay to be initialised.
 
-For more information on adding functionality via overlays, see the developer documentation.&lt;/big&gt;</property>
+For more information on adding functionality via overlays, see the developer documentation.</property>
                         <property name="use_markup">True</property>
                         <property name="wrap">True</property>
                         <property name="xalign">0</property>
@@ -2432,6 +2420,18 @@ For more information on adding functionality via overlays, see the developer doc
             <property name="title" translatable="yes">Overlays</property>
             <property name="position">5</property>
           </packing>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar" id="HeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="title">Configuration</property>
+        <property name="has_subtitle">False</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>

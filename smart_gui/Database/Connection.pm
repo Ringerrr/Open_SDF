@@ -127,8 +127,12 @@ sub generate {
     
     my $object_class            = 'Database::Connection::' . $connection_class;
 
-    my $connection_key          = $auth_hash->{ConnectionName} . ":" . ( defined $auth_hash->{Database} ? $auth_hash->{Database} : $auth_hash->{Host} ); # For SQLite, the key we need to use is 'Host' ( path to file )
-
+    my $connection_key;
+    {
+        no warnings 'uninitialized';
+        $connection_key = $auth_hash->{ConnectionName} . ":" . ( defined $auth_hash->{Database} ? $auth_hash->{Database} : $auth_hash->{Host} ); # For SQLite, the key we need to use is 'Host' ( path to file );
+    }
+    
     if (
             defined $auth_hash->{ConnectionName}    # We can get called with no connection name, ie we're *just* building a connection class without connecting. In that case, skip the connection manager
          && ! $dont_cache

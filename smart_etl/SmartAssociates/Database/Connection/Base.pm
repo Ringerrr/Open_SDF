@@ -486,6 +486,14 @@ sub execute {
     
 }
 
+sub capture_execution_info {
+
+    my ( $self , $sth ) = @_;
+
+    return {};
+
+}
+
 sub error_strings_to_downgrade {
 
     my $self = shift;

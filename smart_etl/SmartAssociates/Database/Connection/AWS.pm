@@ -109,7 +109,7 @@ sub S3_PUT {
         
         $s3 = $self->[ $IDX_S3_CLIENT ];
         
-        $bucket_name      = $template_config_class->resolve_parameter( '#P_BUCKET_NAME#' ) || die( "Missing required param: [#P_BUCKET_NAME]" );
+        $bucket_name      = $template_config_class->resolve_parameter( '#P_BUCKET_NAME#' ) || die( "Missing required param: [#P_BUCKET_NAME#]" );
         $target_key       = $template_config_class->resolve_parameter( '#P_TARGET_KEY#' ) || die( "Missing required param: [#P_TARGET_KEY#]" );
         $source_file_path = $template_config_class->resolve_parameter( '#P_SOURCE_FILE_PATH#' ) || die( "Missing required param: [#P_SOURCE_FILE_PATH#]" );
         $content_type     = $template_config_class->resolve_parameter( '#P_CONTENT_TYPE#' );
