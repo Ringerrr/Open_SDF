@@ -1,0 +1,18 @@
+{
+   "release_packages" : [
+      {
+         "release_package" : "REDSHIFT_COPY_FROM_S3.2020-10-19_19-14-11.dkasak.json",
+         "object_changed" : 1,
+         "release_name" : "2020-10-19_19-13-03_Redshift_COPY_updates",
+         "package_type" : "template",
+         "object_name" : "REDSHIFT_COPY_FROM_S3"
+      }
+   ],
+   "release" : {
+      "package_datetime" : "2020-10-19 20:26:21.765357",
+      "repository" : "core",
+      "release_open" : 0,
+      "release_name" : "2020-10-19_19-13-03_Redshift_COPY_updates",
+      "release_base" : null
+   }
+}

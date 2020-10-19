@@ -210,7 +210,7 @@ sub new {
     $self->{builder}->get_object( 'main_paned' )->add2( $self->{notebook} );
     $self->{notebook}->show;
     
-    # This mapping is used to determine which database we connect to initally, to list other databases
+    # This mapping is used to determine which database we connect to initially, to list other databases
     $self->{db_type_roots} = {
         Netezza     => 'SYSTEM'
       , Oracle      => undef
@@ -2003,8 +2003,8 @@ sub on_execute_clicked {
     
     if (
         (
-#                1
-                $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info)/i # TODO: proper detection of SQL that returns a resultset
+                1
+#                $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info)/i # TODO: proper detection of SQL that returns a resultset
            || ! $connection->is_sql_database
         )
       && ! $direct

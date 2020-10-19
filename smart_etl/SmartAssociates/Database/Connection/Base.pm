@@ -835,7 +835,7 @@ sub fetch_column_type_info {
         # my $sth = $self->dbh->column_info( $database , $schema , $table , undef );
         # Some installations don't expose the required permissions to inspect the schema in this way, apparently
 
-        # $self->execute( $sth );
+        $self->execute( $sth );
         
         my $column_names      = $sth->{NAME};
         my $column_types      = $sth->{TYPE};

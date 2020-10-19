@@ -82,6 +82,10 @@ sub build_connection_string {
         . ";port="      . ( $auth_hash->{Port} || 3306 )
         . ";mysql_use_result=1"; # prevent $dbh->execute() from pulling all results into memory
     
+    if ( $auth_hash->{Attribute_1} ) {
+        $string .= ";mysql_ssl=1"
+    }
+    
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
 }
@@ -96,7 +100,7 @@ sub connection_label_map {
       , Database        => ""
       , Host_IP         => "Host / IP"
       , Port            => "Port"
-      , Attribute_1     => ""
+      , Attribute_1     => "Use SSL"
       , Attribute_2     => ""
       , Attribute_3     => ""
       , Attribute_4     => ""

@@ -174,7 +174,8 @@ sub fetch_column_info {
         # Split out the DATA_TYPE and PRECISION ...
         foreach my $column ( @{$column_info} ) {
 
-            if ( $column->[ DATA_TYPE ] =~ /([\w\s]*)(\(.*\))/ ) {
+            # if ( $column->[ DATA_TYPE ] =~ /([\w\s]*)(\(.*\))/ ) {//
+            if ( $column->[ DATA_TYPE ] =~ /([\w\s]*)\((.*)\)/ ) {
                 ( $column->[ DATA_TYPE ] , $column->[ PRECISION ] ) = ( $1 , $2 );
             }
 
