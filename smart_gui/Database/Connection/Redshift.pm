@@ -33,7 +33,7 @@ sub connection_label_map {
       , Database        => "Database"
       , Host_IP         => "Server"
       , Port            => "Port"
-      , Attribute_1     => ""
+      , Attribute_1     => "SSL Mode"
       , Attribute_2     => ""
       , Attribute_3     => ""
       , Attribute_4     => ""
@@ -56,7 +56,8 @@ sub build_connection_string {
 #        . ";Password="            . $auth_hash->{Password}
         . ";Database="            . $auth_hash->{Database}
         . ";Server="              . $auth_hash->{Host}
-        . ";Port="                . $auth_hash->{Port};
+        . ";Port="                . $auth_hash->{Port}
+        . ";SSLMode="             . $auth_hash->{Attribute_1};
     
     print "Redshift.pm assembled connection string: $string\n";
     

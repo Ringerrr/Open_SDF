@@ -20,7 +20,8 @@ sub build_connection_string {
 #        . ";Password="            . $auth_hash->{Password}
         . ";Database="            . $auth_hash->{Database}
         . ";Server="              . $auth_hash->{Host}
-        . ";Port="                . $auth_hash->{Port};
+        . ";Port="                . $auth_hash->{Port}
+        . ";UseSSL="              . ( $auth_hash->{Attribute_1} ? "1" : "0" );
 
     print "Redshift.pm assembled connection string: $string\n";
 

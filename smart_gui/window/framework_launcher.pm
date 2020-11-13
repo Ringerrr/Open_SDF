@@ -134,6 +134,7 @@ sub on_Execute_clicked {
             $json_args    =~ s/\s/\\ /g;  # escape spaces
             $json_args    =~ s/\(/\\\(/g; # escape (
             $json_args    =~ s/\)/\\\)/g; # escape )
+            $json_args    =~ s/'/\\'/g;   # escape '
             $custom_args  = $leading_args . " " . $json_args;
         } else {
             warn "Failed to pass custom args: $custom_args";

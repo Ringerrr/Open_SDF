@@ -125,6 +125,11 @@ sub dialog {
         $textview->get_buffer->set_text( $options->{text} );
         
     }
+
+    if ( exists $options->{custom_widgets} ) {
+        my $message_area = $dialog->get_message_area;
+        $message_area->pack_end( $options->{custom_widgets} , TRUE , TRUE , 0 );
+    }
     
     $dialog->show_all;
 
@@ -134,7 +139,13 @@ sub dialog {
         $dialog->destroy;
         return undef;
     }
-    
+
+    my $custom_response_hash;
+
+    if ( exists $options->{ok_callback} ) {
+        $custom_response_hash = $options->{ok_callback}();
+    }
+
     if ( $options->{type} eq 'options' ) {
         foreach my $radio_button ( @radio_buttons ) {
             if ( $radio_button->get_active ) {
@@ -147,8 +158,12 @@ sub dialog {
     }
     
     $dialog->destroy;
-    
-    return $response;
+
+    if ( $custom_response_hash ) {
+        return { custom_response_hash => $custom_response_hash , response => $response };
+    } else {
+        return $response;
+    }
     
 }
 
@@ -659,7 +674,7 @@ sub open_window {
     # switches to an existing instance of $class
     
     # If you don't want this functionality ( ie you want to be able to
-    # create multiple instances of a window, simple create the object
+    # create multiple instances of a window, simply create the object
     # yourself and don't use this function )
     
     my $window;
@@ -679,7 +694,11 @@ sub open_window {
             # If we couldn't create required connections, $window could be UNDEF!
             #  ... in which case the code below will fail
             $window = window::load_window( $class, $self->{globals}, $options );
-            
+
+            if ( $options->{dont_manage_window} ) {
+                return $window;
+            }
+
             if ( ! $window ) {
                 return undef;
             }
@@ -759,12 +778,18 @@ sub open_window {
         );
         
     }
-    
+
+    if ( $options->{dialog} ) {
+        return $window;
+    }
+
     if ( ! $window->{header_bar_setup} ) {
         $window->setup_header_bar;
     }
 
-    $window->get_window->set_wmclass( $globals->{self}->{wm_class} , $globals->{self}->{wm_class} );
+    eval { # fails for dialogs, and we don't care
+        $window->get_window->set_wmclass( $globals->{self}->{wm_class}, $globals->{self}->{wm_class} );
+    };
 
     return $window;
     
