@@ -1,0 +1,47 @@
+{
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'REDSHIFT_COPY_FROM_S3'"
+      ],
+      "data" : [
+         {
+            "repository" : "core",
+            "template_desc" : "Load data into Redshift table from S3",
+            "class" : "SQL",
+            "template_text" : "copy #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom 's3://#P_BUCKET_NAME#/#P_OBJECT_PATH#'\ndelimiter '#P_DELIMITER#'\n#P_AUTHORIZATION#",
+            "template_name" : "REDSHIFT_COPY_FROM_S3"
+         }
+      ]
+   },
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'REDSHIFT_COPY_FROM_S3'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "Either an IAM role, or *both* ACCESS_KEY_ID and SECRET_ACCESS_KEY",
+            "param_default" : null,
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_name" : "#P_AUTHORIZATION#"
+         },
+         {
+            "param_default" : null,
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_desc" : "The S3 bucket name",
+            "param_name" : "#P_BUCKET_NAME#"
+         },
+         {
+            "param_desc" : "The column delimiter",
+            "param_default" : ",",
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_name" : "#P_DELIMITER#"
+         },
+         {
+            "param_name" : "#P_OBJECT_PATH#",
+            "param_desc" : "The S3 object path",
+            "param_default" : "",
+            "template_name" : "REDSHIFT_COPY_FROM_S3"
+         }
+      ]
+   }
+}

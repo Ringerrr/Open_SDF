@@ -1,0 +1,47 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'REDSHIFT_COPY_FROM_S3'"
+      ],
+      "data" : [
+         {
+            "param_desc" : "Either an IAM role, or *both* ACCESS_KEY_ID and SECRET_ACCESS_KEY",
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_default" : null,
+            "param_name" : "#P_AUTHORIZATION#"
+         },
+         {
+            "param_desc" : "The S3 bucket name",
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_default" : null,
+            "param_name" : "#P_BUCKET_NAME#"
+         },
+         {
+            "param_default" : "YMD",
+            "param_name" : "#P_DATESTYLE#",
+            "param_desc" : "The datestyle, eg YMD, DMY ...",
+            "template_name" : "REDSHIFT_COPY_FROM_S3"
+         },
+         {
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "param_desc" : "The object prefix in the S3 bucket",
+            "param_name" : "#P_OBJECT_PREFIX#",
+            "param_default" : null
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'REDSHIFT_COPY_FROM_S3'"
+      ],
+      "data" : [
+         {
+            "repository" : "core",
+            "template_desc" : "Load data into Redshift table from S3",
+            "template_name" : "REDSHIFT_COPY_FROM_S3",
+            "template_text" : "copy #CONFIG_TARGET_SCHEMA_NAME#.#CONFIG_TARGET_TABLE_NAME#\nfrom 's3://#P_BUCKET_NAME#/#P_OBJECT_PREFIX#'\ndelimiter '#P_DELIMITER#'\n#P_AUTHORIZATION#",
+            "class" : "SQL"
+         }
+      ]
+   }
+}

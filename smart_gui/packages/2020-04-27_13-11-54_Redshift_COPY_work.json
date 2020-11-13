@@ -1,0 +1,25 @@
+{
+   "release" : {
+      "package_datetime" : "2020-04-27 20:34:28.353065",
+      "release_base" : null,
+      "release_open" : 0,
+      "repository" : "core",
+      "release_name" : "2020-04-27_13-11-54_Redshift_COPY_work"
+   },
+   "release_packages" : [
+      {
+         "release_name" : "2020-04-27_13-11-54_Redshift_COPY_work",
+         "object_changed" : 1,
+         "object_name" : "REDSHIFT_COPY_FROM_S3",
+         "release_package" : "REDSHIFT_COPY_FROM_S3.2020-04-27_20-30-57.dkasak.json",
+         "package_type" : "template"
+      },
+      {
+         "release_package" : "SQL_TO_CSV.2020-04-27_20-33-04.dkasak.json",
+         "object_changed" : 1,
+         "release_name" : "2020-04-27_13-11-54_Redshift_COPY_work",
+         "object_name" : "SQL_TO_CSV",
+         "package_type" : "template"
+      }
+   ]
+}
