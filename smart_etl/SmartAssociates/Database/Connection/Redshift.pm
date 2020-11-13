@@ -9,23 +9,21 @@ use constant DB_TYPE            => 'Redshift';
 
 sub build_connection_string {
 
-    my ( $self, $auth_hash ) = @_;
+    my ( $self, $auth_hash , $connection_string ) = @_;
 
     no warnings 'uninitialized';
 
-    my $string =
-          "dbi:ODBC:"
+    $connection_string =
+        "dbi:ODBC:"
         . "DRIVER="               . $auth_hash->{ODBC_driver}
 #        . ";DbUser="              . $auth_hash->{Username}
 #        . ";Password="            . $auth_hash->{Password}
         . ";Database="            . $auth_hash->{Database}
         . ";Server="              . $auth_hash->{Host}
         . ";Port="                . $auth_hash->{Port}
-        . ";UseSSL="              . ( $auth_hash->{Attribute_1} ? "1" : "0" );
+        . ";SSLMode="             . $auth_hash->{Attribute_1};
 
-    print "Redshift.pm assembled connection string: $string\n";
-
-    return $self->SUPER::build_connection_string( $auth_hash, $string );
+    return $self->SUPER::build_connection_string( $auth_hash, $connection_string );
 
 }
 
@@ -46,16 +44,28 @@ sub connect_post {
 sub capture_execution_info {
 
     my ( $self , $sth ) = @_;
-
-    my $sth = $self->prepare( "select pg_last_query_id() as pg_last_query_id" );
-
-    $self->execute( $sth );
-
-    my $results = $sth->fetchrow_hashref();
-
+    
+    my $this_sth = $self->prepare( "select pg_last_query_id() as pg_last_query_id" );
+    
+    $self->execute( $this_sth );
+    
+    my $results = $this_sth->fetchrow_hashref();
+    
     return {
         query_id    => $results->{pg_last_query_id}
     };
+    
+}
+
+sub error_strings_to_downgrade {
+
+    my $self = shift;
+
+    my @error_strings = (
+        "INFO" # eg INFO:  Load into table 'coldroomtemperatures' completed, 4 record(s) loaded successfully.
+    );
+
+    return \@error_strings;
 
 }
 

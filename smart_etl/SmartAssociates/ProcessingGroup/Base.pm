@@ -112,32 +112,54 @@ sub getRegisteredTemplates {
     # First we get a list of template ID, load config IDs, and classes,
     # in the order we're going to execute them in ...
 
-    my $bind_values = [ $self->[ $IDX_PROCESSING_GROUP_NAME ] ];
+    my $bind_values = [ $self->[ $IDX_PROCESSING_GROUP_NAME ] ];    
+    my $root_step_id = $self->globals->JOB->job_arg( 'ROOT_STEP_ID' );
 
-    my $sql = "select\n"
-     . "    CONFIG.SEQUENCE_ORDER\n"
-     . "  , CONFIG.PARENT_SEQUENCE_ORDER\n"
-     . "  , TEMPLATE.TEMPLATE_NAME\n"
-     . "  , TEMPLATE.CLASS\n"
-     . "from\n"
-     . "             CONFIG\n"
-     . "inner join   TEMPLATE\n"
-     . "    on\n"
-     . "            CONFIG.TEMPLATE_NAME                = TEMPLATE.TEMPLATE_NAME\n"
-     . "where\n"
-     . "    CONFIG.PROCESSING_GROUP_NAME = ?\n"
-     . "and CONFIG.DISABLE_FLAG = 0\n";
-
-     my $root_step_id = $self->globals->JOB->job_arg( 'ROOT_STEP_ID' );
-
+    my $sql = "
+with recursive a as (
+    select sequence_order, parent_sequence_order, PROCESSING_GROUP_NAME , 1::integer recursion_level
+    from   CONFIG
+    where  CONFIG.PROCESSING_GROUP_NAME = ?
+";
+    
      if ( $root_step_id ) {
-         $sql .= "and parent_sequence_order = ?\n";
+         $sql .= "    and    parent_sequence_order = ?\n";
          push @{$bind_values} , $root_step_id;
      }
+    
+    $sql .= "    union all
+    select d.sequence_order, d.parent_sequence_order, d.PROCESSING_GROUP_NAME , a.recursion_level + 1
+    from   CONFIG d
+    join   a
+               on a.PROCESSING_GROUP_NAME = d.PROCESSING_GROUP_NAME
+              and a.sequence_order = d.parent_sequence_order
+)
+select
+    CONFIG.SEQUENCE_ORDER
+  , CONFIG.PARENT_SEQUENCE_ORDER
+  , TEMPLATE.TEMPLATE_NAME
+  , TEMPLATE.CLASS
+  , max(a.recursion_level) as recursion_level
+from
+             CONFIG
+inner join   a
+                                 on CONFIG.sequence_order = a.sequence_order
+inner join   TEMPLATE
+                                 on CONFIG.TEMPLATE_NAME  = TEMPLATE.TEMPLATE_NAME
+where
+    CONFIG.PROCESSING_GROUP_NAME = ?
+and CONFIG.DISABLE_FLAG = 0
+group by
+    CONFIG.SEQUENCE_ORDER
+  , CONFIG.PARENT_SEQUENCE_ORDER
+  , TEMPLATE.TEMPLATE_NAME
+  , TEMPLATE.CLASS
+order by
+    CONFIG.SEQUENCE_ORDER
+;";
 
-     $sql .= "order by\n"
-     . "    CONFIG.SEQUENCE_ORDER";
-
+    push @{$bind_values} , $self->[ $IDX_PROCESSING_GROUP_NAME ];
+    
     my $sth = $self->[ $IDX_DBH ]->prepare( $sql );
 
     $self->[ $IDX_DBH ]->execute(

@@ -62,8 +62,10 @@ sub S3_GET {
     # If our target path has a filename, then we use that. Otherwise if the target path is a directory name,
     # then we parse the filename out of the source key and use that.
     
-    my ( $target_file_part , $target_dir_part , $suffix ) = fileparse( $target_path );
-    my ( $s3_key_filename_part , $s3_key_dir_part , $suffix ) = fileparse( $key );
+    my ( $target_file_part , $target_dir_part , $suffix , $s3_key_filename_part , $s3_key_dir_part );
+    
+    ( $target_file_part , $target_dir_part , $suffix ) = fileparse( $target_path );
+    ( $s3_key_filename_part , $s3_key_dir_part , $suffix ) = fileparse( $key );
     
     if ( ! $flatten_directory ) {
         $target_path = File::Spec->catfile( $target_path , $s3_key_dir_part );
@@ -105,6 +107,8 @@ sub S3_PUT {
     
     my ( $s3 , $bucket , $bucket_name , $target_key , $source_file_path , $content_type , $TEMPLATE_TEXT );
     
+    my $put_status;
+    
     eval {
         
         $s3 = $self->[ $IDX_S3_CLIENT ];
@@ -113,6 +117,10 @@ sub S3_PUT {
         $target_key       = $template_config_class->resolve_parameter( '#P_TARGET_KEY#' ) || die( "Missing required param: [#P_TARGET_KEY#]" );
         $source_file_path = $template_config_class->resolve_parameter( '#P_SOURCE_FILE_PATH#' ) || die( "Missing required param: [#P_SOURCE_FILE_PATH#]" );
         $content_type     = $template_config_class->resolve_parameter( '#P_CONTENT_TYPE#' );
+
+        if ( ! -e $source_file_path ) {
+            die( "Source file [$source_file_path] doesn't exist!" );
+        }
         
         $bucket = $s3->bucket( $bucket_name );
         
@@ -121,7 +129,14 @@ sub S3_PUT {
         
         $source_file_path =~ s/\/\//\//g; # remove double slashes - we might need to handle paths "properly"
         
-        $bucket->add_key_filename(
+        my $size = `du -h $source_file_path`;
+        chomp( $size );
+        
+        $self->log->info( "Source file [$source_file_path] is [$size]" );
+        
+        $self->log->info( "Beginning S3 PUT ..." );
+        
+        $put_status = $bucket->add_key_filename(
             $target_key,
             $source_file_path,
             {
@@ -129,9 +144,13 @@ sub S3_PUT {
             }
         ) or die( $s3->err . ": " . $s3->errstr );
         
+        $self->log->info( "S3 PUT has ended" );
+        
     };
     
     my $error_string = $@;
+    
+    $self->log->info( "Status of S3 PUT request: [$put_status]" );
     
     return {
         record_count  => 1

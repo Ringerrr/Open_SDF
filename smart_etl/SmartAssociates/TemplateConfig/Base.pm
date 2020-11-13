@@ -383,6 +383,7 @@ sub resolve_parameter {
             } else {
                 
                 $self->log->warn( "Parameter [$job_parameter_key] requested, but doesn't exist in job_ctl record!" );
+                $value = '';
                 
             }
             

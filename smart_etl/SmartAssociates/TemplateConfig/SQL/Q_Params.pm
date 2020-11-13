@@ -23,6 +23,7 @@ sub handle_executed_sth {
         my $this_column = $column;
         $this_column =~ s/\s/_/;
         $query_parameters->{ $this_column } = $result_row->{ $column };
+        $self->log->info( "Setting Q Param [$this_column] to value [" . $result_row->{ $column} . "]" );
     }
     
     $self->globals->Q_PARAMS( $query_parameters );

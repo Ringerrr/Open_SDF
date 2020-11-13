@@ -19,14 +19,16 @@ sub default_port {
 
 sub build_connection_string {
     
-    my ( $self, $credentials ) = @_;
+    my ( $self, $credentials , $connection_string ) = @_;
     
     no warnings 'uninitialized';
     
-    my $connection_string =
-          "dbi:Pg:dbname=" . $credentials->{Database}
-        . ";host="         . $credentials->{Host}
-        . ";port="         . $credentials->{Port};
+    if ( ! $connection_string ) { # subclasses can build their own connection string - in this case, don't re-assemble one here ...
+       $connection_string =
+           "dbi:Pg:dbname=" . $credentials->{Database}
+         . ";host="         . $credentials->{Host}
+         . ";port="         . $credentials->{Port};
+    }
     
     return $connection_string;
     
