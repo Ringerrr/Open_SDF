@@ -760,6 +760,8 @@ order by
 
     while ( my $row = $sth->fetchrow_hashref ) {
 
+        no warnings 'uninitialized';
+
         $return->{ $row->{INDEX_NAME} }->{IS_PRIMARY} = $row->{IS_PRIMARY};
         $return->{ $row->{INDEX_NAME} }->{IS_UNIQUE}  = $row->{IS_UNIQUE};
         $return->{ $row->{INDEX_NAME} }->{TABLE_NAME} = $row->{TABLE_NAME};

@@ -609,7 +609,7 @@ sub generate_db_load_command {
     }
     
     if ( $options->{skip_rows} ) {
-        $load_command .= "ignore " . $options->{skip_rows} . " rows\n";
+        $load_command .= "ignore " . $options->{skip_rows} . " lines\n";
     }
     
     return $load_command;

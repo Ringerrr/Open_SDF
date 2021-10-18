@@ -76,8 +76,13 @@ sub build_connection_string {
           "dbi:ODBC:"
         . "DRIVER="    . $auth_hash->{ODBC_driver}
         . ";server="   . $auth_hash->{Host}
-        . ";Port="     . $auth_hash->{Port}
-        . ";app=SmartDataFramework"
+        . ";Port="     . $auth_hash->{Port};
+    
+    if ( $auth_hash->{Database} ) {
+        $string .= ";database=" . $auth_hash->{Database};
+    }
+    
+    $string .= ";app=SmartDataFramework"
         . ";use_unicode=true";
 #        . ";UID="      . $auth_hash->{Username}
 #        . ";PWD="      . $auth_hash->{Password};

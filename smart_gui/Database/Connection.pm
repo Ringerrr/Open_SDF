@@ -138,7 +138,7 @@ sub generate {
          && ! $dont_cache
     ) {
         # Check in user connections pool to see if we already have one of these ...
-        if ( exists $globals->{user_connections}->{ $connection_key } ) {
+        if ( exists $globals->{user_connections}->{ $connection_key } && $globals->{user_connections}->{ $connection_key } ) {
             return $globals->{user_connections}->{ $connection_key };
         }
     }

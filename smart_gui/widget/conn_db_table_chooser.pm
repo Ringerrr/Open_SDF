@@ -285,7 +285,7 @@ sub get_db_connection {
             $auth_hash->{Database} = $database_name;
         }
         
-        if ( $db_type eq 'Netezza' || $db_type eq 'MySQL' || $db_type eq 'Postgres' || $db_type eq 'Greenplum' ) {
+        if ( $db_type eq 'Netezza' || $db_type eq 'MySQL' || $db_type eq 'Postgres' || $db_type eq 'Greenplum' || $db_type eq 'Synapse' ) {
 #        if ( $db_type eq 'Netezza' || $db_type eq 'MySQL' ) {
             delete $auth_hash->{ConnectionString};
             # $auth_hash->{Database} = $database_name;

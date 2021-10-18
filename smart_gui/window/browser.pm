@@ -343,6 +343,18 @@ sub on_tree_row_select {
 
             $self->populate_columns_datasheet( $connection, $database, $schema, $table );
 
+        } elsif ( $type eq VIEW_TYPE ) {
+
+            my $connection_name = $self->get_selected_by_object_type( CONNECTION_TYPE ) || return;
+            my $database        = $self->get_selected_by_object_type( DATABASE_TYPE );
+            my $connection      = $self->get_db_connection( $connection_name, $database );
+            my $schema          = $self->get_selected_by_object_type( SCHEMA_TYPE );
+            my $view            = $self->get_selected_by_object_type( VIEW_TYPE );
+
+            my $class = ref $connection;
+
+            $self->populate_columns_datasheet( $connection, $database, $schema, $view );
+
         }
         
     }
@@ -968,7 +980,10 @@ sub get_db_connection {
     if ( ! exists $self->{connections}->{ $key } ) {
         
         my $auth_hash = $self->{globals}->{config_manager}->get_auth_values( $connection_name );
-        
+
+        # Forces rebuilding string - otherwise some DBs ( eg SQL Server / Synapse ) won't add the database to the connection string
+        $auth_hash->{ConnectionString} = undef;
+
         if ( ! $auth_hash->{Database} ) {
             $auth_hash->{Database} = $database_name;
         }
