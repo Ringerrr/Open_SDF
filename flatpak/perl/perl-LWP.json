@@ -5,8 +5,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.39.tar.gz",
-            "sha256": "9a8d7747938aa75d7d524c71574ae7f99ca66a5dac8255a7f7759f373e7774d5"
+            "url": "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/libwww-perl-6.52.tar.gz",
+            "sha256": "b63f67647b7cfb0bace19ada32e4feb2c2e8e0f4204546c62ce6247fa59d778d"
         },
         {
             "type": "file",

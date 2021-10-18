@@ -4,8 +4,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://mirror.aarnet.edu.au/pub/OpenBSD/OpenSSH/portable/openssh-7.9p1.tar.gz",
-            "sha256": "6b4b3ba2253d84ed3771c8050728d597c91cfce898713beb7b64a305b6f11aad"
+            "url": "https://mirror.aarnet.edu.au/pub/OpenBSD/OpenSSH/portable/openssh-8.8p1.tar.gz",
+            "sha256": "4590890ea9bb9ace4f71ae331785a3a5823232435161960ed5fc86588f331fe9"
         }
     ]
 }

@@ -5,10 +5,17 @@ yum update
 yum install flatpak
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.gnome.Platform//3.34
+flatpak install flathub org.gnome.Platform//3.38
 
 # For the SDK, required for building:
-flatpak install flathub org.gnome.Sdk/x86_64/3.34
+flatpak install flathub org.gnome.Sdk/x86_64/3.38
+
+# Import the GPG certificate
+flatpak remote-add --gpg-import=open.sdf.gpg open.sdf https://tesla.duckdns.org/SmartDataFramework
 
 # Install SDF:
 flatpak install --from https://tesla.duckdns.org/SmartDataFramework/sdf-1.0.flatpakrepo
+
+# Instructions:
+https://smart-associates.atlassian.net/wiki/spaces/SDFOSP/pages
+

@@ -2,7 +2,7 @@
 {
     "app-id": "biz.smartassociates.open.sdf",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.36",
+    "runtime-version": "3.38",
     "sdk": "org.gnome.Sdk",
     "command": "/app/launch_flatpak.sh",
     "rename-icon": "open.sdf",
