@@ -19,9 +19,9 @@ index a0708fe..9efffc8 100644
 --- a/src/dblib/bcp.c
 +++ b/src/dblib/bcp.c
 @@ -85,6 +85,7 @@ static int rtrim(char *, int);
- static STATUS _bcp_read_hostfile(DBPROCESS * dbproc, FILE * hostfile, int *row_error);
+ static STATUS _bcp_read_hostfile(DBPROCESS * dbproc, FILE * hostfile, int *row_error, bool skip);
  static int _bcp_readfmt_colinfo(DBPROCESS * dbproc, char *buf, BCP_HOSTCOLINFO * ci);
- static int _bcp_get_term_var(BYTE * pdata, BYTE * term, int term_len);
+ static int _bcp_get_term_var(const BYTE * pdata, const BYTE * term, int term_len);
 +static int _bcp_escape(TDS_UCHAR **buf, int buflen, char *terminator, int term_len);
  
  /*
