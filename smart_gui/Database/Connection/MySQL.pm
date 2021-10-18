@@ -80,7 +80,8 @@ sub build_connection_string {
         . "database="  . ( $auth_hash->{Database} || 'information_schema' )
         . ";host="       . $auth_hash->{Host}
         . ";port="      . ( $auth_hash->{Port} || 3306 )
-        . ";mysql_use_result=1"; # prevent $dbh->execute() from pulling all results into memory
+        . ";mysql_local_infile=1" # Needed to be able to execute 'load data infile' for TiDB
+        . ";mysql_use_result=1";  # prevent $dbh->execute() from pulling all results into memory
     
     if ( $auth_hash->{Attribute_1} ) {
         $string .= ";mysql_ssl=1"
