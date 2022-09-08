@@ -256,7 +256,7 @@
   , "aws-deps/perl-Ref-Util-XS.json"
   , "aws-deps/perl-Ref-Util.json"
   , "aws-deps/perl-Net-SSLeay.json"
-  , "aws-deps/perl-Net-Amazon-EC2.json"        
+  , "aws-deps/perl-Net-Amazon-EC2.json"
   , "other/binutils.json"
   , "other/alien.json"
   , "perl/perl-Term-ReadKey.json"
