@@ -1,0 +1,7 @@
+insert into user_apps (
+    username
+  , app_name
+) values (
+    'admin'
+  , 'Smart Data Framework'
+);

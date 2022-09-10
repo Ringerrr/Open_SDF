@@ -1,0 +1,7 @@
+insert into apps (
+    app_name
+  , app_command
+) values (
+    'Smart Data Framework'
+  , '/app/launch_flatpak.sh'
+);

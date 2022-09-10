@@ -15,6 +15,6 @@
       , "make install"
     ],
     "post-install": [
-        "chmod 755 /app/lib/perl5/site_perl/5.30.2/x86_64-linux/auto/DBD/ODBC/ODBC.so"
+        "chmod 755 /app/lib/perl5/site_perl/5.36.0/x86_64-linux/auto/DBD/ODBC/ODBC.so"
     ]
 }

@@ -8,7 +8,7 @@ flatpak-builder appdir biz.smartassociates.open.sdf.json \
  --gpg-sign=E75127F2027B84FF84A09C64A5B82001B9FB41CB \
  --gpg-homedir=../gpg
 
-# --disable-updates \
+# --disable-updates
 # --force-clean \
 
 #flatpak-builder appdir biz.smartassociates.open.sdf.json --force-clean --default-branch=1.0 --gpg-sign=76C6ED193465FBCDD5D036435165EB594EE5D544
