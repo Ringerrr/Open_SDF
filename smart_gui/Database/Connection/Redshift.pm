@@ -218,6 +218,198 @@ sub _model_to_table_ddl {
     
 }
 
+sub fetch_all_indexes {
+
+    my ( $self, $database, $schema ) = @_;
+
+    # NOTE: this query will currently only search in the CURRENT database
+    # ( there appears to be no way to include the database in the query )
+    # To work around this, we create another connection, using our own
+    # auth hash, but replacing the database
+
+    my $connection = $self;
+
+    if ( $database ne $self->{database} ) {
+
+        my $auth_hash = { %{$self->{auth_hash}} }; # *copy* the hash, don't copy a *reference* to it ...
+
+        $auth_hash->{Database} = $database;
+
+        $connection = Database::Connection::Redshift->new(
+            $self->{globals}
+          , $auth_hash
+        );
+
+    }
+
+    my $sth;
+
+    eval {
+
+        $sth = $connection->prepare(
+            "select\n"
+          . "    *\n"
+          . "from\n"
+          . "    pg_table_def\n" # https://docs.aws.amazon.com/redshift/latest/dg/r_PG_TABLE_DEF.html
+          . "where\n"
+          . "    schemaname = ?"
+        ) or die( $connection->errstr );
+
+    };
+
+    my $err = $@;
+
+    if ( $err ) {
+
+        $self->dialog(
+            {
+                title       => "Error fetching indexes"
+              , type        => "error"
+              , text        => $err
+            }
+        );
+
+        return;
+
+    }
+
+    print "\n" . $sth->{Statement} . "\n";
+
+    eval {
+
+        $sth->execute( $schema )
+            or die( $sth->errstr );
+
+    };
+
+    $err = $@;
+
+    if ( $err ) {
+
+        $self->dialog(
+            {
+                title       => "Error fetching indexes"
+              , type        => "error"
+              , text        => $err
+            }
+        );
+
+        return;
+
+    }
+
+    my $return;
+
+    # We're creating a structure that looks like:
+
+    #$return = {
+    #    "INDEX_NAME"  => {
+    #        IS_PRIMARY         => 0 or 1
+    #      , IS_UNIQUE          => 0 or 1
+    #      , IS_DISTIBUTION_KEY => 0 or 1
+    #      , TABLE_NAME         => "TABLE_NAME"
+    #      , COLUMNS            => [ "COL_1", "COL_2", etc ... ]
+    #    }
+    #};
+
+    while ( my $row = $sth->fetchrow_hashref ) {
+
+
+        my $distkey_column;
+
+        if ( $row->{diststyle} =~ /KEY\((.*)\)/ ) {
+            $distkey_column = $1;
+            $return->{ $row->{table} }->{IS_PRIMARY}           = 0;
+            $return->{ $row->{table} }->{IS_UNIQUE}            = 0;
+            $return->{ $row->{table} }->{IS_DISTRIBUTION_KEY}  = 1;
+            $return->{ $row->{table} }->{TABLE_NAME}           = $row->{table};
+            push @{ $return->{ $row->{table} }->{COLUMNS} }    , $distkey_column;
+        }
+
+    }
+
+    # # End of fetching indexes.
+    # # Now we fetch organisation keys, and merge them in with the indexes
+    #
+    # eval {
+    #
+    #     $sth = $connection->prepare(
+    #         "select\n"
+    #             . "     s.DATABASE\n"
+    #             . "   , o.SCHEMA\n"
+    #             . "   , o.TABLENAME\n"
+    #             . "   , o.ATTNAME\n"
+    #             . "from _v_table_organize_column as o\n"
+    #             . "     inner join _v_schema as s\n"
+    #             . "         on o.SCHEMA = s.SCHEMA\n"
+    #             . "where\n"
+    #             . "      s.DATABASE = ?\n"
+    #             . "and   o.SCHEMA   = ?\n"
+    #             . "order by o.ORGSEQNO"
+    #     ) or die( $self->errstr );
+    #
+    # };
+    #
+    # $err = $@;
+    #
+    # if ( $err ) {
+    #
+    #     $self->dialog(
+    #         {
+    #             title       => "Error fetching organisation keys"
+    #                 , type        => "error"
+    #             , text        => $err
+    #         }
+    #     );
+    #
+    #     return;
+    #
+    # }
+    #
+    # print "\n" . $sth->{Statement} . "\n";
+    #
+    # eval {
+    #
+    #     $sth->execute( $database, $schema )
+    #         or die( $sth->errstr );
+    #
+    # };
+    #
+    # $err = $@;
+    #
+    # if ( $err ) {
+    #
+    #     $self->dialog(
+    #         {
+    #             title       => "Error fetching organisation keys"
+    #                 , type        => "error"
+    #             , text        => $err
+    #         }
+    #     );
+    #
+    #     return;
+    #
+    # }
+    #
+    # while ( my $row = $sth->fetchrow_hashref ) {
+    #
+    #     my $key_name = $row->{TABLENAME} . "_-_ORGKEY";
+    #
+    #     $return->{ $key_name }->{IS_PRIMARY}           = 0;
+    #     $return->{ $key_name }->{IS_UNIQUE}            = 0;
+    #     $return->{ $key_name }->{IS_DISTRIBUTION_KEY}  = 0;
+    #     $return->{ $key_name }->{IS_ORGANISATION_KEY}  = 1;
+    #     $return->{ $key_name }->{TABLE_NAME}           = $row->{TABLENAME};
+    #
+    #     push @{ $return->{ $key_name }->{COLUMNS} }
+    #         , $row->{ATTNAME};
+    #
+    # }
+
+    return $return;
+
+}
+
 sub generate_migration_import_sequence {
     
     my ( $self, $options ) = @_;

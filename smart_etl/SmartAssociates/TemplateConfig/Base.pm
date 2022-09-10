@@ -20,8 +20,9 @@ my $IDX_IPC_TASK                                =  SmartAssociates::Base::FIRST_
 my $IDX_PERF_STATS_HASH                         =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  7;
 my $IDX_PERF_STATS_MARKERS                      =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  8;
 my $IDX_RECURSION_COUNTER                       =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX +  9;
+my $IDX_PROCESSING_GROUP_ARGS                   =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 10;
 
-use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 10;
+use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 11;
 
 use constant    ENV_HIGH_DATE_TIME              => '2999-12-31 23:59:59.999999';
 use constant    ENV_HIGH_DATE                   => '2999-12-31';
@@ -48,6 +49,7 @@ sub new {
     $self->[ $IDX_PERF_STATS_HASH ]        = {};
     $self->[ $IDX_PERF_STATS_MARKERS ]     = {};
     $self->[ $IDX_RECURSION_COUNTER ]      = 0;
+    $self->[ $IDX_PROCESSING_GROUP_ARGS ]  = $self->globals->PROCESSING_GROUP_ARGS();
 
     return $self;
     
@@ -265,7 +267,11 @@ sub detokenize {
 
     my $parameter_recursion_limit = $self->globals->PARAMETER_RECURSION_LIMIT;
 
-    my @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:=,]+#/g;
+    my @substitution_parameters;
+    {
+        no warnings 'uninitialized';
+        @substitution_parameters = $template_sql =~ /#[a-zA-Z0-9_\.:=,]+#/g;
+    }
 
     while ( ( $self->[ $IDX_RECURSION_COUNTER ] < $parameter_recursion_limit ) && @substitution_parameters ) {
         
@@ -490,49 +496,48 @@ sub resolveUserParameter {
     my $value;
 
     # We start out with parameters that can be overridden with command-line options ...
-
     if (   $parameter eq '#P_MAX_ERRORS#' ) {                                   # the max allowed errors per external table load
-
         my $max_errors = $self->globals->MAX_ERRORS;
-
         if ( $max_errors ) {
-
             $self->log->debug( "Max errors value of [$max_errors] was passed in from command-line. Using it ..." );
             $value = $max_errors;
-
             return $value;                  # this overrides user metadata, so we return straight away
-
         }
-
     }
 
+    my $param_name;
+    if ( $parameter =~ /#P_(.*)#/ ) {
+        $param_name = $1;
+    }
     if (   exists $parameters->{ $parameter } && exists $parameters->{ $parameter }->{PARAM_VALUE} ) {
-
         $self->log->info( "Using param_value [" . $parameters->{ $parameter }->{PARAM_VALUE} . "] for parameter: [$parameter]" );
         $value = $parameters->{ $parameter }->{PARAM_VALUE};
-
-    } elsif (   exists $template_config->{UNPACKED_JOB_ARGS}->{ $parameter } ) {    # these are job-specific args, packed into job_ctl.job_args
-
+    } elsif (   exists $template_config->{UNPACKED_JOB_ARGS}->{ $parameter } ) {
+        # these are job-specific args, packed into job_ctl.job_args
         $self->log->info( "Using JSON-encoded value from JOB_CTL.job_args [" . $template_config->{UNPACKED_JOB_ARGS}->{ $parameter } . "] for parameter: [$parameter]" );
         $value = $template_config->{UNPACKED_JOB_ARGS}->{ $parameter };
-
+    } elsif (   exists $self->[ $IDX_PROCESSING_GROUP_ARGS ]->{ $parameter } ) {
+        # these come from JOB_ARGS_JSON in the PROCESSING_GROUP record
+        $self->log->info( "Using JSON-encoded value from PROCESSING_GROUP.JOB_ARGS_JSON [" . $self->[ $IDX_PROCESSING_GROUP_ARGS ]->{ $parameter } . "] for parameter: [$parameter]" );
+        $value = $self->[ $IDX_PROCESSING_GROUP_ARGS ]->{ $parameter };
     } elsif (   exists $parameters->{ $parameter }->{PARAM_DEFAULT} ) {
-
         no warnings 'uninitialized';
-
         $self->log->info( "Using default value [" . $parameters->{ $parameter }->{PARAM_DEFAULT} . "] for parameter: [$parameter]" );
         $value = $parameters->{ $parameter }->{PARAM_DEFAULT};
-
     } else {
-
-        if (
-                substr( $parameter, 0, 5 ) ne '#P_ZZ'
-             && $parameter ne '#P_ITERATOR#'
-             && $parameter ne '#P_LOOP#'
-        ) {
-            $self->log->warn( "resolve_parameter() was passed an unknown parameter: [$parameter]" );
+        my $q_param = $self->resolve_parameter( '#Q_' . $param_name . '#' );
+        if ( $q_param ne '' ) {
+            $self->log->info( "Using #Q_" . $param_name . "# value [$q_param] for parameter: [$parameter]" );
+            $value = $q_param;
+        } else {
+            if (
+                substr( $parameter , 0 , 5 ) ne '#P_ZZ'
+                    && $parameter ne '#P_ITERATOR#'
+                    && $parameter ne '#P_LOOP#'
+            ) {
+                $self->log->warn( "resolve_parameter() was passed an unknown parameter: [$parameter]" );
+            }
         }
-
     }
 
     return $value;

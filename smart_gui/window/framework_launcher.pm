@@ -105,7 +105,8 @@ sub on_Execute_clicked {
     my $processing_group_str;
     
     $processing_group_str ="--processing-group=$processing_group_name";
-    
+
+    # We can probably remove this - custom args have moved into metadata, and don't get passed in on the command-line
     if ( defined $custom_args ) {
         my ( $leading_args , $json_args );
         if ( $custom_args =~ /(.*)\s*(--args=.*)/ ) {

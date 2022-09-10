@@ -42,6 +42,16 @@ sub new {
     
 }
 
+sub connect_pre {
+
+    my ( $self , $auth_hash , $options_hash ) = @_;
+
+    $auth_hash->{ConnectionString} = undef;
+
+    return ( $auth_hash , $options_hash );
+
+}
+
 sub connection_label_map {
 
     my $self = shift;
@@ -82,10 +92,7 @@ sub build_connection_string {
         $string .= ";database=" . $auth_hash->{Database};
     }
     
-    $string .= ";app=SmartDataFramework"
-        . ";use_unicode=true";
-#        . ";UID="      . $auth_hash->{Username}
-#        . ";PWD="      . $auth_hash->{Password};
+    $string .= ";app=SmartDataFramework;use_unicode=true";
     
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
@@ -321,8 +328,8 @@ sub fetch_procedure {
 
 }
 
-sub fetch_column_info {
-    
+sub fetch_column_info_array {
+
     my ( $self, $database, $schema, $table ) = @_;
     
     my $sth = $self->prepare(
@@ -348,7 +355,11 @@ sub fetch_column_info {
     $self->execute( $sth, [ $table, $schema ] )
         || return;
     
-    my $return = $sth->fetchall_hashref( "COLUMN_NAME" );
+    my $return;
+
+    while ( my $row = $sth->fetchrow_hashref ) {
+        push @{$return}, $row;
+    }
     
     return $return;
     
@@ -376,6 +387,7 @@ sub fetch_all_column_info {
       . "         else 0\n"
       . "         end                as NULLABLE\n"
       . "  , COLUMN_DEFAULT          as COLUMN_DEFAULT\n"
+      . "  , COLUMNPROPERTY(object_id(TABLE_SCHEMA+'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') as IS_IDENTITY\n"
       . "from\n"
       . "    " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "COLUMNS" ) . "\n"
       . "where\n"
@@ -417,6 +429,7 @@ sub fetch_all_column_info {
               , PRECISION       => $column_info->[3]
               , NULLABLE        => $column_info->[4]
               , COLUMN_DEFAULT  => $column_info->[5]
+              , IS_IDENTITY     => $column_info->[6]
               , TABLE_TYPE      => 'TABLE'
           };
     }
@@ -459,6 +472,7 @@ sub fetch_all_indexes {
           . "                else 0\n"
           . "            end                    as IS_UNIQUE\n"
           . "          , INDEXES.is_primary_key as IS_PRIMARY\n"
+          . "          , is_identity            as IS_IDENTITY\n"
           . "from\n" 
           . "            sys.indexes            INDEXES\n"
           . "inner join  sys.index_columns      INDEX_COLUMNS\n"
@@ -541,10 +555,10 @@ sub fetch_all_indexes {
         $return->{ $row->{INDEX_NAME} }->{IS_PRIMARY} = $row->{IS_PRIMARY};
         $return->{ $row->{INDEX_NAME} }->{IS_UNIQUE}  = $row->{IS_UNIQUE};
         $return->{ $row->{INDEX_NAME} }->{TABLE_NAME} = $row->{TABLE_NAME};
+        $return->{ $row->{INDEX_NAME} }->{IS_IDENTITY} = $row->{IS_IDENTITY};
         
-        push @{ $return->{ $row->{INDEX_NAME} }->{COLUMNS} }
-      , $row->{COLUMN_NAME};
-        
+        push @{ $return->{ $row->{INDEX_NAME} }->{COLUMNS} } , $row->{COLUMN_NAME};
+
     }
     
     $this_dbh->disconnect;

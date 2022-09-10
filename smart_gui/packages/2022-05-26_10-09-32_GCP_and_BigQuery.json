@@ -1,0 +1,25 @@
+{
+   "release_packages" : [
+      {
+         "object_changed" : 1,
+         "package_type" : "template",
+         "release_package" : "BIGQUERY_LOAD_FILE.2022-08-25_11-55-41.dankasak.json",
+         "release_name" : "2022-05-26_10-09-32_GCP_and_BigQuery",
+         "object_name" : "BIGQUERY_LOAD_FILE"
+      },
+      {
+         "package_type" : "template",
+         "release_package" : "GOOGLE_CLOUD_STORAGE_PUT.2022-08-25_11-55-26.dankasak.json",
+         "release_name" : "2022-05-26_10-09-32_GCP_and_BigQuery",
+         "object_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+         "object_changed" : 1
+      }
+   ],
+   "release" : {
+      "release_name" : "2022-05-26_10-09-32_GCP_and_BigQuery",
+      "repository" : "core",
+      "release_base" : null,
+      "release_open" : 0,
+      "package_datetime" : "2022-08-26 08:21:21.209339"
+   }
+}

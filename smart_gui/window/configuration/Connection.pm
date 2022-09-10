@@ -56,7 +56,7 @@ sub generate {
           , $options
         );
     } else {
-        $installer_object = window::data_loader::Connection->new(
+        $installer_object = window::configuration::Connection->new(
             $globals
           , $options
         );
@@ -138,6 +138,14 @@ sub do_installation {
     my ( $self , $driver_package_path ) = @_;
 
     return {};
+
+}
+
+sub driver_prompt_text {
+
+    my ( $self ) = @_;
+
+    return "{ The database configuration class hasn't defined further instructions for you. Joy ... }";
 
 }
 

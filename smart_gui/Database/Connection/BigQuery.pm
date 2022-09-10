@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use Google::BigQuery;
+use JSON;
 
 use Glib qw | TRUE FALSE |;
 
@@ -29,12 +30,12 @@ sub connection_label_map {
       , Database        => ""
       , Host_IP         => "Private Key File ( PKC12 or JSON format )"
       , Port            => ""
-      , Attribute_1     => "Catalog"
+      , Attribute_1     => "Catalog ( Project )"
       , Attribute_2     => ""
       , Attribute_3     => ""
-      , Attribute_4     => "" # UseNativeQuery"
-      , Attribute_5     => "" # SQLDialect( 0 or 1 ... 0=Legacy; 1=Standard )"
-      , ODBC_driver     => "" # ODBC Driver"
+      , Attribute_4     => "UseNativeQuery" # UseNativeQuery
+      , Attribute_5     => "SQLDialect( 0 or 1 ... 0=Legacy; 1=Standard )" # SQLDialect( 0 or 1 ... 0=Legacy; 1=Standard )"
+      , ODBC_driver     => "ODBC Driver" # ODBC Driver"
     };
     
 }
@@ -45,16 +46,16 @@ sub build_connection_string {
     
     no warnings 'uninitialized';
     
-    # my $string =
-    #       "dbi:ODBC:"
-    #     . "DRIVER="               . $auth_hash->{ODBC_driver}
-    #     . ";OAuthMechanism=0"
-    #     . ";Email="               . $auth_hash->{Username}
-    #     . ";KeyFilePath="         . $auth_hash->{Password}
-    #     . ";Catalog="             . $auth_hash->{Database}
-    #     . ";RefreshToken="        . $auth_hash->{Port}
-    #     . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
-    #     . ";SQLDialect="          . $auth_hash->{Attribute_5};
+    my $string =
+          "dbi:ODBC:"
+        . "DRIVER="               . $auth_hash->{ODBC_driver}
+        . ";OAuthMechanism=0"
+        . ";Email="               . $auth_hash->{Username}
+        . ";KeyFilePath="         . $auth_hash->{Host}
+        . ";Catalog="             . $auth_hash->{Attribute_1}
+        #. ";RefreshToken="        . $auth_hash->{Port}
+        . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
+        . ";SQLDialect="          . $auth_hash->{Attribute_5};
 
      # my $string =
      #      "dbi:ODBC:"
@@ -66,7 +67,7 @@ sub build_connection_string {
 
     # $string = 'dbi:ODBC:DRIVER=Simba ODBC Driver for Google BigQuery;OAuthMechanism=0;Email=bigquery-service-account@api-project-438416064020.iam.gserviceaccount.com;KeyFilePath=/opt/BigQuery/api-project-438416064020-bf17df0b92a5.p12;Catalog=bigquery-public-data;';
 
-    my $string = "";
+    # my $string = "";
 
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
@@ -95,25 +96,37 @@ sub connect_do {
         # executing queries well. Obviously, both are incomplete,
         # but combined, they just barely give us enough functionality
         # to do what we need.
+
+        # Update 1: Google broke their ODBC driver and abandoned it. Now we rely on
+        # my fork of the Rest library, available at: https://github.com/dankasak/Google-BigQuery
+        # which has various fixes and additions.
+
         $self->{rest_connection} = $self->{connection} = Google::BigQuery::create(
             client_email        => $auth_hash->{Username},
             private_key_file    => $auth_hash->{Host},
             project_id          => $auth_hash->{Attribute_1},
+            default_sql_mode    => '#standardSQL',
             verbose             => 1,
             debug               => 1
         ) || die( $@ );
 
         # $self->{rest_connection}->use_dataset( $auth_hash->{Attribute_1} );
 
-        # Trigger a rebuild of the connection string
-        # $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
-        
-        # $self->{connection} = DBI->connect(
-        #     $auth_hash->{ConnectionString}
-        #   , $auth_hash->{Username}
-        #   , $auth_hash->{Password}
-        #   #, $dbi_options_hash
-        # ) || die( $DBI::errstr );
+        # Update 2: the ODBC driver is BAAAAAACK. Kinda.
+        # The ODBC driver is only really NEEDED for the migration dashboard drill-down GUI, where we
+        # use parameterized queries to fetch records. All other functionality "works" well enough to
+        # not fail hopelessly, so we only really need to try building the ODBC connection if someone
+        # has configured it.
+        if ( $auth_hash->{ODBC_driver} ) {
+            # Trigger a rebuild of the connection string
+            $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
+            $self->{connection} = DBI->connect(
+                $auth_hash->{ConnectionString}
+              , $auth_hash->{Username}
+              , $auth_hash->{Password}
+              #, $dbi_options_hash
+            ) || die( $DBI::errstr );
+        }
         
     };
     
@@ -130,6 +143,8 @@ sub connect_do {
         return undef;
     }
 
+    $self->{_current_database} = $auth_hash->{Attribute_1};
+
     return 1;
     
 }
@@ -144,7 +159,7 @@ sub db_schema_table_string {
     #}
 
     # if ( $options->{dont_quote} ) {
-        return $database . '.' . $table;
+        return $database . '.' . $schema . '.' . $table;
     # } else {
     #     return '"' . $database .'"."' . $table . '"';
     # }
@@ -163,7 +178,7 @@ sub has_schemas {
     
     my $self = shift;
     
-    return 0;
+    return 1;
     
 }
 
@@ -171,8 +186,16 @@ sub fetch_database_list {
     
     my $self = shift;
     
-    return sort( $self->{rest_connection}->show_datasets );
+    return sort( $self->{rest_connection}->show_projects );
     
+}
+
+sub fetch_schema_list {
+
+    my $self = shift;
+
+    return sort( $self->{rest_connection}->show_datasets );
+
 }
 
 sub fetch_table_list {
@@ -181,7 +204,8 @@ sub fetch_table_list {
     
     return sort(
         $self->{rest_connection}->show_tables(
-            dataset_id  => $database
+            project_id  => $database
+          , dataset_id  => $schema
           , maxResults  => 10000
         )
     );
@@ -215,18 +239,19 @@ sub fetch_bigquery_table_desc {
     
     my ( $self, $database, $schema, $table ) = @_;
     
-    if ( ! exists $self->{schema_cache}->{ $database }->{ $table } ) {
-        $self->{schema_cache}->{ $database }->{ $table } = $self->{rest_connection}->desc_table(
-            dataset_id  => $database
+    if ( ! exists $self->{schema_cache}->{ $database }->{ $schema }->{ $table } ) {
+        $self->{schema_cache}->{ $database }->{ $schema }->{ $table } = $self->{rest_connection}->desc_table(
+            project_id  => $database
+          , dataset_id  => $schema
           , table_id    => $table
         );
     }
     
-    return $self->{schema_cache}->{ $database }->{ $table };
+    return $self->{schema_cache}->{ $database }->{ $schema }->{ $table };
     
 }
 
-sub fetch_column_info {
+sub fetch_column_info_array {
     
     my ( $self, $database, $schema, $table, $options ) = @_;
     
@@ -237,8 +262,8 @@ sub fetch_column_info {
     # Split out the DATA_TYPE and PRECISION ...
     foreach my $field ( @{$table_description->{schema}->{fields}} ) {
         
-        $return->{ $field->{name} } =
-        {
+        push @{$return}
+      , {
               COLUMN_NAME     => $field->{name}
             , DATA_TYPE       => $field->{type}
             , PRECISION       => undef
@@ -274,7 +299,8 @@ sub drop_table {
     
     eval {
         my $response = $self->{rest_connection}->drop_table(
-            dataset_id      => $database
+            project_id      => $database
+          , dataset_id      => $schema
           , table_id        => $table
         ) || die( $self->{rest_connection}->errstr );
     };
@@ -296,84 +322,92 @@ sub drop_table {
     
 }
 
-sub _model_to_table_ddl {
-    
-    # BigQuery doesn't currently support crazy stuff like 'create table', so we have to use
-    # their leet haxor rest api calls to get things done. <sigh>
-    
-    my ( $self, $mem_dbh, $object_recordset ) = @_;
-    
-    my @warnings;
-    
-    my $columns_and_mappers;
-    
-    if ( ! defined $object_recordset->{schema_name} ) {
-        $columns_and_mappers = $mem_dbh->select(
-            "select * from table_columns where database_name = ? and schema_name is null and table_name = ? order by ID"
-          , [ $object_recordset->{database_name}, $object_recordset->{table_name} ]
-        );
-    } else {
-        $columns_and_mappers = $mem_dbh->select(
-            "select * from table_columns where database_name = ? and schema_name = ? and table_name = ? order by ID"
-          , [ $object_recordset->{database_name}, $object_recordset->{schema_name}, $object_recordset->{table_name} ]
-        );
-    }
-    
-    my $table_definition;
-    
-    my $counter;
-    
-    foreach my $column_mapper ( @{$columns_and_mappers} ) {
-        
-        my $column_type = $column_mapper->{target_column_type};
-        my $mangler;
-        my $mangled_return;
-        
-        # Invoke the column mangler if a special complex type defined
-        if ( defined $column_type && $column_type =~ /{(.*)}/ ) {
-            
-            $mangler = '_ddl_mangler_' . $1;
-            
-            if ( $self->can( $mangler ) ) {
-                
-                $mangled_return = $self->$mangler( $column_type, $column_mapper->{column_precision} );
-                
-            } else {
-                
-                $self->dialog(
-                    {
-                        title       => "Can't execute mangler"
-                      , type        => "error"
-                      , text        => "I've encountered the mangler type $column_type but there is no mangler"
-                                     . " by the name [$mangler] in target database's class"
-                    }
-                );
-                
-            }
-            
-        }
-        
-        my $final_type = exists $mangled_return->{type}
-                              ? $mangled_return->{type}
-                              : $column_mapper->{target_column_type};
-        
-        push @{$table_definition}, {
-            name        => $column_mapper->{column_name}
-          , type        => $final_type
-        };
-        
-        $counter ++;
-        
-    }
-    
-    my $table_json = encode_json( $table_definition );
-    
-    return {
-        ddl         => $table_definition
-      , warnings    => join( "\n\n", @warnings )
-    };
-    
+sub quote {
+
+    my ( $self , $object ) = @_;
+
+    return '`' . $object . '`';
+
 }
+
+# sub _model_to_table_ddl {
+#
+#     # BigQuery doesn't currently support crazy stuff like 'create table', so we have to use
+#     # their leet haxor rest api calls to get things done. <sigh>
+#
+#     my ( $self, $mem_dbh, $object_recordset ) = @_;
+#
+#     my @warnings;
+#
+#     my $columns_and_mappers;
+#
+#     if ( ! defined $object_recordset->{schema_name} ) {
+#         $columns_and_mappers = $mem_dbh->select(
+#             "select * from table_columns where database_name = ? and schema_name is null and table_name = ? order by ID"
+#           , [ $object_recordset->{database_name}, $object_recordset->{table_name} ]
+#         );
+#     } else {
+#         $columns_and_mappers = $mem_dbh->select(
+#             "select * from table_columns where database_name = ? and schema_name = ? and table_name = ? order by ID"
+#           , [ $object_recordset->{database_name}, $object_recordset->{schema_name}, $object_recordset->{table_name} ]
+#         );
+#     }
+#
+#     my $table_definition;
+#
+#     my $counter;
+#
+#     foreach my $column_mapper ( @{$columns_and_mappers} ) {
+#
+#         my $column_type = $column_mapper->{target_column_type};
+#         my $mangler;
+#         my $mangled_return;
+#
+#         # Invoke the column mangler if a special complex type defined
+#         if ( defined $column_type && $column_type =~ /{(.*)}/ ) {
+#
+#             $mangler = '_ddl_mangler_' . $1;
+#
+#             if ( $self->can( $mangler ) ) {
+#
+#                 $mangled_return = $self->$mangler( $column_type, $column_mapper->{column_precision} );
+#
+#             } else {
+#
+#                 $self->dialog(
+#                     {
+#                         title       => "Can't execute mangler"
+#                       , type        => "error"
+#                       , text        => "I've encountered the mangler type $column_type but there is no mangler"
+#                                      . " by the name [$mangler] in target database's class"
+#                     }
+#                 );
+#
+#             }
+#
+#         }
+#
+#         my $final_type = exists $mangled_return->{type}
+#                               ? $mangled_return->{type}
+#                               : $column_mapper->{target_column_type};
+#
+#         push @{$table_definition}, {
+#             name        => $column_mapper->{column_name}
+#           , type        => $final_type
+#         };
+#
+#         $counter ++;
+#
+#     }
+#
+#     my $table_json = encode_json( $table_definition );
+#
+#     return {
+#         ddl         => $table_definition
+#       , warnings    => join( "\n\n", @warnings )
+#     };
+#
+# }
 
 sub sql_to_sqlite {
 
@@ -478,7 +512,7 @@ sub can_execute_ddl {
     
     my $self = shift;
     
-    return FALSE;
+    return TRUE;
     
 }
 

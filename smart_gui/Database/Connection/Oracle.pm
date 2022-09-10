@@ -160,7 +160,7 @@ sub fetch_table_list {
     
 }
 
-sub fetch_column_info {
+sub fetch_column_info_array {
     
     my ( $self, $database, $schema, $table ) = @_;
     
@@ -185,7 +185,11 @@ sub fetch_column_info {
     $self->execute( $sth, [ $schema , $table ] )
         || return;
     
-    my $return = $sth->fetchall_hashref( "COLUMN_NAME" );
+    my $return;
+
+    while ( my $row = $sth->fetchrow_hashref ) {
+        push @{$return} , $row;
+    }
     
     return $return;
     

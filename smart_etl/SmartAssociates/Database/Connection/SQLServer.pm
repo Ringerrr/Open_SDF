@@ -37,11 +37,14 @@ sub build_connection_string {
           "dbi:ODBC:"
         . "DRIVER="    . $auth_hash->{ODBC_driver}
         . ";server="   . $auth_hash->{Host}
-        . ";Port="     . $auth_hash->{Port}
-        . ";Database=" . $auth_hash->{Database}
-        . ";UID="      . $auth_hash->{Username}
-        . ";PWD="      . $auth_hash->{Password}
-        . ";app=SmartDataFramework";
+        . ";Port="     . $auth_hash->{Port};
+    
+    if ( $auth_hash->{Database} ) {
+        $string .= ";database=" . $auth_hash->{Database};
+    }
+    
+    $string .= ";app=SmartDataFramework"
+        . ";use_unicode=true";
     
     return $self->SUPER::build_connection_string( $auth_hash, $string );
     
@@ -91,15 +94,20 @@ sub fetch_column_info {
     my $cached_field_metadata = $self->field_metadata_cache;
     
     if ( ! exists $cached_field_metadata->{ $schema }->{ $table } ) {
-      
+
+        # The square brackets were added to deal with Microsoft's demo DBs using restricted words as columns!
+        # However this now appears to break our column metadata lookup in nasty ways.
+
+        #. "    '[' + upper(COLUMN_NAME) + ']'             as COLUMN_NAME\n"
+
         my $sth = $self->prepare(
             "select\n"
-          . "    '[' + upper(COLUMN_NAME) + ']'             as COLUMN_NAME\n" # Microsoft's demo DBs use restricted words as columns!
+          . "    upper(COLUMN_NAME)                         as COLUMN_NAME\n" # Microsoft's demo DBs use restricted words as columns!
           . "  , DATA_TYPE                                  as DATA_TYPE\n"
-          . "  , case when upper(DATA_TYPE) like '%CHAR%'     then '(' + cast( CHARACTER_MAXIMUM_LENGTH as VARCHAR(5) ) + ')'\n"
-          . "         when upper(DATA_TYPE) like 'FLOAT'      then '(' + cast( NUMERIC_PRECISION as VARCHAR(5) ) + ')'\n"
+          . "  , case when upper(DATA_TYPE) like '%CHAR%'     then cast( CHARACTER_MAXIMUM_LENGTH as VARCHAR(5) )\n"
+          . "         when upper(DATA_TYPE) like 'FLOAT'      then cast( NUMERIC_PRECISION as VARCHAR(5) )\n"
           . "         when upper(DATA_TYPE) = 'DECIMAL' or upper(DATA_TYPE) = 'MONEY'\n"
-          . "              then '(' + cast( NUMERIC_PRECISION as VARCHAR(5) ) + ',' + cast( NUMERIC_SCALE as VARCHAR(5) ) + ')'\n"
+          . "              then cast( NUMERIC_PRECISION as VARCHAR(5) ) + ',' + cast( NUMERIC_SCALE as VARCHAR(5) )\n"
           . "         else ''\n"
           . "    end as PRECISION\n"
           . "  , case when upper(IS_NULLABLE) = 'YES' then 1 else 0 end as NULLABLE\n"
@@ -254,8 +262,9 @@ sub concatenate {
         #       (I don't like doing this here - especially because the column alias could be quoted etc)
         
         my $this_expression = $exp->{expression};
-        
-        $this_expression =~ s/(\s+?|^)as\s+?\w+//i;
+
+        # This is breaking formatting expressions such as "cast( $column_name as varchar(20) )"
+        # $this_expression =~ s/(\s+?|^)as\s+?\w+//i;
         
         # Now, match any numbery type thingies (from type list DK has in oracle.pm) and alter if needed
         if ( $exp->{type_code} ~~ [2, 3] && $exp->{precision} ) {
@@ -334,29 +343,6 @@ sub create_comparison_pk_col {
     
     my $ret = join ",", @final_column_expressions;
     
-}
-
-sub does_table_exist_string {
-
-    my ( $self , $database , $schema , $table ) = @_;
-
-    my $sql = "select TABLE_NAME from " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "TABLES" ) . "\n"
-      . "where  TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = '" . $schema . "' and TABLE_NAME = '" . $table . "'";
-
-    return $sql;
-
-}
-
-sub does_schema_not_exist_string {
-
-    my ( $self , $database , $schema , $table ) = @_;
-
-    # TODO: MG: flip to "not exists":
-    my $sql = "select schema_name from " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "SCHEMATA" ) . "\n"
-      . "where schema_name = '" . $schema . "'";
-
-    return $sql;
-
 }
 
 1;

@@ -163,8 +163,34 @@ sub fetch_procedure_list {
     
 }
 
+sub fetch_column_info_array {
+
+    my ( $self, $database, $schema, $table ) = @_;
+
+    my $sth = $self->prepare(
+        "pragma table_info( '$table' )"
+    ) || return;
+
+    $self->execute( $sth )
+        || return;
+
+    my $return;
+
+    while ( my $rec = $sth->fetchrow_hashref ) {
+        push @{$return} , {
+            COLUMN_NAME     => $rec->{name}
+          , DATA_TYPE       => $rec->{type}
+          , NULLABLE        => ! $rec->{notnull}
+          , COLUMN_DEFAULT  => $rec->{dflt_value}
+        };
+    }
+
+    return $return;
+
+}
+
 sub fetch_column_info {
-    
+
     my ( $self, $database, $schema, $table ) = @_;
     
     my $sth = $self->prepare(
@@ -271,6 +297,7 @@ sub create_model_schema {
       . "  , column_precision      text\n"
       . "  , column_nullable       integer\n"
       . "  , column_default        text\n"
+      . "  , is_identity           integer\n"
       . "  , target_column_type    text\n"
       . "  , target_column_default text\n"
       . "  , notes                 text\n"
@@ -287,6 +314,7 @@ sub create_model_schema {
       . "  , is_unique             integer\n"
       . "  , is_distribution_key   integer\n"
       . "  , is_organisation_key   integer\n"
+      . "  , is_identity           integer\n"
       . "  , include               integer       not null default 1\n"
       . "  , ddl                   text\n"
       . "  , executed              integer\n"
@@ -358,8 +386,8 @@ sub create_model_schema {
     $self->{_model_index_insert_sth} = $self->prepare(
         "insert into indexes\n"
       . "(\n"
-      . "    database_name , schema_name , table_name , index_name , is_primary , is_unique, is_distribution_key , is_organisation_key\n"
-      . ") values ( ? , ? , ? , ? , ? , ?, ? , ? )"
+      . "    database_name , schema_name , table_name , index_name , is_primary , is_unique, is_distribution_key , is_organisation_key , is_identity\n"
+      . ") values ( ? , ? , ? , ? , ? , ?, ? , ? , ? )"
     );
     
     $self->{_model_index_columns_insert_sth} = $self->prepare(

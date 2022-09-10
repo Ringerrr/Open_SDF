@@ -55,7 +55,7 @@ sub new {
     $self->{builder}->get_object( 'HeaderBar' )->pack_start( $self->{main_stack_switcher} );
     $self->{main_stack_switcher}->show_all;
     
-    # Stack switcher for Groups / Configs / Harvest
+    # Stack switcher for Groups / Configs
     $self->{job_definition_stack} = $self->{builder}->get_object( "job_definition_stack" );
     $self->{job_definition_stack_switcher} = Gtk3::StackSwitcher->new();
     $self->{job_definition_stack_switcher}->set_stack( $self->{job_definition_stack} );
@@ -195,8 +195,95 @@ sub new {
         $source_view->set_buffer( $view_buffer );
         
     }
-    
+
+    $self->{mem_dbh} = Database::Connection::SQLite->new(
+        $self->{globals} , { location    => ':memory:' }
+    );
+
+    # Key/value tables to store unpacked JSON args for a processing_group_set
+    $self->{mem_dbh}->do(
+        "create table processing_group_set_args (\n"
+      . "    ID                    integer       primary key\n"
+      . "  , pgsa_key              text\n"
+      . "  , pgsa_value            text\n"
+      . ")" ) || return;
+
+    $self->{mem_dbh}->do(
+        "create table processing_group_args (\n"
+      . "    ID                    integer       primary key\n"
+      . "  , pga_key               text\n"
+      . "  , pga_value             text\n"
+      . ")" ) || return;
+
     # When we have recordsets that are linked, we have to create all the *dependant* recordsets first ...
+
+    $self->pulse( "Creating Gtk3::Ex::DBI::Datasheet - {Processing group set args}" );
+
+    $self->{processing_group_set_args_datasheet} = Gtk3::Ex::DBI::Datasheet->new(
+        {
+            dbh                 => $self->{mem_dbh}
+          , sql                 => {
+                                       select        => "ID,pgsa_key,pgsa_value"
+                                     , from          => "processing_group_set_args"
+                                     , order_by      => "ID"
+                                   }
+          , fields              => [
+                                       {
+                                           name            => "ID"
+                                         , renderer        => "hidden"
+                                       }
+                                     , {
+                                           name            => "key"
+                                         , header_markup   => "<span color='blue'><b>Key</b></span>"
+                                         , x_percent       => 50
+                                       }
+                                     , {
+                                           name            => "value"
+                                         , header_markup   => "<span color='blue'><b>Value</b></span>"
+                                        , x_percent       => 50
+                                       }
+                                   ]
+            , vbox              => $self->{builder}->get_object( "job_set_args_box" )
+            , auto_tools_box    => 1
+            , on_apply          => sub { $self->on_processing_group_set_args_datasheet_apply( @_ ) }
+            , auto_apply        => TRUE
+            # , on_row_select     => sub { $self->on_param_list_row_select( @_ ) }
+            # , recordset_tools_box     => $self->{builder}->get_object( "param_recordset_tools" )
+            # , before_insert           => sub { $self->before_param_insert }
+            # , on_insert               => sub { $self->on_param_insert }
+    } );
+
+    $self->pulse( "Creating Gtk3::Ex::DBI::Datasheet - {Processing group set args}" );
+
+    $self->{processing_group_args_datasheet} = Gtk3::Ex::DBI::Datasheet->new(
+        {
+            dbh                 => $self->{mem_dbh}
+          , sql                 => {
+                                       select        => "ID,pga_key,pga_value"
+                                     , from          => "processing_group_args"
+                                     , order_by      => "ID"
+                                   }
+         , fields              => [
+                                   {
+                                       name            => "ID"
+                                     , renderer        => "hidden"
+                                   }
+                                 , {
+                                       name            => "key"
+                                     , header_markup   => "<span color='blue'><b>Key</b></span>"
+                                     , x_percent       => 50
+                                   }
+                                 , {
+                                       name            => "value"
+                                     , header_markup   => "<span color='blue'><b>Value</b></span>"
+                                     , x_percent       => 50
+                                   }
+                                  ]
+        , vbox              => $self->{builder}->get_object( "job_args_box" )
+        , auto_tools_box    => 1
+        , on_apply          => sub { $self->on_processing_group_args_datasheet_apply( @_ ) }
+        , auto_apply        => TRUE
+        } );
 
     $self->pulse( "Creating Gtk3::Ex::DBI::Form - {TEMPLATE}" );
 
@@ -329,24 +416,6 @@ sub new {
         }
     } );
     
-    $self->pulse( "Creating Gtk3::Ex::DBI::Form - {HARVEST_CONTROL}" );
-    
-    $self->{harvest_control} = Gtk3::Ex::DBI::Form->new(
-    {
-        dbh                     => $control_db_connection
-      , sql                     => {
-                                      select       => "*"
-                                    , from         => "harvest_control"
-                                    , where        => "0=1"
-                                   }
-      , widget_prefix           => "harvest_control."
-      , builder                 => $self->{builder}
-      , on_initial_changed      => sub { $self->on_harvest_control_insert() }
-#      , debug                   => TRUE
-      , apeture                 => 1
-      , recordset_tools_box     => $self->{builder}->get_object( "harvest_control_toolsbox" )
-    } );
-    
     $self->pulse( "Creating Gtk3::Ex::DBI::Datasheet - {CONFIG_PARAMS_LIST}" );
     
     $self->{config_params_list} = Gtk3::Ex::DBI::Datasheet->new(
@@ -453,7 +522,24 @@ sub new {
       , vbox                => $self->{builder}->get_object( "processing_group_set_members" )
       , on_row_select       => sub { $self->on_processing_group_set_members( @_ ) }
     } );
-    
+
+    $self->{pgs_form} = Gtk3::Ex::DBI::Form->new(
+        {
+            dbh                     => $control_db_connection
+          , sql                     => {
+                                            select      => "*"
+                                          , from        => "processing_group_sets"
+                                          , where       => "0=1"
+                                       }
+          , auto_incrementing       => FALSE
+          , builder                 => $self->{builder}
+          , widget_prefix           => "pgs."
+          , recordset_tools_box     => $self->{builder}->get_object( "pgs.recordset_tools" )
+          , recordset_tool_items    => [ "label" , "undo", "apply" ]
+          , on_current              => sub { $self->on_pgs_form_current( @_ ) }
+        }
+    );
+
     $self->{processing_group_sets} = Gtk3::Ex::DBI::Datasheet->new(
     {
         dbh                 => $control_db_connection
@@ -518,6 +604,7 @@ sub new {
       , before_delete            => sub { $self->before_processing_group_delete( @_ ) }
       , on_delete                => sub { $self->on_processing_group_delete( @_ ) }
       , on_apply                 => sub { $self->on_processing_group_apply( @_ ) }
+      , on_current               => sub { $self->on_processing_group_current( @_ ) }
     } );
 
     $self->{processing_groups} = Gtk3::Ex::DBI::Datasheet->new(
@@ -525,9 +612,9 @@ sub new {
         dbh                     => $control_db_connection
       , sql                     => {
                                       select      => "processing_group_name , substr( last_run_timestamp::VARCHAR, 0, 20 ) as last_run_timestamp"
-                                                   . " , last_run_seconds , disable_flag , template"
+                                                   . " , last_run_seconds , disable_flag , seed"
                                     , from        => "processing_group"
-                                    , order_by    => "template , processing_group_name"
+                                    , order_by    => "seed , processing_group_name"
                                    }
       , read_only               => TRUE
       , auto_incrementing       => FALSE
@@ -560,7 +647,7 @@ sub new {
               , renderer        => "toggle"
             }
           , {
-                name            => "Template"
+                name            => "Seed"
               , header_markup   => "Seed Job"
               , x_absolute      => 80
               , renderer        => "toggle"
@@ -764,12 +851,6 @@ sub rename_processing_group {
         ) || die( $control_dbh->errstr );
         
         $control_dbh->do(
-            "update harvest_control set processing_group_name = ? where processing_group_name = ?"
-          , undef
-          , $new_name, $processing_group_name
-        ) || die( $control_dbh->errstr );
-        
-        $control_dbh->do(
             "update param_value set processing_group_name = ? where processing_group_name = ?"
           , undef
           , $new_name, $processing_group_name
@@ -956,6 +1037,136 @@ sub clone_processing_group {
     
 }
 
+sub on_pgs_form_current {
+
+    my $self = shift;
+
+    $self->{mem_dbh}->do( "delete from processing_group_set_args" );
+    $self->{_pgsa_cache} = '';
+
+    $self->{processing_group_set_args_datasheet}->query();
+
+    my $job_set_args_json = $self->{pgs_form}->get_widget_value( "processing_group_set_args_json" );
+    my $job_set_args;
+
+    eval {
+        if ( $job_set_args_json ) {
+            $job_set_args = from_json( $job_set_args_json );
+        }
+    };
+
+    my $err = $@;
+
+    if ( $err ) {
+        warn( "$err\n$job_set_args_json" );
+    }
+
+    while ( my ( $key, $value ) = each (%{$job_set_args}) ) {
+        $self->{mem_dbh}->do(
+            "insert into processing_group_set_args ( pgsa_key , pgsa_value ) values ( ? , ? )"
+          , [ $key , $value ]
+        );
+    }
+
+    $self->{processing_group_set_args_datasheet}->query();
+
+}
+
+sub on_processing_group_set_args_datasheet_apply {
+
+    my ( $self, $item ) = @_;
+
+    if ( exists $self->{_pgsa_lock} && $self->{_pgsa_lock} ) {
+        return;
+    }
+
+    my $args = $self->{mem_dbh}->select( "select * from processing_group_set_args" );
+    my $args_hash = {};
+
+    foreach my $arg ( @{$args} ) {
+        $args_hash->{ $arg->{pgsa_key} } = $arg->{pgsa_value};
+    }
+
+    my $args_json = to_json( $args_hash );
+
+    if ( $args_json ne $self->{_pgsa_cache} ) {
+        $self->{_pgsa_cache} = $args_json;
+        $self->{pgs_form}->set_widget_value(
+            "processing_group_set_args_json"
+          , $args_json
+        );
+        $self->{_pgsa_lock} = 1;
+        $self->{pgs_form}->apply();
+        $self->{_pgsa_lock} = 0;
+    }
+
+}
+
+sub on_processing_group_current {
+
+    my $self = shift;
+
+    $self->{mem_dbh}->do( "delete from processing_group_args" );
+    $self->{_pga_cache} = '';
+
+    $self->{processing_group_args_datasheet}->query();
+
+    my $job_args_json = $self->{processing_group_form}->get_widget_value( "job_args_json" );
+    my $job_args;
+
+    eval {
+        if ( $job_args_json ) {
+            $job_args = from_json( $job_args_json );
+        }
+    };
+
+    my $err = $@;
+
+    if ( $err ) {
+        warn( "$err\n$job_args_json" );
+    }
+
+    while ( my ( $key, $value ) = each (%{$job_args}) ) {
+        $self->{mem_dbh}->do(
+            "insert into processing_group_args ( pga_key , pga_value ) values ( ? , ? )"
+          , [ $key , $value ]
+        );
+    }
+
+    $self->{processing_group_args_datasheet}->query();
+
+}
+
+sub on_processing_group_args_datasheet_apply {
+
+    my ( $self, $item ) = @_;
+
+    if ( exists $self->{_pga_lock} && $self->{_pga_lock} ) {
+        return;
+    }
+
+    my $args = $self->{mem_dbh}->select( "select * from processing_group_args" );
+    my $args_hash = {};
+
+    foreach my $arg ( @{$args} ) {
+        $args_hash->{ $arg->{pga_key} } = $arg->{pga_value};
+    }
+
+    my $args_json = to_json( $args_hash );
+
+    if ( $args_json ne $self->{_pga_cache} ) {
+        $self->{_pga_cache} = $args_json;
+        $self->{processing_group_form}->set_widget_value(
+            "job_args_json"
+          , $args_json
+        );
+        $self->{_pga_lock} = 1;
+        $self->{processing_group_form}->apply();
+        $self->{_pga_lock} = 0;
+    }
+
+}
+
 sub before_processing_group_delete {
     
     my ( $self ) = @_;
@@ -1013,58 +1224,13 @@ sub on_processing_group_sets_apply {
         $self->{processing_group_set_members}->query;
         $self->{processing_groups}->query;
         $self->{processing_group_form}->query;
-        
-    }
-    
-}
 
-sub on_harvest_control_insert {
-    
-    my $self = shift;
-    
-    my $processing_group_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
-    
-    if ( ! $processing_group_name ) {
+        $self->{pgs_form}->query( { where => "0=1" , bind_values => [] } );
         
-        $self->dialog(
-            {
-                title       => "Can't insert a HARVEST record yet"
-              , type        => "error"
-              , text        => "You need to have a PROCESSING GROUP record selected <b><i>before</i></b>"
-                             . " inserting a HARVEST record"
-            }
-        );
-        
-        return 0;
-        
-    }
-    
-    $self->{harvest_control}->set_widget_value( "processing_group_name", $processing_group_name );
-    
-}
+    } else {
 
-sub on_TestRegex_clicked {
-    
-    my $self = shift;
-    
-    my $file_regex      = $self->{harvest_control}->get_widget_value( "file_regex" );
-    my $filename        = $self->{harvest_control}->get_widget_value( 'example_filename' );
-    
-    foreach my $counter ( 1 .. 15 ) {
-        $self->{builder}->get_object( 'val_' . $counter )->set_text( '' );
-    }
-    
-    my @matches    = $filename =~ /$file_regex/i;
-    
-    foreach my $counter ( 1 .. 15 ) {
-        $self->{builder}->get_object( 'val_' . $counter )->set_text( '' );
-    }
-    
-    my $counter    = 1;
-    
-    foreach my $match ( @matches ) {
-        $self->{builder}->get_object( 'val_' . $counter )->set_text( $match );
-        $counter ++;
+        $self->on_processing_group_sets_select();
+
     }
     
 }
@@ -1636,7 +1802,14 @@ sub on_processing_group_sets_select {
           , bind_values => [ $PGS_NAME ]
         }
     );
-    
+
+    $self->{pgs_form}->query(
+        {
+            where       => "processing_group_set_name = ?"
+          , bind_values => [ $PGS_NAME ]
+        }
+    );
+
     my $iter = $self->{processing_group_set_members}->{treeview}->get_model->get_iter_first;
 
     if ( $iter ) {
@@ -1828,7 +2001,7 @@ sub on_CONFIG_SOURCE_DB_NAME_focus_out_event {
 #        
 #        $self->{globals}->{suppress_error_dialogs} = 0;
 #        
-#        my $completion = $self->values_to_autocompletion( \@schemas );
+#        my $completion = $self->values_to_`auto`completion( \@schemas );
 #        $self->{builder}->get_object( "CONFIG.SOURCE_SCHEMA_NAME" )->set_completion( $completion );
 #        
 #    }
@@ -2422,13 +2595,6 @@ sub on_processing_groups_select {
         );
     }
     
-    $self->{harvest_control}->query(
-        {
-            where       => "processing_group_name = ?"
-          , bind_values => [ $self->{processing_groups}->get_column_value( "processing_group_name" ) ]
-        }
-    );
-    
 }
 
 sub on_param_value_initial_changed {
@@ -2713,18 +2879,6 @@ sub export_processing_group_type_dml {
         {
             dbh                 => $self->{processing_groups}->{dbh}
           , table               => "param_value"
-          , primary_key_array   => [ "processing_group_name" ]
-          , keys_aoa            => [ [ $processing_group_name ] ]
-          , config_manager      => $config_manager
-          , overlay_path        => $overlay_path
-          , snapshot_name       => $processing_group_name
-        }
-    );
-    
-    $self->snapshot_metadata(
-        {
-            dbh                 => $self->{processing_groups}->{dbh}
-          , table               => "harvest_control"
           , primary_key_array   => [ "processing_group_name" ]
           , keys_aoa            => [ [ $processing_group_name ] ]
           , config_manager      => $config_manager
@@ -3110,11 +3264,6 @@ sub package_processing_group {
       , [ $processing_group_name ]
     );
 
-    my $harvest = $self->{globals}->{connections}->{CONTROL}->select(
-        "select * from harvest_control where processing_group_name = ?"
-      , [ $processing_group_name ]
-    );
-
     my $job_json = to_json(
         {
             processing_group => {
@@ -3129,10 +3278,6 @@ sub package_processing_group {
                 pre         => [ "delete from param_value where processing_group_name = '$processing_group_name'" ]
               , data        => $param_values
             }
-          , harvest_control => {
-                pre         => [ "delete from harvest_control where processing_group_name = '$processing_group_name'" ]
-              , data        => $harvest
-           }
         }
       , { pretty => 1 }
     );
@@ -3287,10 +3432,10 @@ sub on_AnotherLaunchGroup_clicked {
     
     if ( $custom_args  ) {
         $launcher->set_widget_value( "CustomArgs", $custom_args );
-    } else {
-        my $pg_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
-        $launcher->{builder}->get_object( "ProcessingGroupName" )->set_text( $pg_name );
     }
+
+    my $pg_name = $self->{processing_groups}->get_column_value( "processing_group_name" );
+    $launcher->{builder}->get_object( "ProcessingGroupName" )->set_text( $pg_name );
     
 }
 

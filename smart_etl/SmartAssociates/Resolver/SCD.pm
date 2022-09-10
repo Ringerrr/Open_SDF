@@ -15,21 +15,23 @@ sub COMPLEX_JOIN_ON_KEYS {
 
     my ( $self, $modifier , $template_config, $parameters ) = @_;
 
-    if ( ! $parameters->{'#P_KEYS#'} ) {
+    my $keys = $template_config->resolve_parameter( '#P_KEYS#' );
+
+    if ( ! $keys ) {
         $self->log->fatal( "This template requires the parameter #P_KEYS# to be set" );
     }
 
     my $field_metadata = $template_config->target_database->fetch_column_info(
-        $self->detokenize( $template_config->template_record->{TARGET_DB_NAME} )
-      , $self->detokenize( $template_config->template_record->{TARGET_SCHEMA_NAME} )
-      , $self->detokenize( $template_config->template_record->{TARGET_TABLE_NAME} )
+        $template_config->detokenize( $template_config->template_record->{TARGET_DB_NAME} )
+      , $template_config->detokenize( $template_config->template_record->{TARGET_SCHEMA_NAME} )
+      , $template_config->detokenize( $template_config->template_record->{TARGET_TABLE_NAME} )
     );
 
     my @join_conditions;
 
     my $case_insensitive_versioning = $template_config->resolve_parameter( '#P_ZZ_CASE_INSENSITIVE_VERSIONING#' );
 
-    foreach my $key ( split ',', $parameters->{'#P_KEYS#'}->{PARAM_VALUE} ) {
+    foreach my $key ( split ',', $keys ) {
 
         $key =~ s/\s//g; # strip spaces
 
@@ -76,10 +78,10 @@ sub COMPLEX_SCD2_ATTRIBUTE_CHANGED {
 
     my ( $self, $modifier , $template_config, $parameters ) = @_;
 
-    my $field_metadata = $self->target_database->fetch_column_info(
-        $self->detokenize( $template_config->template_record->{TARGET_DB_NAME} )
-      , $self->detokenize( $template_config->template_record->{TARGET_SCHEMA_NAME} )
-      , $self->detokenize( $template_config->template_record->{TARGET_TABLE_NAME} )
+    my $field_metadata = $template_config->target_database->fetch_column_info(
+        $template_config->detokenize( $template_config->template_record->{TARGET_DB_NAME} )
+      , $template_config->detokenize( $template_config->template_record->{TARGET_SCHEMA_NAME} )
+      , $template_config->detokenize( $template_config->template_record->{TARGET_TABLE_NAME} )
     );
 
     my @ignore_cols;

@@ -365,26 +365,16 @@ sub populate_columns_datasheet {
     
     my ( $self, $connection, $database, $schema, $table ) = @_;
     
-    my $columns    = $connection->fetch_column_info( $database, $schema, $table );
-    my $field_list = $connection->fetch_field_list( $database, $schema, $table );
-    
-    my $upper_case_columns_hash;
-    
-    # TODO: this is horrible, but I don't have time to deal with it now ...
-    foreach my $column_name ( keys %{$columns} ) {
-        $upper_case_columns_hash->{ uc($column_name) } = $columns->{$column_name}
-    }
-    
+    my $columns    = $connection->fetch_column_info_array( $database, $schema, $table );
+
     $self->{mem_dbh}->do( "delete from browser_columns" );
     
     my $sth = $self->{mem_dbh}->prepare(
         "insert into browser_columns ( column_name, column_type, nullable ) values ( ?, ?, ? )"
     );
     
-    foreach my $column_name ( @{$field_list} ) {
-        
-        my $this_column_info = $upper_case_columns_hash->{ uc( $column_name ) };
-        
+    foreach my $this_column_info ( @{$columns} ) {
+
         no warnings 'uninitialized';
         
         $sth->execute(
@@ -521,7 +511,7 @@ sub save_page {
                 title   => "Please choose a target file for [$page_name]"
               , action  => "save"
               , type    => "file"
-              , path    => $self->{globals}->{config_manager}->simpleGet( 'window::browser:last_saved_folder' )
+              , path    => $self->{globals}->{config_manager}->simpleGet( 'window::browser:last_saved_folder' ) . "/"
             }
         );
         
@@ -2018,8 +2008,7 @@ sub on_execute_clicked {
     
     if (
         (
-                1
-#                $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info)/i # TODO: proper detection of SQL that returns a resultset
+                $test_sql =~ /^(select|with|show|explain|describe|call|exec|pragma|list|info|declare)/i # TODO: proper detection of SQL that returns a resultset
            || ! $connection->is_sql_database
         )
       && ! $direct

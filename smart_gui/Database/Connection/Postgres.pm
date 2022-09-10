@@ -414,7 +414,7 @@ sub refresh_materialized_view_string {
 
 }
 
-sub fetch_column_info {
+sub fetch_column_info_array {
     
     my ( $self, $database, $schema, $table, $options ) = @_;
     
@@ -488,8 +488,8 @@ sub fetch_column_info {
             ( $column->[ DATA_TYPE ] , $column->[ PRECISION ] ) = ( $1 , $2 );
         }
         
-        $return->{ $column->[ COLUMN_NAME ] } =
-        {
+        push @{$return}
+      , {
               COLUMN_NAME     => $column->[ COLUMN_NAME ]
             , DATA_TYPE       => $column->[ DATA_TYPE ]
             , PRECISION       => $column->[ PRECISION ]
@@ -546,7 +546,7 @@ sub fetch_all_column_info {
             . "                               on n.oid = c.relnamespace\n"
             . "where\n"
             . "     c.relkind = 'r'::char\n"
-            . " and n.nspname = ?\n"
+            . " and n.nspname::VARCHAR = ?\n" # VARCHAR cast is for Redshift's benefit
             . " and f.attnum > 0\n";
     
     print "\n\n$sql\n\n";
@@ -950,9 +950,8 @@ sub _model_to_fk_rel_ddl {
     
     my $fk_structure = $self->_model_to_fk_structure( $mem_dbh, $object_recordset->{primary_database}, $object_recordset->{primary_schema}, $object_recordset->{relationship_name} );
     
-    my $primary_db_schema_table = $object_recordset->{primary_database} . "." . $object_recordset->{primary_schema} . "." . $object_recordset->{primary_table};
-    my $foreign_db_schema_table = $object_recordset->{foreign_database} . "." . $object_recordset->{foreign_schema} . "." . $object_recordset->{foreign_table};
-
+    my $primary_db_schema_table = $object_recordset->{primary_database} . "." . ( $object_recordset->{primary_schema} or 'public' ) . "." . $object_recordset->{primary_table};
+    my $foreign_db_schema_table = $object_recordset->{foreign_database} . "." . ( $object_recordset->{foreign_schema} or 'public' ) . "." . $object_recordset->{foreign_table};
 
     my $sql = "alter table    $primary_db_schema_table\n"
             # NP This key $object_recordset->{constraint_name} apears to be called relationship_name now, so was no name for the constraint DDL
@@ -974,13 +973,13 @@ sub _model_to_index_ddl {
     
     my $index_structure = $mem_dbh->_model_to_index_structure( $object_recordset->{database_name}, $object_recordset->{schema_name}, $object_recordset->{table_name}, $object_recordset->{index_name} );
     
-    my $primary_db_schema_table = $object_recordset->{database_name} . "." . $object_recordset->{schema_name} . "." . $object_recordset->{table_name};
+    my $primary_db_schema_table = $object_recordset->{database_name} . "." . ( $object_recordset->{schema_name} or 'public' ) . "." . $object_recordset->{table_name};
     
     # NP Just adding unique ones for a short time
     # TODO: This is INCOMPLETE !!!
     my $sql;
-    
-    if ( $object_recordset->{is_unique} ) {
+
+    #if ( $object_recordset->{is_unique} ) {
         
         my $unique_flag = $object_recordset->{is_unique} ? "UNIQUE" : "";
         
@@ -995,7 +994,7 @@ sub _model_to_index_ddl {
         
         $sql .= "( $col_str )\n";
         
-    }
+    #}
     
     return {
         ddl         => $sql
@@ -1023,7 +1022,7 @@ sub _model_to_primary_key_ddl {
     
     my $pk_structure = $mem_dbh->_model_to_primary_key_structure( $object_recordset->{database_name},  $object_recordset->{schema_name} , $object_recordset->{table_name} );
     
-    my $primary_db_schema_table = $object_recordset->{database_name} . "." . $object_recordset->{schema_name} . "." . $object_recordset->{table_name};
+    my $primary_db_schema_table = $object_recordset->{database_name} . "." . ( $object_recordset->{schema_name} or 'public' ) . "." . $object_recordset->{table_name};
     
     # ALTER TABLE thingy ADD CONSTRAINT PK_COL1 PRIMARY KEY (col1);
     

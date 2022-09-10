@@ -1,0 +1,18 @@
+{
+   "release" : {
+      "release_name" : "2022-05-24_15-41-26_Google_Cloud_Storage_Put",
+      "package_datetime" : "2022-05-24 15:42:02.756918",
+      "repository" : "core",
+      "release_base" : null,
+      "release_open" : 0
+   },
+   "release_packages" : [
+      {
+         "object_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+         "object_changed" : 1,
+         "release_package" : "GOOGLE_CLOUD_STORAGE_PUT.2022-05-24_15-41-47.dankasak.json",
+         "release_name" : "2022-05-24_15-41-26_Google_Cloud_Storage_Put",
+         "package_type" : "template"
+      }
+   ]
+}

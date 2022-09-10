@@ -38,14 +38,13 @@ my $IDX_FIFO_BASE                               =  SmartAssociates::Base::FIRST_
 my $IDX_DIR_SEPARATOR                           =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 25;
 my $IDX_SMART_CONFIG_PATH                       =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 26;
 my $IDX_LAST_STEP_RECORDS_AFFECTED              =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 27;
-my $IDX_DISABLE_FIFO                            =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 28;
-my $IDX_USER_PROFILE                            =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 29;
-my $IDX_CURRENT_TEMPLATE_CONFIG                 =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 30;
-my $IDX_COMMAND_LINE_ARGS                       =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 31;
-my $IDX_RESOLVERS                               =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 32;
-my $IDX_CHILDREN_BY_JOB_NAME                    =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 33;
+my $IDX_USER_PROFILE                            =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 28;
+my $IDX_CURRENT_TEMPLATE_CONFIG                 =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 29;
+my $IDX_PROCESSING_GROUP_ARGS                   =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 30;
+my $IDX_RESOLVERS                               =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 31;
+my $IDX_CHILDREN_BY_JOB_NAME                    =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 32;
 
-use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 34;
+use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 33;
 
 # This class is the base class of all other objects in the SmartAssociates ETL framework.
 # It holds global variables, accessor methods, and other handy stuff for
@@ -381,10 +380,9 @@ sub FIFO_BASE                   { return $_[0]->accessor( $IDX_FIFO_BASE,       
 sub DIR_SEPARATOR               { return $_[0]->accessor( $IDX_DIR_SEPARATOR,               $_[1] ); }
 sub SMART_CONFIG_PATH           { return $_[0]->accessor( $IDX_SMART_CONFIG_PATH,           $_[1] ); }
 sub LAST_STEP_RECORD_AFFECTED   { return $_[0]->accessor( $IDX_LAST_STEP_RECORDS_AFFECTED,  $_[1] ); }
-sub DISABLE_FIFO                { return $_[0]->accessor( $IDX_DISABLE_FIFO,                $_[1] ); }
 sub USER_PROFILE                { return $_[0]->accessor( $IDX_USER_PROFILE,                $_[1] ); }
 sub CURRENT_TEMPLATE_CONFIG     { return $_[0]->accessor( $IDX_CURRENT_TEMPLATE_CONFIG,     $_[1] ); }
-sub COMMAND_LINE_ARGS           { return $_[0]->accessor( $IDX_COMMAND_LINE_ARGS,           $_[1] ); }
+sub PROCESSING_GROUP_ARGS       { return $_[0]->accessor( $IDX_PROCESSING_GROUP_ARGS,       $_[1] ); }
 sub RESOLVERS                   { return $_[0]->accessor( $IDX_RESOLVERS,                   $_[1] ); }
 
 sub MISC                        { return $_[0]->accessor( $IDX_MISC,                        $_[1] ); }

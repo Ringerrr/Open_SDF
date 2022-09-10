@@ -79,8 +79,8 @@ sub build_connection_string {
           "dbi:mysql:"
         . "database="  . ( $auth_hash->{Database} || 'information_schema' )
         . ";host="       . $auth_hash->{Host}
-        . ";port="      . ( $auth_hash->{Port} || 3306 )
-        . ";mysql_local_infile=1" # Needed to be able to execute 'load data infile' for TiDB
+        . ";port="      . ( $auth_hash->{Port} || $self->default_port() )
+        . ";mysql_local_infile=1" # force-allow "load data infile local"
         . ";mysql_use_result=1";  # prevent $dbh->execute() from pulling all results into memory
     
     if ( $auth_hash->{Attribute_1} ) {
@@ -268,17 +268,23 @@ sub fetch_procedure_list {
     
 }
 
-sub fetch_column_info {
+sub fetch_column_info_array {
     
-    my ( $self, $database, $schema, $table, $options ) = @_;
+    my ( $self , $database , $schema , $table ) = @_;
     
-    my $sth = $self->prepare( "show columns from $table" )
+    my $sth = $self->prepare( "select\n"
+      . "    COLUMN_NAME\n"
+      . "  , COLUMN_TYPE\n"
+      . "  , IS_NULLABLE\n"
+      . "  , ORDINAL_POSITION\n"
+      . "  , EXTRA\n"
+      . "from information_schema.columns\n"
+      . "where table_schema = ? and table_name = ?\n"
+      . "order by ordinal_position"
+    ) || return;
+    
+    $self->execute( $sth , [ $database , $table ] )
         || return;
-    
-    $self->execute( $sth )
-        || return;
-    
-    my $mysql_hash = $sth->fetchall_hashref( "Field" ); # was FIELD
     
     my $return;
     
@@ -286,27 +292,28 @@ sub fetch_column_info {
     # to try to force column names to upper-case, but this doesn't appear
     # to completely work, so we further mangle things here ...
     
-    foreach my $column_name ( keys %{$mysql_hash} ) {
-        
-        my $data_type = $mysql_hash->{$column_name}->{Type};
+    while ( my ( $column_name , $data_type , $is_nullable , $ordinal_position , $extra ) = $sth->fetchrow_array() ) {
+
         my $precision_scale;
-        
+
         if ( $data_type =~ /([\w\s]*)(\(.*\))/ ) {
             ( $data_type , $precision_scale ) = ( $1 , $2 );
+            if ( $data_type =~ /int/i ) {
+                $precision_scale = undef; # This is not needed, and other databases don't like it
+            }
         }
-        
-        $return->{ uc($column_name) } = {
+
+        push @{$return}
+      , {
             COLUMN_NAME     => $column_name
           , DATA_TYPE       => $data_type
           , PRECISION       => $precision_scale
-          , NULLABLE        => $mysql_hash->{$column_name}->{Null} eq 'YES' ? 1 : 0
+          , NULLABLE        => $is_nullable eq 'YES' ? 1 : 0
+          , SERIAL          => $extra eq 'auto_increment' ? 1 : 0
         };
+
     }
-    
-    if ( $options->{force_upper} ) {
-        $return = $self->mangle_case_result_data( $return, "upper" );
-    }
-    
+
     return $return;
     
 }
@@ -337,7 +344,7 @@ sub fetch_all_indexes {
           . "join    information_schema.key_column_usage  k\n"
           . "                                                 using ( constraint_name , table_schema , table_name )\n"
           . "where\n"
-          . "        t.constraint_type in ( 'PRIMARY KEY' , 'UNIQUE' )\n"
+          . "        1=1 -- t.constraint_type in ( 'PRIMARY KEY' , 'UNIQUE' )\n"
           . "and     t.table_schema = ?\n"
           . "order by\n"
           . "        table_name , constraint_name , ordinal_position"
@@ -516,6 +523,14 @@ order by
     
 }
 
+sub quote {
+
+    my ( $self , $object ) = @_;
+
+    return '`' . $object . '`';
+
+}
+
 sub db_schema_table_string {
     
     my ( $self, $database, $schema, $table, $options ) = @_;
@@ -609,7 +624,7 @@ sub generate_db_load_command {
     }
     
     if ( $options->{skip_rows} ) {
-        $load_command .= "ignore " . $options->{skip_rows} . " lines\n";
+        $load_command .= "ignore " . $options->{skip_rows} . " rows\n";
     }
     
     return $load_command;
@@ -708,6 +723,130 @@ sub generate_session_kill_sql {
     } else {
         return "call mysql.rds_kill($pid)";
     }
+
+}
+
+sub _map_identity_column {
+
+    my ( $self , $this_column_info , $source_column_type , $mapping_metadata ) = @_;
+
+    my $warnings = "";
+    my $target_column_type = $mapping_metadata->{$source_column_type}->{target_column_type} . " primary key auto_increment";
+
+    return {
+        type     => $target_column_type
+      , warnings => $warnings
+    };
+
+}
+
+sub _model_to_primary_key_ddl {
+
+    my ( $self, $mem_dbh, $object_recordset ) = @_;
+
+    my $pk_structure = $mem_dbh->_model_to_primary_key_structure( $object_recordset->{database_name},  $object_recordset->{schema_name} , $object_recordset->{table_name} );
+
+    my $sql = "";
+
+    if ( ! $pk_structure->[0]{is_identity} ) { # For IDENTITY PKs, the PK definition maps directly to a column type, and NOT a separate PK/index DDL
+        my $primary_db_schema_table = $object_recordset->{database_name} . "." . $object_recordset->{table_name};
+        $sql = "alter table    $primary_db_schema_table\n add constraint " . $object_recordset->{index_name} . "\n";
+        my $cols = [];
+        map {push @{$cols}, $_->{column_name}} @{$pk_structure};
+        my $col_str = join " , ", @{$cols};
+        $sql .= "primary key ( $col_str )\n";
+    }
+
+    return {
+        ddl         => $sql
+      , warnings    => undef
+    };
+
+}
+
+sub _model_to_index_ddl {
+
+    my ( $self, $mem_dbh, $object_recordset ) = @_;
+
+    my $index_structure = $mem_dbh->_model_to_index_structure( $object_recordset->{database_name}, $object_recordset->{schema_name}, $object_recordset->{table_name}, $object_recordset->{index_name} );
+
+    my $primary_db_schema_table = $object_recordset->{database_name} . "." . $object_recordset->{table_name};
+
+    my $sql;
+
+    my $unique_flag = $object_recordset->{is_unique} ? "UNIQUE" : "";
+
+    $sql = "alter table    $primary_db_schema_table\n"
+        . "add $unique_flag index " . $object_recordset->{index_name} . "\n";
+
+    my $cols = [];
+
+    map  {push @{ $cols }, $_->{column_name} } @{$index_structure};
+
+    my $col_str = join ", ", @{ $cols };
+
+    $sql .= "( $col_str )\n";
+
+    return {
+        ddl         => $sql
+      , warnings    => undef
+    };
+
+}
+
+sub _ddl_mangler_NVARCHAR {
+
+    my ( $self, $type, $precision_scale ) = @_;
+
+    my $return;
+
+    my $precision;
+
+    if ( $precision_scale =~ /\((.*)\)/ ) {
+        $precision = $1;
+    }
+
+    if ( $precision > 16383 ) {
+        $return = {
+            type            => 'text'
+          , precision_scale => undef
+        };
+    } else {
+        $return = {
+            type            => 'nvarchar'
+          , precision_scale => $precision_scale
+        };
+    };
+
+    return $return;
+
+}
+
+sub _ddl_mangler_VARBINARY {
+
+    my ( $self, $type, $precision_scale ) = @_;
+
+    my $return;
+
+    my $precision;
+
+    if ( $precision_scale =~ /\((.*)\)/ ) {
+        $precision = $1;
+    }
+
+    if ( $precision > 50 ) {
+        $return = {
+            type            => 'blob'
+          , precision_scale => undef
+        };
+    } else {
+        $return = {
+            type            => 'varbinary'
+          , precision_scale => $precision_scale
+        };
+    };
+
+    return $return;
 
 }
 

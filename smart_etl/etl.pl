@@ -55,7 +55,7 @@ my  $p_processing_group;                                    # Arg: run a process
 my  $p_extract_group;                                       # Arg: run an extract group
 my  $p_work_collection;                                     # Arg: dynamically load and run a work collection of a given type
 
-my  $p_migration_batch;                                     # Arg: a migration batch identifier
+my  $p_processing_group_set;                                # Arg: identifier for a set of processing groups
 my  $p_batch_id;                                            # Arg: run a batch process by batch id
 
 my  $p_simulate;                                            # Arg: simulate-run. Don't execute template SQL
@@ -96,7 +96,7 @@ GetOptions(
   , 'recursion-limit=i'         => \$P_PARAMETER_RECURSION_LIMIT
   , 'fifo-base=s'               => \$p_fifo_base
   , 'work-collection=s'         => \$p_work_collection
-  , 'migration-batch=s'         => \$p_migration_batch
+  , 'processing-group-set=s'    => \$p_processing_group_set
   , 'batch-id=i'                => \$p_batch_id
   , 'args=s'                    => \$p_args
 );
@@ -218,13 +218,6 @@ if ( $p_args ) {
     $args = decode_json( $p_args );
 }
 
-# This is a hack that allows us to disable the FIFO for debugging migrations jobs
-if ( $args->{disable_fifo} ) {
-    $globals->DISABLE_FIFO( 1 );
-} else {
-    $globals->DISABLE_FIFO( 0 );
-}    
-
 my $log = SmartAssociates::Log->new(
     $globals
   , {
@@ -290,8 +283,8 @@ eval {
     $globals->MAX_ERRORS( $P_MAX_ERRORS );
     $globals->EXTRACT_DATE( $P_EXTRACT_DATE );
     $globals->FIFO_BASE( $p_fifo_base );
-    $globals->COMMAND_LINE_ARGS( $args );
-    
+    $globals->PROCESSING_GROUP_ARGS( $args );
+
     # We also support a 'misc' hash in the global variables, where you can chuck key/value pairs.
     # This should just be used for once-off things where it's hard to justify registering 'proper' spaces & accessors for them.
     # DO NOT ABUSE!
@@ -305,28 +298,36 @@ eval {
     my $worker;
     
     if ( $JOB_ID ) {
-        
+
         $globals->JOB(
             SmartAssociates::Database::Item::Job::Base::generate(
                 $globals
-              , $JOB_ID
+                , $JOB_ID
             )
         );
-        
+
         $globals->JOB->field(
             &SmartAssociates::Database::Item::Job::Base::FLD_LOG_PATH
-          , $log->log_path
+            , $log->log_path
         );
-        
+
         $globals->JOB->update;
         $globals->JOB->start;
 
         $worker = SmartAssociates::ProcessingGroup::Base::generate(
             $globals
         );
-        
-        $globals->CONFIG_GROUP( $worker );
-            
+
+        $globals->CONFIG_GROUP($worker);
+
+    }  elsif ( $p_work_collection ) {
+
+        $worker = SmartAssociates::Base::generate(
+            $globals
+          , 'SmartAssociates::WorkCollection::' . $p_work_collection
+          , $p_processing_group
+        );
+
     } elsif ( $p_processing_group ) {
         
         $worker = SmartAssociates::WorkCollection::Base->new(
@@ -350,14 +351,6 @@ eval {
           , $p_processing_group
           , $p_simulate
           , $p_batch_id
-        );
-        
-    } elsif ( $p_work_collection ) {
-        
-        $worker = SmartAssociates::Base::generate(
-            $globals
-          , 'SmartAssociates::WorkCollection::' . $p_work_collection
-          , $args
         );
         
     }

@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'AZURE_BLOB_PUT'"
+      ],
+      "data" : [
+         {
+            "template_name" : "AZURE_BLOB_PUT",
+            "param_name" : "#P_CONTAINER_NAME#",
+            "param_desc" : "The name of the Azure Blob storage container to upload to",
+            "param_default" : ""
+         },
+         {
+            "param_name" : "#P_SOURCE_FILE_PATH#",
+            "template_name" : "AZURE_BLOB_PUT",
+            "param_desc" : "The full path to the local file to be uploaded",
+            "param_default" : ""
+         },
+         {
+            "param_default" : "",
+            "param_desc" : "The path inside the chosen container to assign to the uploaded file",
+            "param_name" : "#P_TARGET_PATH#",
+            "template_name" : "AZURE_BLOB_PUT"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "template_name" : "AZURE_BLOB_PUT",
+            "repository" : "core",
+            "template_text" : "Uploading [#P_SOURCE_FILE_PATH#] to bucket: [#P_CONTAINER_NAME#], key: [#P_TARGET_PATH#]",
+            "class" : "SQL::DatabaseMethod",
+            "template_desc" : "Upload file to Azure Blob storage container"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'AZURE_BLOB_PUT'"
+      ]
+   }
+}

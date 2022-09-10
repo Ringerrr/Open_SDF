@@ -7,6 +7,9 @@ use base 'SmartAssociates::TemplateConfig::Base';
 
 use constant VERSION                            => '1.0';
 
+# NOTE: DEFUNCT. This was used @ TripAdvisor, and calls gsutil directly. We now have a GCP connection type
+# which performs GCP cloud storage API calls ( amongst other things )
+
 sub execute {
     
     my $self = shift;
@@ -25,8 +28,8 @@ sub execute {
     
     if ( $operation eq 'put' ) {
         
-        my $local_file_path         = $self->resolve_parameter( '#P_LOCAL_FILE_PATH#' )     || $self->log->fatal( "Mising param #P_LOCAL_FILE_PATH#" );
-        my $destination_bucket      = $self->resolve_parameter( '#P_DESTINATION_BUCKET#' )  || $self->log->fatal( "Mising param #P_DESTINATION_BUCKET#" );
+        my $local_file_path         = $self->resolve_parameter( '#P_LOCAL_FILE_PATH#' )     || $self->log->fatal( "Missing param #P_LOCAL_FILE_PATH#" );
+        my $destination_bucket      = $self->resolve_parameter( '#P_DESTINATION_BUCKET#' )  || $self->log->fatal( "Missing param #P_DESTINATION_BUCKET#" );
         
         @args = (
             "gsutil"
@@ -37,8 +40,8 @@ sub execute {
         
     } elsif ( $operation eq 'get' ) {
         
-        my $google_cloud_storage_path   = $self->resolve_parameter( '#P_GOOGLE_CLOUD_STORAGE_PATH#' )  || $self->log->fatal( "Mising param #P_GOOGLE_CLOUD_STORAGE_PATH#" );
-        my $local_destination_folder    = $self->resolve_parameter( '#P_LOCAL_DESTINATION_FOLDER#' )  || $self->log->fatal( "Mising param #P_LOCAL_DESTINATION_FOLDER#" );
+        my $google_cloud_storage_path   = $self->resolve_parameter( '#P_GOOGLE_CLOUD_STORAGE_PATH#' )  || $self->log->fatal( "Missing param #P_GOOGLE_CLOUD_STORAGE_PATH#" );
+        my $local_destination_folder    = $self->resolve_parameter( '#P_LOCAL_DESTINATION_FOLDER#' )  || $self->log->fatal( "Missing param #P_LOCAL_DESTINATION_FOLDER#" );
         
         @args = (
             "gsutil"

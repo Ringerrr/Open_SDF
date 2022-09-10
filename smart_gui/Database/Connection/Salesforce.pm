@@ -205,7 +205,7 @@ sub fetch_salesforce_table_desc {
     
 }
 
-sub fetch_column_info {
+sub fetch_column_info_array {
     
     my ( $self, $database, $schema, $table, $options ) = @_;
     
@@ -216,8 +216,8 @@ sub fetch_column_info {
     # Split out the DATA_TYPE and PRECISION ...
     foreach my $field ( @{$sf_column_info->{fields}} ) {
         
-        $return->{ $field->{name} } =
-        {
+        push @{$return}
+      , {
               COLUMN_NAME     => $field->{name}
             , DATA_TYPE       => $field->{type}
             , PRECISION       => undef

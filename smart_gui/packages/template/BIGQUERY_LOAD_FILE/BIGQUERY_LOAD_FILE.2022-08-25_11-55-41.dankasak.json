@@ -1,0 +1,113 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'BIGQUERY_LOAD_FILE'"
+      ],
+      "data" : [
+         {
+            "param_default" : "0",
+            "param_desc" : "Boolean - Allow records with truncated columns",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_ALLOW_JAGGED_ROWS#"
+         },
+         {
+            "param_name" : "#P_ALLOW_QUOTED_NEW_LINES#",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_default" : "0",
+            "param_desc" : "Boolean - whether to allow newline characters inside quotes"
+         },
+         {
+            "param_default" : "",
+            "param_desc" : "The Google Cloud Storage bucket name to upload the file to",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_BUCKET_NAME#"
+         },
+         {
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_CREATE_DISPOSITION#",
+            "param_desc" : "CREATE_NEVER or CREATE_IF_NEEDED",
+            "param_default" : "CREATE_IF_NEEDED"
+         },
+         {
+            "param_name" : "#P_ENCODING#",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_default" : "UTF-8",
+            "param_desc" : "UTF-8 or ISO-8859-1"
+         },
+         {
+            "param_name" : "#P_FIELD_DELIMITER#",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_desc" : "The field delimiter character",
+            "param_default" : ","
+         },
+         {
+            "param_name" : "#P_IGNORE_UNKNOWN_VALUES#",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_desc" : "Boolean - whether to ignore extra values not defined in the table schema",
+            "param_default" : "0"
+         },
+         {
+            "param_desc" : "The maximum bad records before a load gets failed",
+            "param_default" : "0",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_MAX_BAD_RECORDS#"
+         },
+         {
+            "param_desc" : "The unique key which identifies the object to load",
+            "param_default" : "",
+            "param_name" : "#P_OBJECT_PATH#",
+            "template_name" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "param_desc" : "The quote character",
+            "param_default" : "\"",
+            "param_name" : "#P_QUOTE#",
+            "template_name" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "param_default" : null,
+            "param_desc" : "Schema definition - typically we'd *not* supply this",
+            "param_name" : "#P_SCHEMA#",
+            "template_name" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_SKIP_LEADING_ROWS#",
+            "param_desc" : "Number of leading rows to skip",
+            "param_default" : "0"
+         },
+         {
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_name" : "#P_SOURCE_FORMAT#",
+            "param_desc" : "CSV, GOOGLE_SHEETS, NEWLINE_DELIMITED_JSON, AVRO, DATASTORE_BACKUP or BIGTABLE ( BIGTABLE is experimental )",
+            "param_default" : "CSV"
+         },
+         {
+            "param_desc" : "The name of the #Q_ param that holds a table definition structure. Optional.",
+            "param_default" : null,
+            "param_name" : "#P_SOURCE_TABLE_STRUCTURE_NAME#",
+            "template_name" : "BIGQUERY_LOAD_FILE"
+         },
+         {
+            "param_name" : "#P_WRITE_DISPOSITION#",
+            "template_name" : "BIGQUERY_LOAD_FILE",
+            "param_desc" : "WRITE_TRUNCATE, WRITE_APPEND or WRITE_EMPTY",
+            "param_default" : "WRITE_EMPTY"
+         }
+      ]
+   },
+   "template" : {
+      "pre" : [
+         "delete from template where template_name = 'BIGQUERY_LOAD_FILE'"
+      ],
+      "data" : [
+         {
+            "repository" : "core",
+            "template_text" : "$big_query->load(\n    project_id          => #CONFIG_TARGET_DB_NAME#\n  , dataset_id          => #CONFIG_TARGET_SCHEMA_NAME#\n  , table_id            => #CONFIG_TARGET_TABLE_NAME#\n  , data                => 'gs://#P_BUCKET_NAME#/#P_OBJECT_PATH#'\n  , allowJaggedRows     => #P_ALLOW_JAGGED_ROWS#\n  , allowQuotedNewlines => #P_ALLOW_QUOTED_NEW_LINES#\n  , createDisposition   => #P_CREATE_DISPOSITION#\n  , encoding            => #P_ENCODING#\n  , fieldDelimiter      => #P_FIELD_DELIMITER#\n  , ignoreUnknownValues => #P_IGNORE_UNKNOWN_VALUES#\n  , maxBadRecords       => #P_MAX_BAD_RECORDS#\n  , quote               => #P_QUOTE#\n  , schema              => #P_SCHEMA#\n  , skipLeadingRows     => #P_SKIP_LEADING_ROWS#\n  , sourceFormat        => #P_SOURCE_FORMAT#\n  , writeDisposition    => #P_WRITE_DISPOSITION#\n);",
+            "template_desc" : "Load a file ( CSV, JSON, others ) into BigQuery",
+            "class" : "SQL::DatabaseMethod",
+            "template_name" : "BIGQUERY_LOAD_FILE"
+         }
+      ]
+   }
+}

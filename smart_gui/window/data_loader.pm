@@ -10,7 +10,7 @@ use Glib qw( TRUE FALSE );
 use Time::HiRes;
 use Text::CSV;
 use File::Basename;
-use WWW::Mechanize;
+#use WWW::Mechanize;
 use JSON;
 use File::Temp qw / tempfile tempdir /;
 use Storable 'dclone';
@@ -292,6 +292,81 @@ sub regen_tables_list {
 }
 
 sub on_tables_list_select {
+
+    my $self = shift;
+
+    my $connection  = $self->{target_chooser}->get_db_connection();
+    my $database    = $self->{target_chooser}->get_database_name();
+    my $schema      = $self->{target_chooser}->get_schema_name();
+    my $table       = $self->{tables_list}->get_column_value( "table_name" );
+
+    my $column_info_array = $connection->fetch_column_info_array( $database , $schema , $table );
+
+    my $sql = "create table $table (\n";
+    my $counter = 0;
+    foreach my $column_info ( @{$column_info_array} ) {
+        if ( $counter ) {
+            $sql .= "\n  , ";
+        } else {
+            $sql .= "    ";
+        }
+
+        $sql .= $column_info->{COLUMN_NAME}  . " " . $column_info->{DATA_TYPE};
+
+        if ( $column_info->{PRECISION} ) {
+            $sql .= $column_info->{PRECISION};
+        }
+
+        if ( ! $column_info->{NULLABLE} ) {
+            $sql .= " not null";
+        }
+
+        if ( defined $column_info->{COLUMN_DEFAULT} ) {
+            $sql .= "default " . $column_info->{COLUMN_DEFAULT};
+        }
+
+        $sql .= "\n    ";
+
+        if ( $column_info->{DATA_TYPE} =~ /char/i ) {
+            my $length;
+            if ( $column_info->{PRECISION} =~ /\(([\d]*)\)/ ) {
+                $length = $1;
+            }
+            $sql .= "/*{{ rand.regex('[a-zA-Z ]{" . $length . "}') }}*/";
+        } elsif ( $column_info->{SERIAL} ) {
+            $sql .= "/*{{ rownum }}*/";
+        } elsif ( $column_info->{DATA_TYPE} =~ /decimal|numeric/i ) {
+            my ( $precision , $scale );
+            if ( $column_info->{PRECISION} =~ /\(([\d]*)\.([\d]*)\)/ ) {
+                ( $precision , $scale ) = ( $1 , $2 );
+            }
+            my $l1 = $precision - $scale;
+            $sql .= "/*{{ rand.regex('[0-9]{" . $l1 . "}') || '.' || rand.regex('[0-9]{" . $scale . "}') }}*/";
+        } elsif ( $column_info->{DATA_TYPE} =~ /bigint/ ) {
+            $sql .= "/*{{ rand.regex('[0-9]{16}') }}*/"
+        } elsif ( $column_info->{DATA_TYPE} =~ /int/ ) {
+            $sql .= "/*{{ rand.regex('[0-9]{9}') }}*/"
+        } elsif ( $column_info->{DATA_TYPE} =~ /text/ ) {
+            $sql .= "/*{{ rand.regex('[a-zA-Z ]{1000}') }}*/";
+        } elsif ( $column_info->{DATA_TYPE} =~ /double/ ) {
+            $sql .= "/*{{ rand.regex('[0-9]{6}') || '.' || rand.regex('[0-9]{6}') }}*/";
+        } elsif ( $column_info->{DATA_TYPE} =~ /datetime/ ) {
+            $sql .= "/*{{ TIMESTAMP WITH TIME ZONE '1000-01-01 00:00:00 UTC' + INTERVAL rand.range(0, 284012524800) SECOND }}*/";
+        } else {
+            $sql .= "/* UNSUPPORTED */";
+        }
+
+        $counter ++;
+
+    }
+
+    $sql .= "\n)";
+
+    $self->set_widget_value( 'GD_Rows_Request' , $sql );
+
+}
+
+sub on_tables_list_select_old {
 
     my $self = shift;
 

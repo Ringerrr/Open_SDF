@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "data" : [
+         {
+            "param_desc" : "The target GCP cloud storage bucket",
+            "param_default" : "",
+            "param_name" : "#P_BUCKET_NAME#",
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT"
+         },
+         {
+            "param_name" : "#P_SOURCE_FILE_PATH#",
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "param_default" : "",
+            "param_desc" : "The path of the local file to upload"
+         },
+         {
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "param_name" : "#P_TARGET_KEY#",
+            "param_desc" : "The key that uniquely identifies the target object",
+            "param_default" : ""
+         }
+      ],
+      "pre" : [
+         "delete from param where template_name = 'GOOGLE_CLOUD_STORAGE_PUT'"
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "class" : "SQL::DatabaseMethod",
+            "template_desc" : "Upload a file to Google Cloud Storage",
+            "template_text" : "Upload from local path [#P_SOURCE_FILE_PATH#] to Google Cloud Storage bucket [#P_BUCKET_NAME#] , key [#P_TARGET_KEY#]",
+            "repository" : "core"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'GOOGLE_CLOUD_STORAGE_PUT'"
+      ]
+   }
+}

@@ -41,7 +41,7 @@ sub execute {
     my $target_schema_name = $self->detokenize( $template_config->{TARGET_SCHEMA_NAME} );
     my $target_table_name  = $self->detokenize( $template_config->{TARGET_TABLE_NAME} );
 
-    # Recursive parameter substitution in connectionname too ...
+    # Recursive parameter substitution in connection_name too ...
     my $connection_name    = $self->detokenize( $template_config->{CONNECTION_NAME} );
 
     $self->target_database_name( $target_db_name );
@@ -60,15 +60,9 @@ sub execute {
     my $method = $self->resolve_parameter( '#P_ZZ_DATABASE_CLASS_METHOD#' ) || $template_config->{TEMPLATE_NAME};
     
     if ( $target_connection->can( $method ) ) {
-        
-        $return = $self->target_database->$method(
-            $self
-        );
-        
+        $return = $self->target_database->$method( $self );
     } else {
-        
         die( "Target connection doesn't implement method " . $template_config->{TEMPLATE_NAME} . "!" );
-        
     }
     
     my $end_ts = $self->log->prettyTimestamp();
@@ -86,6 +80,7 @@ sub execute {
       , $return->{template_text}
       , to_json( $self->perf_stats, { pretty => 1 } )
       , $template_config->{NOTES}
+      , $template_config->{custom_logs}
     );
     
     if ( $return->{error} ) {

@@ -5,6 +5,8 @@ use warnings;
 
 use base 'SmartAssociates::Base';
 
+use JSON;
+
 my $IDX_TOP_LEVEL_TEMPLATES                     =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 0;
 my $IDX_TARGET_DATABASES                        =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 1;
 my $IDX_DBH                                     =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 2;
@@ -69,15 +71,21 @@ sub prepare {
 sub getMetadata {
     
     my $self = shift;
-    
+
+    # NOTE: this code path is not reachable - sub-classes implement it. This was the old Netezza code,
+    # and *should* still work.
+
     my $CONTROL_DB_NAME = $self->globals->CONTROL_DB_NAME;
     my $LOG_DB_NAME     = $self->globals->LOG_DB_NAME;
     
     my $sth = $self->[ $IDX_DBH ]->prepare(
         "select\n"
-      . "    PROCESSING_GROUP_NAME\n"
+      . "    JOB_CTL.PROCESSING_GROUP_NAME\n"
+      . "  , PROCESSING_GROUP.JOB_ARGS_JSON\n"
       . "from\n"
       . "            " . $LOG_DB_NAME . "..JOB_CTL\n"
+      . "inner join  " . $CONTROL_DB_NAME . "..PROCESSING_GROUP\n"
+      . "                on JOB_CTL.PROCESSING_GROUP_NAME = PROCESSING_GROUP.PROCESSING_GROUP_NAME\n"
       . "where\n"
       . "    JOB_CTL.JOB_ID = ?\n"
     );
@@ -92,7 +100,19 @@ sub getMetadata {
     my $rec = $sth->fetchrow_hashref;
     
     $self->[ $IDX_PROCESSING_GROUP_NAME ] = $rec->{PROCESSING_GROUP_NAME};
-    
+
+    if ( defined $rec->{JOB_ARGS_JSON} ) {
+        my $job_args_hash = {};
+        eval {
+            $job_args_hash = json_decode( $rec->{JOB_ARGS_JSON} );
+        };
+        my $err = $@;
+        if ( $err ) {
+            $self->log->warn( "Failed to decode JSON:\n" . $rec->{JOB_ARGS_JSON} . "\n$err" );
+        }
+        $self->globals->PROCESSING_GROUP_ARGS( $job_args_hash );
+    }
+
     $sth->finish();
     
 }

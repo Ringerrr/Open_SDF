@@ -1,0 +1,41 @@
+{
+   "param" : {
+      "pre" : [
+         "delete from param where template_name = 'GOOGLE_CLOUD_STORAGE_PUT'"
+      ],
+      "data" : [
+         {
+            "param_default" : null,
+            "param_desc" : null,
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "param_name" : "#P_GOOGLE_CLOUD_STORAGE_PATH#"
+         },
+         {
+            "param_name" : "#P_LOCAL_FILE_PATH#",
+            "param_desc" : "",
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "param_default" : ""
+         },
+         {
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "param_desc" : "",
+            "param_default" : "put",
+            "param_name" : "#P_OPERATION#"
+         }
+      ]
+   },
+   "template" : {
+      "data" : [
+         {
+            "repository" : "core",
+            "template_desc" : "Upload a file to Google Cloud Storage",
+            "template_text" : "Upload from local path [#P_LOCAL_FILE_PATH#] to Google Cloud Storage [#P_GOOGLE_CLOUD_STORAGE_PATH#]",
+            "template_name" : "GOOGLE_CLOUD_STORAGE_PUT",
+            "class" : "GoogleCloudStorage"
+         }
+      ],
+      "pre" : [
+         "delete from template where template_name = 'GOOGLE_CLOUD_STORAGE_PUT'"
+      ]
+   }
+}

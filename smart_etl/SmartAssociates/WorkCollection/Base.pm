@@ -12,8 +12,10 @@ my $IDX_PROCESSING_GROUP_NAME                   =  SmartAssociates::Base::FIRST_
 my $IDX_SIMULATE                                =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 2;
 my $IDX_DBH                                     =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 3;
 my $IDX_BATCH_ID                                =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 4;
+my $IDX_PROCESSING_GROUP_SET                    =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 5;
+my $IDX_ARGS_HASH                               =  SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 6;
 
-use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 5;
+use constant    FIRST_SUBCLASS_INDEX            => SmartAssociates::Base::FIRST_SUBCLASS_INDEX + 7;
 
 # This class has a 1:1 mapping with CONTROL..PROCESSING_GROUP
 # We basically check to see whether the group is disabled or not ...
@@ -38,7 +40,39 @@ sub new {
       , 'METADATA'
       , $self->globals->CONTROL_DB_NAME
     );
-    
+
+    my $sql =
+        "select
+            pgs.processing_group_set_name                         as processing_group_set_name
+          , pgs.processing_group_set_args_json                    as processing_group_set_args_json
+from
+            processing_group_sets         as pgs
+inner join  processing_group_set_members  as pgsm
+                                                       on pgs.processing_group_set_name = pgsm.processing_group_set_name
+where
+            pgsm.processing_group_name = ?
+group by
+    1 , 2";
+
+    my $sth = $self->[ $IDX_DBH ]->prepare(
+        $sql
+    );
+
+    $self->[ $IDX_DBH ]->execute(
+        $sth
+      , [ $self->processing_group_name() ]
+    );
+
+    my $row = $sth->fetchrow_hashref();
+
+    $self->[ $IDX_PROCESSING_GROUP_SET ] = $row->{PROCESSING_GROUP_SET_NAME};
+
+    if ( $row->{PROCESSING_GROUP_SET_ARGS_JSON} ) {
+        $self->[ $IDX_ARGS_HASH ] = decode_json( $row->{PROCESSING_GROUP_SET_ARGS_JSON} );
+    } else {
+        $self->[ $IDX_ARGS_HASH ] = {};
+    }
+
     return $self;
     
 }
@@ -252,5 +286,7 @@ sub control_hash                { return $_[0]->accessor( $IDX_CONTROL_HASH,    
 sub simulate                    { return $_[0]->accessor( $IDX_SIMULATE,                        $_[1] ); }
 sub processing_group_name       { return $_[0]->accessor( $IDX_PROCESSING_GROUP_NAME,           $_[1] ); }
 sub dbh                         { return $_[0]->accessor( $IDX_DBH,                             $_[1] ); }
+sub args_hash                   { return $_[0]->accessor( $IDX_ARGS_HASH,                       $_[1] ); }
+sub processing_group_set        { return $_[0]->accessor( $IDX_PROCESSING_GROUP_SET,            $_[1] ); }
 
 1;

@@ -379,4 +379,12 @@ sub does_schema_not_exist_string {
 
 }
 
+sub minus_operator {
+
+    my $self = shift;
+
+    return "except";
+
+}
+
 1;

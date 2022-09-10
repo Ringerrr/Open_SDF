@@ -647,18 +647,20 @@ sub fetch_field_list {
 
 sub fetch_column_info {
     
-    my ( $self, $database, $schema, $table ) = @_;
+    my ( $self , $database , $schema , $table , $options ) = @_;
     
-    $self->dialog(
-        {
-            title   => "Oops!"
-          , type    => "error"
-          , text    => "Can't call Database::Connection::fetch_column_info() ... subclasses must implement this method"
-        }
-    );
-    
-    return ();
-    
+    my $col_def_array = $self->fetch_column_info_array( $database , $schema , $table );
+
+    my $return;
+
+    foreach my $col_def ( @{$col_def_array} ) {
+        $return->{ $col_def->{COLUMN_NAME} } = $col_def;
+    }
+
+    if ( $options->{force_upper} ) {
+        $return = $self->mangle_case_result_data( $return, "upper" );
+    }
+
 }
 
 sub fetch_view {
@@ -739,13 +741,21 @@ sub get_character_length {
     }
     
     my $row = $sth->fetchrow_arrayref;
-    
+
+    my $return;
+
     if ( $row ) {
-        return $$row[0];
+        $return = $$row[0];
     } else {
-        return undef;
+        $return = 65000;
     }
-    
+
+    if ( ! $return ) {
+        $return = 65000;
+    }
+
+    return $return;
+
 }
 
 sub fetch_dbi_column_info {
@@ -786,6 +796,14 @@ sub fetch_dbi_column_info {
     }
 
     return $this_dbi_column_info;
+
+}
+
+sub quote {
+
+    my ( $self , $object ) = @_;
+
+    return '"' . $object . '"';
 
 }
 
@@ -1419,6 +1437,7 @@ sub _model_fetch_and_populate_indexes {
           , $index_structure->{IS_UNIQUE}
           , ( $index_structure->{IS_DISTRIBUTION_KEY} ? $index_structure->{IS_DISTRIBUTION_KEY} : 0 )
           , ( $index_structure->{IS_ORGANISATION_KEY} ? $index_structure->{IS_ORGANISATION_KEY} : 0 )
+          , ( $index_structure->{IS_IDENTITY} ? $index_structure->{IS_IDENTITY} : 0 )
         );
 
         my $index_id = $self->last_insert_id(
@@ -1616,6 +1635,7 @@ sub _model_to_primary_key_structure {
     my $pk_rows = $self->select(
         "select\n"
       . "            column_name\n"
+      . "          , is_identity\n" # For IDENTITY / AUTO_INCREMENT / AUTO_RANDOM etc ... the PK is specified directly against the column
       . "from\n"
       . "            indexes\n"
       . "inner join  index_columns\n"
@@ -1624,7 +1644,8 @@ sub _model_to_primary_key_structure {
       . "            indexes.database_name = ?\n"
       . "        and ( indexes.schema_name = ? or indexes.schema_name is null )\n"
       . "        and indexes.table_name    = ?\n"
-      . "        and indexes.is_primary    = 1"
+      . "        and indexes.is_primary    = 1\n"
+      . "--        and indexes.is_identity   = 0"
       , [ $database , $schema , $table ]
     );
 
@@ -1909,6 +1930,17 @@ sub _model_to_table_ddl {
     
 }
 
+sub _map_identity_column {
+
+    my ( $self , $this_column_info , $source_column_type , $mapping_metadata ) = @_;
+
+    return {
+        type     => $mapping_metadata->{$source_column_type}->{target_column_type}
+      , warnings => "Target class doesn't implement map_identity_column()"
+    };
+
+}
+
 sub _model_to_primary_key_ddl {
     
     my $self = shift;
@@ -1953,14 +1985,22 @@ sub _model_to_fk_rel_ddl {
 
     my $fk_structure = $self->_model_to_fk_structure( $mem_dbh, $object_recordset->{primary_database}, $object_recordset->{primary_schema}, $object_recordset->{relationship_name} );
 
-    my $primary_db_schema_table = $object_recordset->{primary_database} . "." . $object_recordset->{primary_schema} . "." . $object_recordset->{primary_table};
-    my $foreign_db_schema_table = $object_recordset->{foreign_database} . "." . $object_recordset->{foreign_schema} . "." . $object_recordset->{foreign_table};
+    my $primary_db_schema_table = $self->db_schema_table_string(
+        $object_recordset->{primary_database}
+      , $object_recordset->{primary_schema}
+      , $object_recordset->{primary_table}
+    );
 
+    my $foreign_db_schema_table = $self->db_schema_table_string(
+        $object_recordset->{foreign_database}
+      , $object_recordset->{foreign_schema}
+      , $object_recordset->{foreign_table}
+    );
 
     my $sql = "alter table    $primary_db_schema_table\n"
             . "add constraint " . $object_recordset->{relationship_name} . "\n"
             . "foreign key    ( " . join( " , ", @{$fk_structure->{PRIMARY_COLUMNS}} ) . " )\n"
-            . "references     $foreign_db_schema_table ( " . join( " , ", @{$fk_structure->{FOREIGN_COLUMNS}} ) . " )\n"; # NP TODO There's a "Use of uninitialized value in concatenation"
+            . "references     $foreign_db_schema_table ( " . join( " , ", @{$fk_structure->{FOREIGN_COLUMNS}} ) . " )\n";
 
     return {
         ddl         => $sql

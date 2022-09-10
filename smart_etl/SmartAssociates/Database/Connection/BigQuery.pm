@@ -5,7 +5,7 @@ use warnings;
 
 use Google::BigQuery;
 use JSON;
-use String::CamelCase qw(camelize decamelize wordsplit);
+#use String::CamelCase qw(camelize decamelize wordsplit);
 use Text::CSV;
 use File::Basename;
 
@@ -15,6 +15,7 @@ my $IDX_REST_CLIENT                             =  SmartAssociates::Database::Co
 my $IDX_CLIENT_EMAIL                            =  SmartAssociates::Database::Connection::Base::FIRST_SUBCLASS_INDEX + 1;
 my $IDX_PRIVATE_KEY_FILE                        =  SmartAssociates::Database::Connection::Base::FIRST_SUBCLASS_INDEX + 2;
 my $IDX_PROJECT_ID                              =  SmartAssociates::Database::Connection::Base::FIRST_SUBCLASS_INDEX + 3;
+my $IDX_COLUMN_TYPE_CODE_CACHE                  =  SmartAssociates::Database::Connection::Base::FIRST_SUBCLASS_INDEX + 4;
 
 use constant FIRST_SUBCLASS_INDEX                                                                                   => 5;
 
@@ -44,40 +45,44 @@ sub connect_do {
     # Store these in properly named attributes so we're not translating from our regular auth hash key names
     
     $self->[ $IDX_CLIENT_EMAIL ]     = $auth_hash->{Username};
-    $self->[ $IDX_PRIVATE_KEY_FILE ] = $auth_hash->{Password};
-    $self->[ $IDX_PROJECT_ID ]       = $auth_hash->{Database};
+    $self->[ $IDX_PRIVATE_KEY_FILE ] = $auth_hash->{Host};
+    $self->[ $IDX_PROJECT_ID ]       = $auth_hash->{Attribute_1};
     
     $self->[ $IDX_REST_CLIENT ] = Google::BigQuery::create(
         client_email        => $self->[ $IDX_CLIENT_EMAIL ]
       , private_key_file    => $self->[ $IDX_PRIVATE_KEY_FILE ]
       , project_id          => $self->[ $IDX_PROJECT_ID ]
+      , default_sql_mode    => '#standardSQL'
+      , verbose             => 1
       , debug               => 1
     ) || $self->log->fatal( "Could not connect to " . $self->DB_TYPE . " database via REST API ( Google::BigQuery )\n" . DBI->errstr );
     
-    my $connection_string;
-    
-    {
-        no warnings "uninitialized";
-        $connection_string =
-              "dbi:ODBC:"
-            . "DRIVER="               . $auth_hash->{ODBC_Driver}
-            . ";OAuthMechanism=0"
-            . ";Email="               . $auth_hash->{Username}
-            . ";KeyFilePath="         . $auth_hash->{Password}
-            . ";Catalog="             . $auth_hash->{Database}
-            . ";RefreshToken="        . $auth_hash->{Port}
-            . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
-            . ";SQLDialect="          . $auth_hash->{Attribute_5};
-    }
-    
-    my $dbh = DBI->connect(
-        $connection_string
-      , $auth_hash->{Username}
-      , $auth_hash->{Password}
-    ) || $self->log->fatal( "Could not connect to " . $self->DB_TYPE . " database via ODBC API\n" . DBI->errstr );
-    
-    $self->dbh( $dbh );
-    
+    # my $connection_string;
+    #
+    # {
+    #     no warnings "uninitialized";
+    #     $connection_string =
+    #           "dbi:ODBC:"
+    #         . "DRIVER="               . $auth_hash->{ODBC_Driver}
+    #         . ";OAuthMechanism=0"
+    #         . ";Email="               . $auth_hash->{Username}
+    #         . ";KeyFilePath="         . $auth_hash->{Password}
+    #         . ";Catalog="             . $auth_hash->{Database}
+    #         . ";RefreshToken="        . $auth_hash->{Port}
+    #         . ";UseNativeQuery="      . $auth_hash->{Attribute_4}
+    #         . ";SQLDialect="          . $auth_hash->{Attribute_5};
+    # }
+    #
+    # my $dbh = DBI->connect(
+    #     $connection_string
+    #   , $auth_hash->{Username}
+    #   , $auth_hash->{Password}
+    # ) || $self->log->fatal( "Could not connect to " . $self->DB_TYPE . " database via ODBC API\n" . DBI->errstr );
+    #
+    # $self->dbh( $dbh );
+
+    $self->dbh( $self->[ $IDX_REST_CLIENT ] );
+
 }
 
 sub get_fields_from_table {
@@ -110,7 +115,8 @@ sub fetch_bigquery_table_desc {
     if ( ! exists $cached_bigquery_table_desc->{ $table } ) {
         
         $cached_bigquery_table_desc->{ $table } = $self->[ $IDX_REST_CLIENT ]->desc_table(
-            dataset_id  => $database
+            project_id  => $database
+          , dataset_id  => $schema
           , table_id    => $table
         );
         
@@ -147,12 +153,81 @@ sub fetch_column_info {
     
 }
 
-sub coalesce {
-    
-    my ( $self, $table, $expression, $string ) = @_;
-    
-    return "coalesce($expression,'$string')";
-    
+sub fetch_column_type_info {
+
+    my ( $self, $database, $schema, $table, $column , $usage ) = @_;
+
+    # This method is currently used by parts of the migration wizard, to drive the generation
+    # of SQL expressions per column. New code should use fetch_column_definitions, which also fetches
+    # lengths, scale, etc, and we should port code that uses this method and then remove this method
+
+    if ( ! $usage ) {
+        $self->log->fatal( "fetch_column_type_info() called without a usage" );
+    }
+
+    my $return;
+
+    my $unquoted_column = $column;
+    $unquoted_column =~ s/"//g;
+
+    if ( ! exists $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table} ) {
+
+        my $table_description = $self->fetch_bigquery_table_desc( $database, $schema, $table );
+
+        # my $column_names      = $sth->{NAME};
+        # my $column_types      = $sth->{TYPE};
+        # my $column_precisions = $sth->{PRECISION};
+        # my $column_scales     = $sth->{SCALE};
+
+        my $type_codes;
+        my $precisions;
+
+        my $counter = 0;
+
+        my $bigquery_to_type_code = {
+            INTEGER => $self->SQL_INTEGER
+          , NUMERIC => $self->SQL_NUMERIC
+          , STRING  => $self->SQL_VARCHAR
+          , DATE    => $self->SQL_DATE
+        };
+
+        foreach my $field ( @{$table_description->{schema}->{fields}} ) {
+            if ( exists $bigquery_to_type_code->{ $field->{type} } ) {
+                $type_codes->{$field->{name}} = $bigquery_to_type_code->{ $field->{type} };
+            } else {
+                $self->log->warn( "BigQuery type [$field->{type}] not found in mapping ( hard-coded in class ) - defaulting to SQL_VARCHAR" );
+                $type_codes->{$field->{name}} = $self->SQL_VARCHAR;
+            }
+        }
+
+        $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table} = $type_codes;
+
+    }
+
+    if ( ! exists $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table} ) {
+
+        $self->log->warn( "Couldn't locate metadata for column" );
+
+        $return = {
+            type_code           => undef
+          , formatted_select    => $column
+          , precision           => undef
+          , column_info         => undef
+        };
+
+    } else {
+
+        my $type_code = $self->[ $IDX_COLUMN_TYPE_CODE_CACHE ]->{$database}->{$schema}->{$table}->{$unquoted_column};
+
+        $return = {
+            type_code           => $type_code
+          , formatted_select    => $self->formatted_select( $database , $schema , $table , $column , $type_code , $usage )
+          , precision           => undef
+          , column_info         => undef
+        };
+
+    }
+
 }
 
 sub replace {
@@ -170,47 +245,125 @@ sub db_schema_table_string {
     my ( $self, $database, $schema, $table , $options ) = @_;
     
     if ( ! $options->{dont_quote} ) {
-        return $database . '.' . $table;
+        return $database . '.' . $schema . '.' . $table;
     } else {
-        return '"' . $database . '"."' . $table . '"';
+        return '"' . $database . '"."' . $schema . '"."' . $table . '"';
     }
     
 }
 
-sub _table_schema_from_Salesforce {
-    
-    my ( $self, $source_table_structure ) = @_;
-    
-    my @fields;
-    
-    my %sf_2_bq = (
-        id          => 'STRING'
-      , boolean     => 'BOOLEAN'
-      , currency    => 'FLOAT'
-      , percent     => 'FLOAT'
-      , date        => 'DATE'
-    ); # everything else is STRING
-    
-    foreach my $field ( @{$source_table_structure->{structure}->{fields}} ) {
-        
-        my $mapped_field_name = $field->{name};
-        $mapped_field_name =~ s/[ -%\*#@\(\)~`+]/_/g;
-        $mapped_field_name = decamelize( $mapped_field_name );
-        
-        $self->log->debug( "Mapping Salesforce field [" . $field->{name} . "] type [" . $field->{type}
-                         . "] to BigQuery field [$mapped_field_name] type [" . ( $sf_2_bq{ $field->{type} } || 'STRING' ) . "]" );
-        
-        push @fields, {
-            name        => $mapped_field_name
-          , type        => ( $sf_2_bq{ $field->{type} } || 'STRING' )
-          , description => $field->{label}
-        };
-        
-    }
-    
-    return \@fields;
-    
+sub does_schema_not_exist_string {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    my $sql = "select 1\n"
+        . "from ( select SESSION_USER() )\n"
+        . "where not exists (\n"
+        . "    select * from " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "SCHEMATA" ) . "\n"
+        . "    where schema_name = '" . $schema . "'\n"
+        . ")";
+
+    return $sql;
+
 }
+
+sub create_schema_string {
+
+    my ( $self , $database , $schema ) = @_;
+
+    my $sql;
+
+    # BigQuery doesn't like dashes ( - ) in the project id ( DB ) name when we specify it in a "create dataset"
+    # command ... but it PUTS THE STUPID THING THERE ITSELF when creating the project
+    if ( $self->[ $IDX_PROJECT_ID ] ne $database ) {
+        $sql = "create schema " . $self->db_schema_string( $database , $schema );
+    } else {
+        $sql = "create schema $schema";
+    }
+
+    return $sql;
+
+}
+
+sub does_table_exist_string {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    # We pass the SCHEMA as the database here. Weird ...
+    my $sql = "select TABLE_NAME from " . $self->db_schema_table_string( $schema, "INFORMATION_SCHEMA", "TABLES" ) . "\n"
+        . "where  TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = '" . $schema . "' and TABLE_NAME = '" . $table . "'";
+
+    return $sql;
+
+}
+
+sub varchar_type {
+
+    # This ridiculous method is to deal with BigQuery not supporting regular column types like varchar.
+    # Better to use a proper database, and not a hack on top of gmail
+
+    my ( $self , $size ) = @_;
+
+    return "STRING";
+
+}
+
+sub coalesce {
+
+    my ( $self , $expression , $string ) = @_;
+
+    if ( $string eq "''" ) {
+        return "coalesce($expression,$string)";
+    } else {
+        return "coalesce($expression,'$string')";
+    }
+
+}
+
+sub minus_operator {
+
+    my $self = shift;
+
+    return "except distinct";
+
+}
+
+# Was in use at private project in TripAdvisor. Those jobs are now gone. We can probably remove completely ...
+#
+# sub _table_schema_from_Salesforce {
+#
+#     my ( $self, $source_table_structure ) = @_;
+#
+#     my @fields;
+#
+#     my %sf_2_bq = (
+#         id          => 'STRING'
+#       , boolean     => 'BOOLEAN'
+#       , currency    => 'FLOAT'
+#       , percent     => 'FLOAT'
+#       , date        => 'DATE'
+#     ); # everything else is STRING
+#
+#     foreach my $field ( @{$source_table_structure->{structure}->{fields}} ) {
+#
+#         my $mapped_field_name = $field->{name};
+#         $mapped_field_name =~ s/[ -%\*#@\(\)~`+]/_/g;
+#         $mapped_field_name = decamelize( $mapped_field_name );
+#
+#         $self->log->debug( "Mapping Salesforce field [" . $field->{name} . "] type [" . $field->{type}
+#                          . "] to BigQuery field [$mapped_field_name] type [" . ( $sf_2_bq{ $field->{type} } || 'STRING' ) . "]" );
+#
+#         push @fields, {
+#             name        => $mapped_field_name
+#           , type        => ( $sf_2_bq{ $field->{type} } || 'STRING' )
+#           , description => $field->{label}
+#         };
+#
+#     }
+#
+#     return \@fields;
+#
+# }
 
 sub BIGQUERY_EXECUTE_SQL {
     
@@ -223,7 +376,8 @@ sub BIGQUERY_EXECUTE_SQL {
     #    ( Google refuses to even consider issues with BigQuery for SQL executed via Simba's ODBC driver )
     
     # First the required ones ( all others are optional and have default values )...
-    my $dataset_id          = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+    my $project_id          = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+    my $dataset_id          = $template_config_class->resolve_parameter( '#CONFIG_TARGET_SCHEMA_NAME#' )         || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_SCHEMA_NAME#" );
     my $max_billing_tier    = $template_config_class->resolve_parameter( '#P_MAX_BILLING_TIER#' );
     
     my $template_text       = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
@@ -252,7 +406,7 @@ sub BIGQUERY_EXECUTE_SQL {
         $response = $self->[ $IDX_REST_CLIENT ]->request(
               resource            => 'jobs'                       # BigQuery API resource
             , method              => 'insert'                     # BigQuery API method
-            , project_id          => $self->[ $IDX_PROJECT_ID ]   # project_id
+            , project_id          => $project_id                  # project_id
             , dataset_id          => $dataset_id                  # dataset_id
             , job_id              => undef                        # dafaq?
             , content             => {
@@ -271,23 +425,31 @@ sub BIGQUERY_EXECUTE_SQL {
     };
     
     my $err = $@;
-    
+
+    $template_config_class->perf_stat_stop( 'BigQuery SQL via REST API' );
+
     if ( $response->{status}->{errors} ) {
         no warnings "uninitialized";
         $err .= "\n" . to_json( $response->{status}, { pretty => 1 } );
     }
-    
+
     if ( $response->{error} ) {
         no warnings "uninitialized";
         $err .= "\n" . to_json( $response->{error}, { pretty => 1 } );
     }
-    
-    $template_config_class->perf_stat_stop( 'BigQuery SQL via REST API' );
-    
+
+    my $custom_logs;
+
+    eval {
+        $custom_logs = "Request:\n" . to_json( $self->[ $IDX_REST_CLIENT ]->{_last_request}, { pretty => 1 } );
+        $custom_logs .= "\n\nResponse:\n" . to_json( $self->[ $IDX_REST_CLIENT ]->{_last_response}, { pretty => 1 } );
+    };
+
     return {
           template_text       => $template_text
         , record_count        => ( $err ? 0 : 1 )
         , error               => $err
+        , $custom_logs        => $custom_logs
     };
     
 }
@@ -378,8 +540,9 @@ sub BIGQUERY_TABLE_FROM_SQL {
 sub BIGQUERY_DROP_TABLE {
     
     my ( $self, $template_config_class ) = @_;
-    
-    my $dataset_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+
+    my $project_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+    my $dataset_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_SCHEMA_NAME#' )         || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_SCHEMA_NAME#" );
     my $table_id    = $template_config_class->resolve_parameter( '#CONFIG_TARGET_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_TABLE_NAME#" );
     
     my $template_text = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
@@ -393,7 +556,7 @@ sub BIGQUERY_DROP_TABLE {
     eval {
         
         $response = $self->[ $IDX_REST_CLIENT ]->drop_table(
-            project_id      => $self->[ $IDX_PROJECT_ID ]
+            project_id      => $project_id
           , dataset_id      => $dataset_id
           , table_id        => $table_id
         ) || die( $self->[ $IDX_REST_CLIENT ]->errstr );
@@ -417,16 +580,17 @@ sub BIGQUERY_LOAD_FILE {
     my ( $self, $template_config_class ) = @_;
     
     # First the required ones ( all others are optional and have default values )...
-    my $dataset_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+    my $project_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+    my $dataset_id  = $template_config_class->resolve_parameter( '#CONFIG_TARGET_SCHEMA_NAME#' )         || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_SCHEMA_NAME#" );
     my $table_id    = $template_config_class->resolve_parameter( '#CONFIG_TARGET_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_TABLE_NAME#" );
-    my $local_path  = $template_config_class->resolve_parameter( '#P_LOCAL_CSV_PATH#' )                  || $self->log->fatal( "Missing param #P_LOCAL_CSV_PATH#" );
-    my $bucket_id   = $template_config_class->resolve_parameter( '#P_BUCKET_ID#' )                       || $self->log->fatal( "Missing param #P_BUCKET_ID#" );
-    
+    my $bucket_name = $template_config_class->resolve_parameter( '#P_BUCKET_NAME#' )                     || $self->log->fatal( "Missing param #P_BUCKET_NAME#" );
+    my $object_path = $template_config_class->resolve_parameter( '#P_OBJECT_PATH#' )                     || $self->log->fatal( "Missing param #P_OBJECT_PATH#" );
+
     my $source_table_structure_name = $template_config_class->resolve_parameter( '#P_SOURCE_TABLE_STRUCTURE_NAME#' );
     
     my $target_schema;
     
-    if ( $source_table_structure_name ) {
+    if ( $source_table_structure_name ne '' ) {
         
         my $source_table_structure = $template_config_class->resolve_parameter( '#Q_' . $source_table_structure_name . '#');
         my $schema_gen_method = '_table_schema_from_' . $source_table_structure->{type};
@@ -439,37 +603,8 @@ sub BIGQUERY_LOAD_FILE {
     
     my $template_text = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
     
-    my $gs_path;
-    
-    if ( $local_path =~ /.*\/(.*)/ ) {
-        $gs_path = 'gs://' . $bucket_id . '/' . $1;
-    } else {
-        $self->log->fatal( "Failed to parse local path: [$local_path]" );
-    }
-    
-    # We have to push the file using 'gsutil' to Google Cloud Storage, as the method of loading
-    # directly from a local file requires slurping the entire file into memory. I'm not sure
-    # if this is a limitation of the library ( Google::BigQuery ) or not. It's easy and probably
-    # more fault-tolerant to shell out to gsutil anyway.
-    
     eval {
-        
-        $self->log->info( "Starting file upload to of [$local_path] to Google Cloud Storage [$gs_path]" );
-        
-        my @args = (
-            'gsutil'
-          , "cp"
-          , $local_path
-          , $gs_path
-        );
-        
-        $template_config_class->perf_stat_start( 'File upload to Google Cloud Storage' );
-        
-        system( @args ) == 0
-            or die( "gsutil upload failed: " . $? );
-        
-        $template_config_class->perf_stat_stop( 'File upload to Google Cloud Storage' );
-        
+
         $self->log->info( "Starting BigQuery load from Google Cloud Storage" );
         
         $template_config_class->perf_stat_start( 'BigQuery load CSV from Google Cloud Storage' );
@@ -494,10 +629,10 @@ sub BIGQUERY_LOAD_FILE {
         }
         
         $self->[ $IDX_REST_CLIENT ]->load(
-            project_id          => $self->[ $IDX_PROJECT_ID ]
-          , dataset_id          => $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )
-          , table_id            => $template_config_class->resolve_parameter( '#CONFIG_TARGET_TABLE_NAME#' )
-          , data                => $gs_path
+            project_id          => $project_id
+          , dataset_id          => $dataset_id
+          , table_id            => $table_id
+          , data                => 'gs://' . $bucket_name . "/" . $object_path
           , allowJaggedRows     => $template_config_class->resolve_parameter( '#P_ALLOW_JAGGED_ROWS#' )
           , allowQuotedNewlines => $allow_quoted_newlines
           , createDisposition   => $template_config_class->resolve_parameter( '#P_CREATE_DISPOSITION#' )
@@ -514,106 +649,98 @@ sub BIGQUERY_LOAD_FILE {
         
         $template_config_class->perf_stat_stop( 'BigQuery load CSV from Google Cloud Storage' );
         
-        $self->log->info( "Deleting file [$gs_path] from Google Cloud Storage" );
-        
-        @args = (
-            'gsutil'
-          , "rm"
-          , $gs_path
-        );
-        
-        $template_config_class->perf_stat_start( 'BigQuery remove file from Google Cloud Storage' );
-        
-        system( @args ) == 0
-            or $self->log->warn( "gsutil rm failed: " . $? );
-        
-        $template_config_class->perf_stat_stop( 'BigQuery remove file from Google Cloud Storage' );
-        
-        unlink( $local_path );
-        
     };
     
     my $error = $@;
-    
+    my $custom_logs;
+
+    eval {
+        $custom_logs = "Request:\n" . to_json( $self->[ $IDX_REST_CLIENT ]->{_last_request}, { pretty => 1 } );
+        $custom_logs .= "\n\nResponse:\n" . to_json( $self->[ $IDX_REST_CLIENT ]->{_last_response}, { pretty => 1 } );
+    };
+
     return {
         template_text       => $template_text
       , record_count        => 0
       , error               => $error
+      , custom_logs         => $custom_logs
     };
     
 }
 
-sub BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS {
-    
-    my ( $self, $template_config_class ) = @_;
-    
-    my $source_database             = $template_config_class->resolve_parameter( '#CONFIG_SOURCE_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_SOURCE_DB_NAME#" );
-    my $source_table                = $template_config_class->resolve_parameter( '#CONFIG_SOURCE_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_SOURCE_TABLE_NAME#" );
-    my $target_database             = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
-    my $target_table                = $template_config_class->resolve_parameter( '#CONFIG_TARGET_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_TABLE_NAME#" );
-    my $source_table_structure_name = $template_config_class->resolve_parameter( '#P_SOURCE_TABLE_STRUCTURE_NAME#' )     || $self->log->fatal( "Missing param #P_SOURCE_TABLE_STRUCTURE_NAME" );
-
-    my $template_text               = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
-    
-    eval {
-        
-        $template_config_class->perf_stat_start( 'BigQuery check if table exists' );
-        
-        if ( ! $self->[ $IDX_REST_CLIENT ]->is_exists_table(
-            project_id  => $self->[ $IDX_PROJECT_ID ]
-          , dataset_id  => $target_database
-          , table_id    => $target_table
-        ) ) {
-            
-            $template_config_class->perf_stat_stop( 'BigQuery check if table exists' );
-            
-            $self->log->info( "Target table doesn't exist. Creating ..." );
-            
-            my $source_table_structure = $template_config_class->resolve_parameter( '#Q_' . $source_table_structure_name . '#');
-            my $schema_gen_method = '_table_schema_from_' . $source_table_structure->{type};
-            
-            my $target_schema;
-            
-            if ( $self->can( $schema_gen_method ) ) {
-                $target_schema = $self->$schema_gen_method( $source_table_structure );
-            }
-            
-            $template_config_class->perf_stat_start( 'BigQuery create table' );
-            
-            $self->[ $IDX_REST_CLIENT ]->create_table(
-                project_id      => $self->[ $IDX_PROJECT_ID ]
-              , dataset_id      => $target_database
-              , table_id        => $target_table
-              , description     => "Mirror of $target_table from Salesforce"
-              , expirationTime  => undef
-              , friendlyName    => $target_table
-              , schema          => $target_schema
-              , view            => undef
-            ) || die( $self->[ $IDX_REST_CLIENT ]->errstr );
-            
-            $template_config_class->perf_stat_stop( 'BigQuery create table' );
-            
-        } else {
-            
-            $template_config_class->perf_stat_stop( 'BigQuery check if table exists' );
-            
-        }
-        
-    };
-    
-    my $error = $@;
-    
-    if ( $error ) {
-        $template_config_class->perf_stat_stop( 'BigQuery create table' );
-    }
-    
-    return {
-        template_text       => $template_text
-      , record_count        => ( $error ? 0 : 1 )
-      , error               => $error
-    };
-    
-}
+# From TripAdvisor. Updated with new db.schema.table modeling, but needs testing. Not in use anywhere ...
+# sub BIGQUERY_CREATE_TARGET_IF_NOT_EXISTS {
+#
+#     my ( $self, $template_config_class ) = @_;
+#
+#     my $source_database             = $template_config_class->resolve_parameter( '#CONFIG_SOURCE_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_SOURCE_DB_NAME#" );
+#     my $source_schema               = $template_config_class->resolve_parameter( '#CONFIG_SOURCE_SCHEMA_NAME#' )         || $self->log->fatal( "Missing CONFIG param #CONFIG_SOURCE_SCHEMA_NAME#" );
+#     my $source_table                = $template_config_class->resolve_parameter( '#CONFIG_SOURCE_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_SOURCE_TABLE_NAME#" );
+#     my $target_database             = $template_config_class->resolve_parameter( '#CONFIG_TARGET_DB_NAME#' )             || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_DB_NAME#" );
+#     my $target_table                = $template_config_class->resolve_parameter( '#CONFIG_TARGET_TABLE_NAME#' )          || $self->log->fatal( "Missing CONFIG param #CONFIG_TARGET_TABLE_NAME#" );
+#     my $source_table_structure_name = $template_config_class->resolve_parameter( '#P_SOURCE_TABLE_STRUCTURE_NAME#' )     || $self->log->fatal( "Missing param #P_SOURCE_TABLE_STRUCTURE_NAME" );
+#
+#     my $template_text               = $template_config_class->detokenize( $template_config_class->template_record->{TEMPLATE_TEXT} );
+#
+#     eval {
+#
+#         $template_config_class->perf_stat_start( 'BigQuery check if table exists' );
+#
+#         if ( ! $self->[ $IDX_REST_CLIENT ]->is_exists_table(
+#             project_id  => $source_database
+#           , dataset_id  => $source_schema
+#           , table_id    => $source_table
+#         ) ) {
+#
+#             $template_config_class->perf_stat_stop( 'BigQuery check if table exists' );
+#
+#             $self->log->info( "Target table doesn't exist. Creating ..." );
+#
+#             my $source_table_structure = $template_config_class->resolve_parameter( '#Q_' . $source_table_structure_name . '#');
+#             my $schema_gen_method = '_table_schema_from_' . $source_table_structure->{type};
+#
+#             my $target_schema;
+#
+#             if ( $self->can( $schema_gen_method ) ) {
+#                 $target_schema = $self->$schema_gen_method( $source_table_structure );
+#             }
+#
+#             $template_config_class->perf_stat_start( 'BigQuery create table' );
+#
+#             $self->[ $IDX_REST_CLIENT ]->create_table(
+#                 project_id      => $target_database
+#               , dataset_id      => $target_schema
+#               , table_id        => $target_table
+#               , description     => "Mirror of $target_table from Salesforce"
+#               , expirationTime  => undef
+#               , friendlyName    => $target_table
+#               , schema          => $target_schema
+#               , view            => undef
+#             ) || die( $self->[ $IDX_REST_CLIENT ]->errstr );
+#
+#             $template_config_class->perf_stat_stop( 'BigQuery create table' );
+#
+#         } else {
+#
+#             $template_config_class->perf_stat_stop( 'BigQuery check if table exists' );
+#
+#         }
+#
+#     };
+#
+#     my $error = $@;
+#
+#     if ( $error ) {
+#         $template_config_class->perf_stat_stop( 'BigQuery create table' );
+#     }
+#
+#     return {
+#         template_text       => $template_text
+#       , record_count        => ( $error ? 0 : 1 )
+#       , error               => $error
+#     };
+#
+# }
 
 sub BIGQUERY_MERGE_NEW_COLUMNS {
     

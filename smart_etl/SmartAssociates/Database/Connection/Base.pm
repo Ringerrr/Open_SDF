@@ -250,11 +250,8 @@ sub connect_do {
     
     my ( $self, $auth_hash , $options_hash ) = @_;
 
-    # Netezza is defaulting to the SYSTEM database if we don't regenerate ...
-#    if ( ! $auth_hash->{ConnectionString} ) {
-        $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
-#    }
-    
+    $auth_hash->{ConnectionString} = $self->build_connection_string( $auth_hash );
+
     my $dbh = DBI->connect(
         $auth_hash->{ConnectionString}
       , $auth_hash->{Username}
@@ -726,6 +723,32 @@ sub distribution_key_string {
 
 }
 
+sub does_table_exist_string {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    # This comes from the SQL Server class. If you have to change it, move this BACK to SQL Server first.
+    my $sql = "select TABLE_NAME from " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "TABLES" ) . "\n"
+        . "where  TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = '" . $schema . "' and TABLE_NAME = '" . $table . "'";
+
+    return $sql;
+
+}
+
+sub does_schema_not_exist_string {
+
+    my ( $self , $database , $schema , $table ) = @_;
+
+    my $sql = "select 1\n"
+        . "where not exists (\n"
+        . "    select * from " . $self->db_schema_table_string( $database, "INFORMATION_SCHEMA", "SCHEMATA" ) . "\n"
+        . "    where schema_name = '" . $schema . "'\n"
+        . ")";
+
+    return $sql;
+
+}
+
 sub create_schema_string {
 
     my ( $self , $database , $schema ) = @_;
@@ -741,6 +764,17 @@ sub truncate_db_schema_table_string {
     my ( $self, $database, $schema, $table ) = @_;
 
     return "truncate " . $self->db_schema_table_string( $database , $schema , $table );
+
+}
+
+sub varchar_type {
+
+    # This ridiculous method is to deal with BigQuery not supporting regular column types like varchar.
+    # Better to use a proper database, and not a hack on top of gmail
+
+    my ( $self , $size ) = @_;
+
+    return "varchar($size)";
 
 }
 
@@ -964,7 +998,7 @@ sub concatenate {
 
         if ( $exp->{type_code} ~~ [-7..-5, 2..8] ) {
             # no need to alias individual cols/expressions; they'll be concated as part of larger expression
-            $this_expression = "cast ($this_expression as VARCHAR(20))";
+            $this_expression = "cast ($this_expression as " . $self->varchar_type(20) . ")";
         }
 
         # TODO: optimise - don't coalesce NOT NULL columns
@@ -1070,6 +1104,14 @@ sub does_table_exist {
     } else {
         return 0;
     }
+
+}
+
+sub minus_operator {
+
+    my $self = shift;
+
+    return "minus";
 
 }
 

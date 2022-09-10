@@ -63,7 +63,7 @@ sub execute {
 
     my $custom_logs = $return_info->{custom_logs};             # Any custom logs that have already been returned
 
-    $custom_logs = $self->collect_custom_logs( $custom_logs ); # Any other, as-yet unhanlded custom logs
+    $custom_logs = $self->collect_custom_logs( $custom_logs ); # Any other, as-yet unhandled custom logs
 
     $self->globals->JOB->log_execution(
         $template_config->{PROCESSING_GROUP_NAME}
@@ -109,24 +109,34 @@ sub execute_sql {
     
     eval {
 
-        $self->log->info( 'Preparing SQL for execution' );
-        $self->perf_stat_start( 'Template SQL preparing in database engine' );
+        my $direct_execute = $self->resolve_parameter( '#P_ZZ_DIRECT_EXECUTE#' ); # skips the *prepare* phase
 
-        $sth = $self->target_database->prepare( $TEMPLATE_TEXT )
-            || die( $self->target_database->errstr );
+        if ( ! $direct_execute ) {
 
-        $self->perf_stat_stop( 'Template SQL preparing in database engine' );
-        $self->log->info( 'Statement handle successfully prepared from SQL' );
+            $self->log->info( 'Preparing SQL for execution' );
+            $self->perf_stat_start( 'Template SQL preparing in database engine' );
+
+            $sth = $self->target_database->prepare( $TEMPLATE_TEXT )
+                || die( $self->target_database->errstr );
+
+            $self->perf_stat_stop( 'Template SQL preparing in database engine' );
+            $self->log->info( 'Statement handle successfully prepared from SQL' );
+
+        }
 
         if ( ! $template_config->{UNPACKED_JOB_ARGS}->{simulate} ) {
             
             $self->perf_stat_start( 'Template SQL execution in database engine' );
 
-           # $record_count = $sth->execute()
-           #     || die( $sth->errstr );
-            
-            $record_count = $sth->execute();
-            my $sth_errstr = $sth->errstr;
+            my ( $record_count , $sth_errstr );
+
+            if ( ! $direct_execute ) {
+                $record_count = $sth->execute();
+                $sth_errstr = $sth->errstr;
+            } else {
+                $record_count = $self->target_database->do( $TEMPLATE_TEXT );
+                $sth_errstr = $self->target_database->dbh->errstr();
+            }
 
             if ( $sth_errstr ) {
                 $self->log->info( "Caught error message:\n$sth_errstr" );
@@ -166,7 +176,7 @@ sub execute_sql {
 
         $error = $@;
 
-        if ( $record_count == -1 && $return_value ) {   # an insert, and the subclass processed something and maybe counted things
+        if ( ( ! defined $record_count or $record_count == -1 ) && $return_value ) {   # an insert, and the subclass processed something and maybe counted things
             $record_count = $return_value;
         } elsif ( $record_count eq &SmartAssociates::Database::Connection::Base::PERL_ZERO_RECORDS_INSERTED && $return_value ) {  # mysql returns 0 when we force mysql_use_result=1
             $record_count = $return_value;

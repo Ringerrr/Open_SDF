@@ -259,33 +259,6 @@ sub fetch_column_info_array {
     
 }
 
-sub fetch_column_info {
-    
-    my ( $self, $database, $schema, $table, $options ) = @_;
-
-    my $column_info_array = $self->fetch_column_info_array( $database, $schema, $table, $options );
-    
-    my $return;
-    
-    foreach my $column_info ( @{$column_info_array} ) {
-        
-        $return->{ $column_info->{col_name} } = {
-            COLUMN_NAME     => $column_info->{col_name}
-          , DATA_TYPE       => $column_info->{data_type}
-          , PRECISION       => undef
-          , NULLABLE        => 1
-        };
-        
-    }
-    
-    if ( $options->{force_upper} ) {
-        $return = $self->mangle_case_result_data( $return, "upper" );
-    }
-    
-    return $return;
-    
-}
-
 sub fetch_field_list {
     
     my ( $self, $database, $schema, $table, $options ) = @_;

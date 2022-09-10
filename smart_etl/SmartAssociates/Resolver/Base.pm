@@ -155,12 +155,14 @@ sub COMPLEX_COLUMNS_FROM_SOURCE {
 
     }
 
-    my $value = join(
-        "\n  , "
-        , @final_columns
-    );
-
-    return $value;
+    if ( $modifier =~ /WANT_ARRAY/ ) {
+        return @final_columns;
+    } else {
+        return join(
+            "\n  , "
+          , @final_columns
+        );
+    }
 
 }
 
@@ -255,12 +257,14 @@ sub COMPLEX_COLUMNS_FROM_TARGET {
 
     }
 
-    my $value = join(
-        "\n  , "
-        , @final_columns
-    );
-
-    return $value;
+    if ( $modifier =~ /WANT_ARRAY/ ) {
+        return @final_columns;
+    } else {
+        return join(
+            "\n  , "
+          , @final_columns
+        );
+    }
 
 }
 
@@ -286,6 +290,18 @@ sub COMPLEX_DOES_TABLE_EXIST {
 
 }
 
+sub COMPLEX_DOES_DATABASE_NOT_EXIST {
+
+    my ( $self, $modifier , $template_config, $parameters ) = @_;
+
+    my $source_db     = $template_config->template_record->{SOURCE_DB_NAME};
+    $source_db        = $template_config->detokenize( $source_db );;
+    my $sql           = $template_config->target_database->does_database_not_exist_string( $source_db );
+
+    return $sql;
+
+}
+
 sub COMPLEX_DOES_SCHEMA_NOT_EXIST {
 
     my ( $self, $modifier , $template_config, $parameters ) = @_;
@@ -300,6 +316,18 @@ sub COMPLEX_DOES_SCHEMA_NOT_EXIST {
         $target_db
       , $target_schema
     );
+
+    return $sql;
+
+}
+
+sub COMPLEX_CREATE_DATABASE {
+
+    my ( $self, $modifier , $template_config, $parameters ) = @_;
+
+    my $source_db     = $template_config->template_record->{SOURCE_DB_NAME};
+    $source_db        = $template_config->detokenize( $source_db );
+    my $sql           = $template_config->target_database->create_database_string( $source_db );
 
     return $sql;
 
@@ -418,6 +446,47 @@ sub COMPLEX_TRUNCATE_DB_SCHEMA_TABLE {
     my $table   = $template_config->detokenize( $template_config->template_record->{TARGET_TABLE_NAME} );
 
     return $template_config->target_database->truncate_db_schema_table_string( $db, $schema, $table );
+
+}
+
+sub COMPLEX_MYSQL_LOAD_DATA_SET_CLAUSE {
+
+    my ( $self, $modifier , $template_config, $parameters ) = @_;
+
+    return '';
+    
+    # This clause might look something like ( simplification ):
+    # ( @col1 , @col2 , @col3 )
+    # set
+    # id = @col1 , description = @col2 , binary_column = unhex( @col3 )
+
+    my $target_columns_string     = $self->COMPLEX_COLUMNS_FROM_TARGET( $modifier , $template_config , $parameters );
+    my @target_column_expressions = $self->COMPLEX_COLUMNS_FROM_SOURCE( 'MIGRATION_IMPORT,WANT_ARRAY' , $template_config , $parameters );
+    my @target_column_names       = $self->split_comma_separated_columns( $modifier , $target_columns_string, 1 );
+
+    my @col_set_expressions;
+    my $col_counter = 1;
+
+    for my $target_column ( @target_column_names ) {
+        my $this_import_expression = $target_column_expressions[ $col_counter - 1 ];
+        my $this_col_expression = '@col' . $col_counter;
+        $this_import_expression =~ s/$target_column/$this_col_expression/g;
+        push @col_set_expressions
+           , {
+                 column_position => $this_col_expression
+               , column_name     => $target_column
+               , set_expression  => $this_import_expression
+             };
+        $col_counter ++;
+    }
+
+    my $set_clause = "( "
+                   . join( " , " , map { $_->{column_position} } @col_set_expressions )
+                   . " )\n"
+                   . "set\n"
+                   . join( " , " , map { $_->{column_name} . " = " . $_->{set_expression} } @col_set_expressions );
+
+    return $set_clause;
 
 }
 
