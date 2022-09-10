@@ -14,6 +14,7 @@ use File::Basename;
 use JSON;
 use File::Temp qw / tempfile tempdir /;
 use Storable 'dclone';
+use File::Slurp;
 
 use constant false => \0;
 use constant true => \1;
@@ -57,7 +58,11 @@ sub new {
     $self->{builder}->add_objects_from_file(
         $self->{options}->{builder_path}
       , "data_loader"
+      , "adjustment1"
+      , "adjustment2"
     );
+
+    $self->{load_progress_bar} = $self->{builder}->get_object( "load_progress_bar" );
 
     $self->{main_stack} = $self->{builder}->get_object( "main_stack" );
     $self->{main_stack_switcher} = Gtk3::StackSwitcher->new();
@@ -264,7 +269,12 @@ sub new {
           , recordset_tools_box => $self->{builder}->get_object( 'regex_manglers_tools_box' )
         }
     );
-    
+
+    $self->manage_widget_value( "dbgen_path" );
+    $self->manage_widget_value( "output_path" );
+    $self->manage_widget_value( "total_records_to_generate" );
+    $self->manage_widget_value( "max_records_per_file" );
+
     return $self;
     
 }
@@ -288,6 +298,41 @@ sub regen_tables_list {
     }
 
     $self->{tables_list}->query();
+
+}
+
+sub on_find_dbgen_clicked {
+
+    my $self = shift;
+
+
+    $self->set_widget_value(
+        "dbgen_path"
+      , $self->file_chooser(
+            {
+                title   => "Please locate the dbgen binary"
+              , action  => "open"
+              , type    => "file"
+            }
+        )
+    );
+
+}
+
+sub on_output_path_browser_clicked {
+
+    my $self = shift;
+
+    $self->set_widget_value(
+        "output_path"
+      , $self->file_chooser(
+            {
+                title   => "Select the output path ..."
+              , action  => "open"
+              , type    => "folder"
+            }
+        )
+    );
 
 }
 
@@ -350,7 +395,7 @@ sub on_tables_list_select {
             $sql .= "/*{{ rand.regex('[a-zA-Z ]{1000}') }}*/";
         } elsif ( $column_info->{DATA_TYPE} =~ /double/ ) {
             $sql .= "/*{{ rand.regex('[0-9]{6}') || '.' || rand.regex('[0-9]{6}') }}*/";
-        } elsif ( $column_info->{DATA_TYPE} =~ /datetime/ ) {
+        } elsif ( $column_info->{DATA_TYPE} =~ /datetime|timestamp/ ) {
             $sql .= "/*{{ TIMESTAMP WITH TIME ZONE '1000-01-01 00:00:00 UTC' + INTERVAL rand.range(0, 284012524800) SECOND }}*/";
         } else {
             $sql .= "/* UNSUPPORTED */";
@@ -362,7 +407,115 @@ sub on_tables_list_select {
 
     $sql .= "\n)";
 
-    $self->set_widget_value( 'GD_Rows_Request' , $sql );
+    $self->set_widget_value( 'dbgen_table_ddl' , $sql );
+
+    $self->{dbgen_ddl_path} = $self->get_widget_value( 'output_path' ) . "/" . $table . ".sql";
+
+    my @dbgen_cmd_args = (
+        $self->get_widget_value( 'dbgen_path' )
+      , "-i" , $self->{dbgen_ddl_path}
+      , "-o" , $self->get_widget_value( 'output_path' )
+      , "-N" , $self->get_widget_value( 'total_records_to_generate' )
+      , "-R" , $self->get_widget_value( 'max_records_per_file' )
+      , "-r" , 1
+      , "-f" , "csv"
+      , "--headers"
+    );
+
+    my $dbgen_bash_command = join( " \\\n  " , @dbgen_cmd_args );
+
+    $self->set_widget_value( 'dbgen_command' , $dbgen_bash_command );
+
+}
+
+sub on_Write_DDL_and_dbgen_cmd_clicked {
+
+    my $self = shift;
+
+    if ( -e $self->{dbgen_ddl_path} ) {
+        my $answer = $self->dialog(
+            {
+                title   => "Overwrite existing DDL?"
+              , type    => "question"
+              , "text"=> "File " . $self->{dbgen_ddl_path} . " exists. Overwrite?"
+            }
+        );
+        if ( $answer ne 'yes' ) {
+            return;
+        }
+    }
+
+    eval {
+        open TARGET_FILE , ">" . $self->{dbgen_ddl_path}
+            || die( "Failed to open target file for writing:\n" . $!) ;
+        print TARGET_FILE $self->get_widget_value( 'dbgen_table_ddl' );
+        close TARGET_FILE
+            || die( "Failed to close target file:\n" . $! );
+    };
+    my $err = $@;
+    if ( $err ) {
+        $self->dialog(
+            {
+                title       => "Error saving file"
+              , type        => "error"
+              , text        => $err
+            }
+        );
+    }
+
+    eval {
+        open TARGET_FILE , ">" . $self->{dbgen_ddl_path} . ".dbgen.sh"
+            || die( "Failed to open target file for writing:\n" . $!) ;
+        print TARGET_FILE $self->get_widget_value( 'dbgen_command' );
+        close TARGET_FILE
+            || die( "Failed to close target file:\n" . $! );
+    };
+    $err = $@;
+    if ( $err ) {
+        $self->dialog(
+            {
+                title       => "Error saving file"
+              , type        => "error"
+              , text        => $err
+            }
+        );
+    }
+
+}
+
+sub on_Load_Generated_Data_clicked {
+
+    my $self = shift;
+
+    my @csv_files;
+    my @files = read_dir( $self->get_widget_value( "output_path" ), prefix => 1 ) ;
+
+    my $table = $self->{tables_list}->get_column_value( "table_name" );
+
+    foreach my $file ( @files ) {
+        if ( $file =~ /$table\.[\d]*\.csv$/ ) {
+            push @csv_files, $file;
+        }
+    }
+
+    my $count = @csv_files;
+    $self->{pulse_fraction} = 1 / $count;
+
+    $self->{suppress_dialogs} = 1;
+    $self->{parse_lines} = 1000;
+
+    eval {
+        for my $this_csv ( @csv_files ) {
+            $self->pulse( "$this_csv" , undef , $self->{load_progress_bar} );
+            $self->{builder}->get_object( 'File' )->set_text( $this_csv );
+            $self->on_Parse_clicked();
+            $self->on_GenerateExternalTableDDL_clicked();
+            $self->on_ImportFromCSV_clicked();
+        }
+    };
+
+    $self->{suppress_dialogs} = 0;
+    delete $self->{parse_lines};
 
 }
 
@@ -801,77 +954,13 @@ sub on_tables_list_select_old {
 
 }
 
-sub on_GenerateData_API_Request_clicked {
+sub on_Execute_dbgen_clicked {
 
-    my $self = shift;
+    my ( $self ) = @_;
 
-    my $mech  = WWW::Mechanize->new();
-
-    $mech->add_header(
-        'content-type' => 'application/json'
-    );
-
-    my $json = $self->get_widget_value( 'GD_Rows_Request' );
-    # my $obj  = from_json( $json );
-    # $json    = to_json( $obj );
-
-    my $gd_host = $self->get_widget_value( 'GenerateDataHostname' );
-
-    my $response = $mech->post(
-        "http://$gd_host/generatedata/api/v1/data"
-      , Content => $json
-    );
-
-    if ( ! $response->is_success ) {
-
-        $self->dialog(
-            {
-                title   => "Generate Data API error"
-              , type    => "error"
-              , text    => $response->content()
-            }
-        );
-
-    } else {
-
-        my ( $fh , $filename ) = tempfile();
-
-        binmode( $fh, ":utf8" );
-
-        print $fh $response->content();
-
-        eval {
-            close $fh
-                or die( $! );
-        };
-
-        my $err = $@;
-
-        if ( $err ) {
-
-            $self->dialog(
-                {
-                    title   => "Error writing file"
-                  , type    => "error"
-                  , text    => $err
-                }
-            );
-
-        } else {
-
-            $self->{builder}->get_object( 'File' )->set_text( $filename );
-
-            $self->dialog(
-                {
-                    title   => "Data Generated"
-                  , type    => "info"
-                  , text    => "Generate Data API call successful"
-                }
-            );
-
-        }
-
-    }
+    my $cmd = $self->get_widget_value( 'dbgen_command' );
+    my $fw_launcher = $self->open_window( "window::framework_launcher" , $self->{globals} );
+    $fw_launcher->execute_cli( $cmd );
 
 }
 
@@ -940,7 +1029,7 @@ sub on_Parse_clicked {
     my $quote_character     = $self->{builder}->get_object( 'QuoteChar' )->get_text;
     my $encoding            = $self->{builder}->get_object( 'Encoding' )->get_text;
     my $eol                 = $self->{builder}->get_object( 'EOL' )->get_text;
-    my $lines_to_read       = $self->{builder}->get_object( "LinesToRead" )->get_text;
+    my $lines_to_read       = exists $self->{parse_lines} ? $self->{parse_lines} : $self->{builder}->get_object( "LinesToRead" )->get_text;
     my $includes_headers    = $self->{builder}->get_object( "FileContainsHeaders" )->get_active;
     my $lines_of_garbage    = $self->{builder}->get_object( "LinesOfGarbage" )->get_text;
     my $null_string         = $self->{builder}->get_object( "NullValue" )->get_text;
@@ -1249,14 +1338,17 @@ sub on_Parse_clicked {
             );
             
         } else {
-            
-            $self->dialog(
-              {
-                  title    => "Parsing complete"
-                , type     => "info"
-                , text     => "The CSV appeared to parse correctly ..."
-              }
-            );
+
+            if ( ! $self->{suppress_dialogs} ) {
+                $self->dialog(
+                  {
+                      title    => "Parsing complete"
+                    , type     => "info"
+                    , text     => "The CSV appeared to parse correctly ..."
+                  }
+                );
+            }
+
         }
         
     } elsif ( $diag && $diag ne 'EOF - End of data in parsing input stream' ) {
@@ -1270,15 +1362,16 @@ sub on_Parse_clicked {
         );
         
     } else {
-        
-        $self->dialog(
-            {
+
+        if ( ! $self->{suppress_dialogs} ) {
+            $self->dialog(
+                {
                     title    => "Parsing complete"
                   , type     => "info"
                   , text     => "The CSV appeared to parse correctly ..."
-            }
-        );
-        
+                }
+            );
+        }
     }
     
     my $target_connection = $self->{target_chooser}->get_db_connection;
@@ -1943,6 +2036,7 @@ sub on_ImportFromCSV_clicked {
           , remote_client       => $remote_client
           , file_path           => $file_path
           , progress_bar        => $self->{progress}
+          , suppress_dialog     => ( exists $self->{suppress_dialogs} && $self->{suppress_dialogs} ) ? 1 : 0
         }
     );
     

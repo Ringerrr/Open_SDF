@@ -275,23 +275,27 @@ sub get_widget_value {
         
     } elsif ( $type eq 'Gtk3::Entry' ) {
         
-        return $widget->get_text;
+        return $widget->get_text();
         
     } elsif ( $type eq 'Gtk3::CheckButton' ) {
         
-        return ( $widget->get_active || 0 );
+        return ( $widget->get_active() || 0 );
 
     } elsif ( $type eq 'Gtk3::Switch' ) {
 
-        return $widget->get_active || 0;
+        return $widget->get_active() || 0;
 
     } elsif ( $type eq 'Gtk3::RadioButton' ) {
 
-        return $widget->get_active || 0;
+        return $widget->get_active() || 0;
 
     } elsif ( $type eq 'Gtk3::ToggleButton' ) {
 
-        return $widget->get_active || 0;
+        return $widget->get_active() || 0;
+
+    } elsif ( $type eq 'Gtk3::SpinButton' ) {
+
+        return $widget->get_value() || 0;
         
     } else {
         
@@ -360,6 +364,10 @@ sub set_widget_value {
     } elsif ( $type eq 'Gtk3::ToggleButton' ) {
 
         return $widget->set_active( $value || 0 );
+
+    } elsif ( $type eq 'Gtk3::SpinButton' ) {
+
+        return $widget->set_value( $value || 0 );
         
     } else {
         

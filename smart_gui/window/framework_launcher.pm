@@ -85,25 +85,25 @@ sub new {
 }
 
 sub on_Execute_clicked {
-    
+
     my $self = shift;
 
     my $processing_group_name       = $self->{builder}->get_object( "ProcessingGroupName" )->get_text;
     my $custom_args                 = $self->get_widget_value( "CustomArgs" );
-    
+
     my $execute_on_remote_host      = $self->{builder}->get_object( 'ExecuteOnRemoteHost' )->get_active;
     my $remote_host                 = $self->{builder}->get_object( 'RemoteHost' )->get_text;
     my $remote_username             = $self->{builder}->get_object( 'RemoteUsername' )->get_text;
 
     my @args;
-    
+
     my ( $app_path, $app_name );
-    
+
     $app_path = $self->{globals}->{paths}->{parent} . "/smart_etl";
     $app_name = "etl.pl";
-    
+
     my $processing_group_str;
-    
+
     $processing_group_str ="--processing-group=$processing_group_name";
 
     # We can probably remove this - custom args have moved into metadata, and don't get passed in on the command-line
@@ -144,7 +144,7 @@ sub on_Execute_clicked {
     }
 
     my $log_level = $self->{builder}->get_object( 'LogLevelDebug' )->get_active ? 'debug' : 'info';
-    
+
     $ENV{PERL5LIB} = $app_path;
 
     $processing_group_str .= " --log-level=" . $log_level;
@@ -156,33 +156,35 @@ sub on_Execute_clicked {
            , "--user-profile=" . $self->{globals}->{self}->{user_profile}
            , $processing_group_str;
     } else {
-        
+
         push @args
            , 'ssh ' . $remote_username . '@' . $remote_host
            , "'flatpak run --command=/app/launch_etl.sh biz.smartassociates.sdf $processing_group_str'";
-        
+
     }
-    
+
     my $args_string = join( " ", @args );
-    
+
 #    $self->{globals}->{log}->print ( "\n\n$args_string\n\n" );
     print "\n\n$args_string\n\n";
+
+    if ( ! $execute_on_remote_host ) {
+        $args_string = "cd ../smart_etl && perl $args_string";
+    }
+
+    $self->execute_cli( $args_string , sub { $self->open_etl_monitor() } );
+
+}
+
+sub execute_cli {
+
+    my ( $self , $args_string , $exec_after ) = @_;
 
     my $OUTPUT_FH;
     
     eval {
-        
-        if ( ! $execute_on_remote_host ) {
-            
-            open( $OUTPUT_FH, "cd ../smart_etl && perl $args_string |" )
-                || die( "Can't fork!\n" . $! );
-            
-        } else {
-            
-            open( $OUTPUT_FH, "$args_string |" );
-            
-        }
-        
+        open( $OUTPUT_FH, "$args_string |" )
+            || die( "Can't fork!\n" . $! );
     };
     
     my $err = $@;
@@ -213,25 +215,6 @@ sub on_Execute_clicked {
         sysread $OUTPUT_FH, $lines, 65536;
 
         $self->log_to_buffer( $lines );
-
-        # foreach my $line ( split /\n/, $lines ) {
-        #
-        #     $line .= "\n";
-        #
-        #     if ( $line =~ /[\d_]*\s(\d)\s([\d\w]*)\s([\.\w\/-]*):(\d*)\s(.*)/ ) {
-        #         my $severity    = $1;
-        #         my $job_id      = $2;
-        #         my $app         = $3;
-        #         my $line_no     = $4;
-        #         my $msg         = $5;
-        #         $self->{etl_log_buffer}->insert_with_tags_by_name( $self->{etl_log_buffer}->get_end_iter, $line, $severity );
-        #     } else {
-        #         $self->{etl_log_buffer}->insert( $self->{etl_log_buffer}->get_end_iter, $line );
-        #     }
-        #
-        #     push @{$self->{output}}, $line;
-        #
-        # }
         
         Glib::Idle->add( sub {
             $self->{vadjustment}->set_value( $self->{vadjustment}->get_upper - $self->{vadjustment}->get_page_increment - $self->{vadjustment}->get_step_increment );
@@ -240,7 +223,9 @@ sub on_Execute_clicked {
         
         if ( $condition >= 'hup' ) {
             close $OUTPUT_FH;
-            Glib::Timeout->add( 1000, sub { $self->open_etl_monitor } );
+            if ( $exec_after ) {
+                Glib::Timeout->add( 1000 , sub { $exec_after->() } );
+            }
             return FALSE; # uninstall
         } else {
             return TRUE;  # continue without uninstalling

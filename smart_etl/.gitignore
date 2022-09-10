@@ -1,0 +1,5 @@
+*.komodoproject
+config.db
+.idea/
+smart_etl.iml
+_Deparsed_XSubs.pm

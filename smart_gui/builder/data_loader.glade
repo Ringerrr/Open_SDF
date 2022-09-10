@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.4 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">100000000</property>
+    <property name="step-increment">10000</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment2">
+    <property name="upper">100000000</property>
+    <property name="step-increment">10000</property>
+    <property name="page-increment">10</property>
+  </object>
   <object class="GtkWindow" id="data_loader">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <signal name="destroy" handler="on_data_loader_destroy" after="yes" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox" id="target_chooser_box">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="spacing">5</property>
             <child>
               <placeholder/>
@@ -29,11 +39,11 @@
         <child>
           <object class="GtkStack" id="main_stack">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkBox" id="howto_page">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <placeholder/>
@@ -41,20 +51,17 @@
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">&lt;big&gt;The Data Loader is your 1-stop-shop for loading data into any database.
 
 
 
-* The &lt;span color='blue'&gt;Generate Data&lt;/span&gt; page is an API client for the open-source &lt;i&gt;Generate Data&lt;/i&gt; library. It assumes you have an existing &lt;i&gt;Generate Data&lt;/i&gt; instance, configured for open access. There are docker containers that provide everything you need ( you'll have to do some minor configuration 1st ). See: &lt;span color='blue'&gt;&lt;a href="https://smart-associates.atlassian.net/wiki/spaces/SDF/pages/278429719/Setting+up+generatedata+in+Docker" title="confluence"&gt;Setting up generatedata in Docker&lt;/a&gt;&lt;/span&gt; for setup details.
+* The &lt;span color='blue'&gt;Generate Data&lt;/span&gt; page converts an existing table ( ie reverse-engineers a table ) into a DDL and &lt;a href="https://github.com/kennytm/dbgen" title="dbgen"&gt;dgben&lt;/a&gt; cli command to generate random data. You will have to download and build dbgen from the previous link ( there are pre-built binaries under the &lt;b&gt;Releases&lt;/b&gt; section ).
 
-This page queries the data dictionary of your selected database.schema.table and constructs a &lt;i&gt;Generate Data&lt;/i&gt; API request customised for your table.
-
-When you use the &lt;i&gt;Generate Data&lt;/i&gt; page, it will automatically populate the next page - &lt;i&gt;Load from File setup&lt;/i&gt; - with the path of the generated CSV.
+When you use the &lt;i&gt;Generate Data&lt;/i&gt; page, it will automatically populate the next page - &lt;i&gt;Load from File setup&lt;/i&gt; - with the path of the &lt;b&gt;&lt;i&gt;first&lt;/i&gt;&lt;/b&gt; generated CSV
+( dbgen can split output over multiple files ).
 
 This page is an optional feature; if you don't need to generate data ( ie if you already have CSVs ), you can start at the &lt;i&gt;Load from File setup&lt;/i&gt; page.
-
-
 
 * The &lt;span color='blue'&gt;Load from File setup&lt;/span&gt; page carries out a number of functions:
  * parsing a CSV
@@ -70,7 +77,7 @@ This page is an optional feature; if you don't need to generate data ( ie if you
 
 * The &lt;span color='blue'&gt;Column Name Manglers&lt;/span&gt; page contains a list of regular expression modifiers to rename column headings on-the-fly. You'd want to do this, for example, if your CSV has column headings that would be invalid SQL column names ( eg start with a number, etc ).
 &lt;/big&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="use-markup">True</property>
                     <property name="wrap">True</property>
                   </object>
                   <packing>
@@ -91,11 +98,11 @@ This page is an optional feature; if you don't need to generate data ( ie if you
             <child>
               <object class="GtkPaned" id="generate_data_page">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <child>
                   <object class="GtkBox" id="generate_data_table_list">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <placeholder/>
@@ -109,35 +116,17 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
+                    <property name="spacing">5</property>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
-                        <child>
-                          <object class="GtkAlignment">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
-                            <child>
-                              <object class="GtkEntry" id="GenerateDataHostname">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">127.0.0.1</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Generate Data Hostname</property>
-                          </object>
-                        </child>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">&lt;big&gt;This screen uses &lt;a href="https://github.com/kennytm/dbgen" title="dbgen"&gt;dgben&lt;/a&gt;, a random data generator written in rust. To use this, you will have to download a binary, or fetch from github ( eg the previous link ), and build it. When you have a binary, configure the path to the dbgen binary below
+&lt;/big&gt;</property>
+                        <property name="use-markup">True</property>
+                        <property name="wrap">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -146,32 +135,129 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="spacing">5</property>
+                        <property name="homogeneous">True</property>
                         <child>
-                          <object class="GtkAlignment">
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="label-xalign">0</property>
+                            <property name="shadow-type">none</property>
                             <child>
-                              <object class="GtkEntry" id="RecordsToGenerate">
+                              <object class="GtkAlignment">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">10000</property>
-                                <signal name="editing-done" handler="on_tables_list_select" after="yes" swapped="no"/>
+                                <property name="can-focus">False</property>
+                                <property name="double-buffered">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkEntry" id="dbgen_path">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="text" translatable="yes">dbgen</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="find_dbgen">
+                                        <property name="label" translatable="yes">...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <signal name="clicked" handler="on_find_dbgen_clicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Path to dbgen binary:</property>
                               </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
-                        <child type="label">
-                          <object class="GtkLabel">
+                        <child>
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Records to Generate</property>
+                            <property name="can-focus">False</property>
+                            <property name="label-xalign">0</property>
+                            <property name="shadow-type">none</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="double-buffered">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkEntry" id="output_path">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="output_path_browser">
+                                        <property name="label" translatable="yes">...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <signal name="clicked" handler="on_output_path_browser_clicked" after="yes" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Path to output data to:</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -181,25 +267,106 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="spacing">5</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label-xalign">0</property>
+                            <property name="shadow-type">none</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <object class="GtkSpinButton" id="total_records_to_generate">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="adjustment">adjustment1</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Total records to generate</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label-xalign">0</property>
+                            <property name="shadow-type">none</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <object class="GtkSpinButton" id="max_records_per_file">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="adjustment">adjustment2</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Max records per file</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkScrolledWindow">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="shadow_type">in</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
                                 <child>
-                                  <object class="GtkTextView" id="GD_Rows_Request">
+                                  <object class="GtkTextView" id="dbgen_table_ddl">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can-focus">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -209,29 +376,121 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Generate Data Rows Request</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">dbgen table DDL</property>
                           </object>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="GenerateData_API_Request">
-                        <property name="label" translatable="yes">Generate Data API Request ...</property>
+                      <object class="GtkFrame">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_GenerateData_API_Request_clicked" after="yes" swapped="no"/>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
+                            <child>
+                              <object class="GtkScrolledWindow">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
+                                <child>
+                                  <object class="GtkTextView" id="dbgen_command">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">dbgen command</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkButton" id="Write_DDL_and_dbgen_cmd">
+                            <property name="label" translatable="yes">Write DDL and dbgen command ...</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <signal name="clicked" handler="on_Write_DDL_and_dbgen_cmd_clicked" after="yes" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="Execute_dbgen">
+                            <property name="label" translatable="yes">Execute dbgen ...</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <signal name="clicked" handler="on_Execute_dbgen_clicked" after="yes" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="Load_Generated_Data">
+                            <property name="label" translatable="yes">Load generated data ...</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <signal name="clicked" handler="on_Load_Generated_Data_clicked" after="yes" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">3</property>
+                        <property name="position">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkProgressBar" id="load_progress_bar">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="show-text">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">6</property>
                       </packing>
                     </child>
                   </object>
@@ -250,37 +509,38 @@ This page is an optional feature; if you don't need to generate data ( ie if you
             <child>
               <object class="GtkPaned" id="load_from_file_setup">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="border_width">5</property>
+                <property name="can-focus">True</property>
+                <property name="border-width">5</property>
                 <property name="orientation">vertical</property>
                 <child>
+                  <!-- n-columns=6 n-rows=3 -->
                   <object class="GtkGrid" id="grid1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="border_width">5</property>
-                    <property name="row_spacing">5</property>
-                    <property name="column_spacing">5</property>
-                    <property name="row_homogeneous">True</property>
-                    <property name="column_homogeneous">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="border-width">5</property>
+                    <property name="row-spacing">5</property>
+                    <property name="column-spacing">5</property>
+                    <property name="row-homogeneous">True</property>
+                    <property name="column-homogeneous">True</property>
                     <child>
                       <object class="GtkFrame" id="frame13">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment13">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkBox" id="box33">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <child>
                                   <object class="GtkEntry" id="File">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can-focus">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -291,17 +551,17 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                                 <child>
                                   <object class="GtkButton" id="Browse">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
                                     <signal name="clicked" handler="on_Browse_clicked" after="yes" swapped="no"/>
                                     <child>
                                       <object class="GtkBox" id="box28">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <child>
                                           <object class="GtkImage" id="image7">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="stock">gtk-find-and-replace</property>
@@ -315,7 +575,7 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                                         <child>
                                           <object class="GtkLabel" id="label25">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="xpad">5</property>
                                             <property name="label" translatable="yes">Browse ...</property>
                                             <property name="xalign">0</property>
@@ -342,32 +602,32 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label26">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">File Path</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
                         <property name="width">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame16">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment16">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="Delimiter">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -375,31 +635,31 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label29">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Delimiter</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame25">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment25">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="EscapeChar">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -407,31 +667,31 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label41">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Escape Character</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame24">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment24">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="QuoteChar">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -439,31 +699,31 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label40">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Quote Character</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame21">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment21">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="NullValue">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -471,66 +731,66 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label37">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Null Value</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame26">
-                        <property name="width_request">50</property>
+                        <property name="width-request">50</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment26">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="Encoding">
-                                <property name="width_request">50</property>
+                                <property name="width-request">50</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
                         </child>
                         <child type="label">
                           <object class="GtkLabel" id="label42">
-                            <property name="width_request">40</property>
+                            <property name="width-request">40</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Encoding</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame23">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment23">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkComboBox" id="DateStyle">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                               </object>
                             </child>
                           </object>
@@ -538,31 +798,31 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label39">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Date Style</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame22">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment22">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="DateDelim">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -570,66 +830,66 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label38">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Date Delimiter</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">2</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame27">
-                        <property name="width_request">50</property>
+                        <property name="width-request">50</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment27">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="EOL">
-                                <property name="width_request">50</property>
+                                <property name="width-request">50</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
                         </child>
                         <child type="label">
                           <object class="GtkLabel" id="label45">
-                            <property name="width_request">40</property>
+                            <property name="width-request">40</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">End of Line character(s)</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">4</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame29">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment29">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="TimeDelim">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
@@ -637,14 +897,14 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <child type="label">
                           <object class="GtkLabel" id="label47">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Time Delimiter</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">2</property>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -652,33 +912,33 @@ This page is an optional feature; if you don't need to generate data ( ie if you
                         <property name="label" translatable="yes">File contains
 Headers</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
                         <property name="xalign">0</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">5</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame34">
-                        <property name="width_request">20</property>
+                        <property name="width-request">20</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment34">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="LinesOfGarbage">
-                                <property name="width_request">20</property>
+                                <property name="width-request">20</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                                 <property name="text" translatable="yes">0</property>
                               </object>
                             </child>
@@ -686,67 +946,67 @@ Headers</property>
                         </child>
                         <child type="label">
                           <object class="GtkLabel" id="label54">
-                            <property name="width_request">20</property>
+                            <property name="width-request">20</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes"># of lines, from the start, to ignore</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">4</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="frame15">
-                        <property name="width_request">50</property>
+                        <property name="width-request">50</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
+                        <property name="shadow-type">none</property>
                         <child>
                           <object class="GtkAlignment" id="alignment15">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkEntry" id="LinesToRead">
-                                <property name="width_request">50</property>
+                                <property name="width-request">50</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can-focus">True</property>
                               </object>
                             </child>
                           </object>
                         </child>
                         <child type="label">
                           <object class="GtkLabel" id="label28">
-                            <property name="width_request">40</property>
+                            <property name="width-request">40</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes"># of lines to read</property>
                           </object>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">0</property>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkButton" id="Parse">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_Parse_clicked" after="yes" swapped="no"/>
                         <child>
                           <object class="GtkBox" id="box30">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <child>
                               <object class="GtkImage" id="image8">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="stock">gtk-media-play</property>
@@ -760,7 +1020,7 @@ Headers</property>
                             <child>
                               <object class="GtkLabel" id="label43">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Parse
 File ...</property>
@@ -776,8 +1036,8 @@ File ...</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">2</property>
+                        <property name="left-attach">5</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -785,14 +1045,14 @@ File ...</property>
                         <property name="label" translatable="yes">File contains
 EOL issues</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
                         <property name="xalign">0</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">1</property>
+                        <property name="left-attach">5</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -807,26 +1067,26 @@ EOL issues</property>
                 <child>
                   <object class="GtkPaned" id="paned1">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <child>
                       <object class="GtkFrame" id="frame19">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
                         <child>
                           <object class="GtkAlignment" id="alignment19">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkBox" id="box27">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkBox" id="Definitions_Datasheet_box">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <placeholder/>
@@ -842,8 +1102,8 @@ EOL issues</property>
                                   <object class="GtkButton" id="ShowUniqueValues">
                                     <property name="label" translatable="yes">Show Unique</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
                                     <signal name="clicked" handler="on_ShowUniqueValues_clicked" after="yes" swapped="no"/>
                                   </object>
                                   <packing>
@@ -856,8 +1116,8 @@ EOL issues</property>
                                   <object class="GtkButton" id="ProfileAllColumns">
                                     <property name="label" translatable="yes">Profile All Columns</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
                                     <signal name="clicked" handler="on_ProfileAllColumns_clicked" after="yes" swapped="no"/>
                                   </object>
                                   <packing>
@@ -868,22 +1128,22 @@ EOL issues</property>
                                 </child>
                                 <child>
                                   <object class="GtkFrame" id="frame28">
-                                    <property name="can_focus">False</property>
-                                    <property name="label_xalign">0</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label-xalign">0</property>
                                     <child>
                                       <object class="GtkAlignment" id="alignment28">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="left_padding">12</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="left-padding">12</property>
                                         <child>
                                           <object class="GtkBox" id="box29">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can-focus">False</property>
                                             <property name="spacing">5</property>
                                             <child>
                                               <object class="GtkComboBox" id="DataMangler">
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
+                                                <property name="can-focus">False</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
@@ -895,10 +1155,10 @@ EOL issues</property>
                                               <object class="GtkButton" id="DataManglerApply">
                                                 <property name="label">gtk-add</property>
                                                 <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">True</property>
-                                                <property name="use_stock">True</property>
-                                                <property name="always_show_image">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="use-stock">True</property>
+                                                <property name="always-show-image">True</property>
                                                 <signal name="clicked" handler="on_DataManglerApply_clicked" after="yes" swapped="no"/>
                                               </object>
                                               <packing>
@@ -914,7 +1174,7 @@ EOL issues</property>
                                     <child type="label">
                                       <object class="GtkLabel" id="label46">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="label" translatable="yes">Included Manglers</property>
                                       </object>
                                     </child>
@@ -932,7 +1192,7 @@ EOL issues</property>
                         <child type="label">
                           <object class="GtkLabel" id="label34">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Column Setup</property>
                           </object>
                         </child>
@@ -945,22 +1205,22 @@ EOL issues</property>
                     <child>
                       <object class="GtkFrame" id="frame20">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
                         <child>
                           <object class="GtkAlignment" id="alignment20">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkBox" id="box23">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkBox" id="DataPreviewBox">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <placeholder/>
@@ -974,17 +1234,17 @@ EOL issues</property>
                                 </child>
                                 <child>
                                   <object class="GtkBox" id="box3">
-                                    <property name="width_request">5</property>
+                                    <property name="width-request">5</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="spacing">5</property>
                                     <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkButton" id="PreviewShowAll">
                                         <property name="label" translatable="yes">Show All</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
                                         <signal name="clicked" handler="on_PreviewShowAll_clicked" after="yes" swapped="no"/>
                                       </object>
                                       <packing>
@@ -997,8 +1257,8 @@ EOL issues</property>
                                       <object class="GtkButton" id="Preview_DataToCSV">
                                         <property name="label" translatable="yes">Export to CSV ...</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
                                         <signal name="clicked" handler="on_Preview_DataToCSV_clicked" after="yes" swapped="no"/>
                                       </object>
                                       <packing>
@@ -1021,7 +1281,7 @@ EOL issues</property>
                         <child type="label">
                           <object class="GtkLabel" id="label36">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Preview</property>
                           </object>
                         </child>
@@ -1047,39 +1307,39 @@ EOL issues</property>
             <child>
               <object class="GtkBox" id="execute_load">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="border_width">5</property>
+                <property name="can-focus">False</property>
+                <property name="border-width">5</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
                 <child>
                   <object class="GtkFrame" id="frame2">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
                     <child>
                       <object class="GtkAlignment" id="alignment2">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
                         <child>
                           <object class="GtkBox" id="box4">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="homogeneous">True</property>
                             <child>
                               <object class="GtkBox" id="box2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkRadioButton" id="UseFileDefinition">
                                     <property name="label" translatable="yes">Generate Table definition from CSV file</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="xalign">0</property>
                                     <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1091,10 +1351,10 @@ EOL issues</property>
                                   <object class="GtkRadioButton" id="UseDBTargetDefinition">
                                     <property name="label" translatable="yes">Use definition from target table ( Netezza only )</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="xalign">0</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="draw-indicator">True</property>
                                     <property name="group">UseFileDefinition</property>
                                   </object>
                                   <packing>
@@ -1113,16 +1373,16 @@ EOL issues</property>
                             <child>
                               <object class="GtkBox" id="box8">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkCheckButton" id="RemoteClient">
                                     <property name="label" translatable="yes">Remote Client ( Postgres only )</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="xalign">0</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1134,10 +1394,10 @@ EOL issues</property>
                                   <object class="GtkCheckButton" id="QuoteColumnNames">
                                     <property name="label" translatable="yes">Quote Column Names</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="xalign">0</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1155,20 +1415,20 @@ EOL issues</property>
                             <child>
                               <object class="GtkButton" id="GenerateExternalTableDDL">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
                                 <signal name="clicked" handler="on_GenerateExternalTableDDL_clicked" after="yes" swapped="no"/>
                                 <child>
                                   <object class="GtkBox" id="box7">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <child>
                                       <object class="GtkImage" id="image2">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xalign">1</property>
                                         <property name="xpad">5</property>
-                                        <property name="icon_name">emblem-documents</property>
+                                        <property name="icon-name">emblem-documents</property>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
@@ -1179,7 +1439,7 @@ EOL issues</property>
                                     <child>
                                       <object class="GtkLabel" id="label5">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xpad">5</property>
                                         <property name="label" translatable="yes">Generate table DDL and 'immediate' DB Load options ...</property>
                                         <property name="xalign">0</property>
@@ -1206,7 +1466,7 @@ EOL issues</property>
                     <child type="label">
                       <object class="GtkLabel" id="label3">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Load Options</property>
                       </object>
                     </child>
@@ -1220,33 +1480,33 @@ EOL issues</property>
                 <child>
                   <object class="GtkFrame" id="frame3">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
                     <child>
                       <object class="GtkAlignment" id="alignment3">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
                         <child>
                           <object class="GtkBox" id="box11">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="homogeneous">True</property>
                             <child>
                               <object class="GtkFrame" id="frame9">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
-                                <property name="shadow_type">none</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
+                                <property name="shadow-type">none</property>
                                 <child>
                                   <object class="GtkAlignment" id="alignment9">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">12</property>
                                     <child>
                                       <object class="GtkEntry" id="target_table">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                       </object>
                                     </child>
                                   </object>
@@ -1254,7 +1514,7 @@ EOL issues</property>
                                 <child type="label">
                                   <object class="GtkLabel" id="label12">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Target Table</property>
                                   </object>
                                 </child>
@@ -1268,20 +1528,20 @@ EOL issues</property>
                             <child>
                               <object class="GtkButton" id="ExecuteCreateTable">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
                                 <signal name="clicked" handler="on_ExecuteCreateTable_clicked" after="yes" swapped="no"/>
                                 <child>
                                   <object class="GtkBox" id="box5">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <child>
                                       <object class="GtkImage" id="image1">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xalign">1</property>
                                         <property name="xpad">5</property>
-                                        <property name="icon_name">document-new</property>
+                                        <property name="icon-name">document-new</property>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
@@ -1292,7 +1552,7 @@ EOL issues</property>
                                     <child>
                                       <object class="GtkLabel" id="label4">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xpad">5</property>
                                         <property name="label" translatable="yes">Create table in selected schema ...</property>
                                         <property name="xalign">0</property>
@@ -1319,11 +1579,11 @@ EOL issues</property>
                     <child type="label">
                       <object class="GtkBox" id="box6">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label2">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">DDL Execution</property>
                           </object>
                           <packing>
@@ -1336,10 +1596,10 @@ EOL issues</property>
                           <object class="GtkCheckButton" id="DropAndRebuildTarget">
                             <property name="label" translatable="yes">Drop and Rebuild Target Table</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="xalign">0</property>
-                            <property name="draw_indicator">True</property>
+                            <property name="draw-indicator">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1359,27 +1619,27 @@ EOL issues</property>
                 <child>
                   <object class="GtkBox" id="box25">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkFrame" id="frame17">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
                         <child>
                           <object class="GtkAlignment" id="alignment17">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkScrolledWindow" id="scrolledwindow2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="shadow_type">in</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
                                 <child>
                                   <object class="GtkTextView" id="ExternalTableDDL">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can-focus">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -1389,7 +1649,7 @@ EOL issues</property>
                         <child type="label">
                           <object class="GtkLabel" id="label31">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Column Definitions</property>
                           </object>
                         </child>
@@ -1403,22 +1663,22 @@ EOL issues</property>
                     <child>
                       <object class="GtkFrame" id="frame18">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="can-focus">False</property>
+                        <property name="label-xalign">0</property>
                         <child>
                           <object class="GtkAlignment" id="alignment18">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
                             <child>
                               <object class="GtkScrolledWindow" id="scrolledwindow3">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="shadow_type">in</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
                                 <child>
                                   <object class="GtkTextView" id="DBLoaderOptions">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can-focus">True</property>
                                   </object>
                                 </child>
                               </object>
@@ -1428,7 +1688,7 @@ EOL issues</property>
                         <child type="label">
                           <object class="GtkLabel" id="label32">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">Database Loader Options</property>
                           </object>
                         </child>
@@ -1449,27 +1709,27 @@ EOL issues</property>
                 <child>
                   <object class="GtkFrame" id="frame30">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
                     <child>
                       <object class="GtkAlignment" id="alignment30">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
                         <child>
                           <object class="GtkButton" id="ImportFromCSV">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
                             <signal name="clicked" handler="on_ImportFromCSV_clicked" after="yes" swapped="no"/>
                             <child>
                               <object class="GtkBox" id="box32">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <child>
                                   <object class="GtkImage" id="image10">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="xalign">1</property>
                                     <property name="xpad">5</property>
                                     <property name="stock">gtk-execute</property>
@@ -1483,7 +1743,7 @@ EOL issues</property>
                                 <child>
                                   <object class="GtkLabel" id="label51">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="xpad">5</property>
                                     <property name="label" translatable="yes">Import current CSV to selected target</property>
                                     <property name="xalign">0</property>
@@ -1503,7 +1763,7 @@ EOL issues</property>
                     <child type="label">
                       <object class="GtkLabel" id="label48">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Immediate ad-hoc load ...</property>
                       </object>
                     </child>
@@ -1517,35 +1777,35 @@ EOL issues</property>
                 <child>
                   <object class="GtkFrame" id="frame31">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
                     <child>
                       <object class="GtkAlignment" id="alignment31">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
                         <child>
                           <object class="GtkBox" id="box31">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="border_width">5</property>
+                            <property name="can-focus">False</property>
+                            <property name="border-width">5</property>
                             <property name="spacing">5</property>
                             <property name="homogeneous">True</property>
                             <child>
                               <object class="GtkFrame" id="frame32">
-                                <property name="width_request">250</property>
+                                <property name="width-request">250</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
                                 <child>
                                   <object class="GtkAlignment" id="alignment32">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">12</property>
                                     <child>
                                       <object class="GtkEntry" id="HarvestGroupName">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                       </object>
                                     </child>
                                   </object>
@@ -1553,7 +1813,7 @@ EOL issues</property>
                                 <child type="label">
                                   <object class="GtkLabel" id="label52">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Enter a Processing Group Name</property>
                                   </object>
                                 </child>
@@ -1567,17 +1827,17 @@ EOL issues</property>
                             <child>
                               <object class="GtkFrame" id="frame1">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label_xalign">0</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
                                 <child>
                                   <object class="GtkAlignment" id="alignment1">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">12</property>
                                     <child>
                                       <object class="GtkEntry" id="StagingSchemaName">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="text" translatable="yes">staging</property>
                                       </object>
                                     </child>
@@ -1586,7 +1846,7 @@ EOL issues</property>
                                 <child type="label">
                                   <object class="GtkLabel" id="label1">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Use Staging Schema</property>
                                   </object>
                                 </child>
@@ -1600,17 +1860,17 @@ EOL issues</property>
                             <child>
                               <object class="GtkButton" id="GenerateHarvestJob">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
                                 <signal name="clicked" handler="on_GenerateHarvestJob_clicked" after="yes" swapped="no"/>
                                 <child>
                                   <object class="GtkBox" id="box34">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can-focus">False</property>
                                     <child>
                                       <object class="GtkImage" id="image9">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xalign">1</property>
                                         <property name="xpad">5</property>
                                         <property name="stock">gtk-convert</property>
@@ -1624,7 +1884,7 @@ EOL issues</property>
                                     <child>
                                       <object class="GtkLabel" id="label50">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
+                                        <property name="can-focus">False</property>
                                         <property name="xpad">5</property>
                                         <property name="label" translatable="yes">Generate Harvest Job ...</property>
                                         <property name="xalign">0</property>
@@ -1651,7 +1911,7 @@ EOL issues</property>
                     <child type="label">
                       <object class="GtkLabel" id="label49">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Generate Smart ETL 'Harvest' load job ...</property>
                       </object>
                     </child>
@@ -1672,14 +1932,14 @@ EOL issues</property>
             <child>
               <object class="GtkBox" id="column_name_manglers">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="border_width">5</property>
+                <property name="can-focus">False</property>
+                <property name="border-width">5</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
                 <child>
                   <object class="GtkLabel" id="label44">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">This page is to set up column &lt;b&gt;&lt;i&gt;name&lt;/i&gt;&lt;/b&gt; manglers, which will automatically rename columns from the headers in a CSV file. You'd want to do this if you need to shorten column names, or replace bad text, etc. These manglers are written in regular expressions.
 
 The normal form of a regular expression is:
@@ -1689,7 +1949,7 @@ s/blah/blue/g
  ... which would replace the text 'blah' with 'blue'. To build regular expression in this page, enter the regex you're searching for in 'regex_find', and the regex you want to replace a match with in 'regex_replace'.
 
 Note that these manglers are executed &lt;b&gt;&lt;i&gt;in order&lt;/i&gt;&lt;/b&gt; specifed by the 'order' column.</property>
-                    <property name="use_markup">True</property>
+                    <property name="use-markup">True</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
                   </object>
@@ -1701,24 +1961,24 @@ Note that these manglers are executed &lt;b&gt;&lt;i&gt;in order&lt;/i&gt;&lt;/b
                 </child>
                 <child>
                   <object class="GtkFrame" id="frame14">
-                    <property name="height_request">150</property>
+                    <property name="height-request">150</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
+                    <property name="can-focus">False</property>
+                    <property name="label-xalign">0</property>
                     <child>
                       <object class="GtkAlignment" id="alignment14">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
                         <child>
                           <object class="GtkBox" id="box26">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkBox" id="regex_manglers_box">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <placeholder/>
@@ -1733,7 +1993,7 @@ Note that these manglers are executed &lt;b&gt;&lt;i&gt;in order&lt;/i&gt;&lt;/b
                             <child>
                               <object class="GtkBox" id="regex_manglers_tools_box">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -1751,7 +2011,7 @@ Note that these manglers are executed &lt;b&gt;&lt;i&gt;in order&lt;/i&gt;&lt;/b
                     <child type="label">
                       <object class="GtkLabel" id="label27">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Column Manglers</property>
                       </object>
                     </child>
@@ -1781,10 +2041,10 @@ Note that these manglers are executed &lt;b&gt;&lt;i&gt;in order&lt;/i&gt;&lt;/b
     <child type="titlebar">
       <object class="GtkHeaderBar" id="HeaderBar">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="title">Data Loader</property>
-        <property name="has_subtitle">False</property>
-        <property name="show_close_button">True</property>
+        <property name="has-subtitle">False</property>
+        <property name="show-close-button">True</property>
         <child>
           <placeholder/>
         </child>
