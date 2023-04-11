@@ -119,6 +119,7 @@ sub new {
                                             $self->{builder}->get_object( 'Password' )->set_visibility( FALSE );
                                             $self->on_DatabaseType_changed();
                                        }
+          , before_apply        => sub { $self->before_connections_apply( @_ ) }
           , on_apply            => sub { $self->{connections_list}->query }
           , auto_tools_box      => 1
         }
@@ -1024,6 +1025,28 @@ sub get_auth_hash {
     };
     
     return $auth_hash;
+    
+}
+
+sub before_connections_apply {
+    
+    my $self = shift;
+    
+    my $connection_name = $self->{connections}->get_widget_value( "ConnectionName" );
+    
+    if ( ! $connection_name ) {
+        $self->dialog(
+            {
+                title       => "Please enter a connection name!"
+              , type        => "warning"
+              , text        => "A connection name is required ( it's the primary key ). Please enter one.\n"
+                               . "( Near the top of the screen, under the Database Type )"
+            }
+        );
+        return FALSE;
+    }
+    
+    return TRUE;
     
 }
 

@@ -140,6 +140,7 @@ sub new {
     $self->manage_widget_value( "EscapeChar", "\\" );
     $self->manage_widget_value( "LinesToRead", 10000 );
     $self->manage_widget_value( "NullValue", "\\N" );
+    $self->manage_widget_value( "sysbench_template_path" );
     
     $self->{mem_dbh}->do(
         "create table column_defs (\n"
@@ -336,6 +337,14 @@ sub on_output_path_browser_clicked {
 
 }
 
+sub on_output_path_changed {
+
+    my $self = shift;
+
+    $self->generate_dbgen_command();
+
+}
+
 sub on_tables_list_select {
 
     my $self = shift;
@@ -345,71 +354,268 @@ sub on_tables_list_select {
     my $schema      = $self->{target_chooser}->get_schema_name();
     my $table       = $self->{tables_list}->get_column_value( "table_name" );
 
+    $self->{table}  = $table;
+
     my $column_info_array = $connection->fetch_column_info_array( $database , $schema , $table );
+    my $indexes           = $connection->fetch_all_indexes( $database , $schema );
 
-    my $sql = "create table $table (\n";
-    my $counter = 0;
-    foreach my $column_info ( @{$column_info_array} ) {
-        if ( $counter ) {
-            $sql .= "\n  , ";
-        } else {
-            $sql .= "    ";
+    # Scan indexes for a primary key index for our table ...
+    my @table_pk_columns;
+
+    while ( my ( $index_name , $index_hash ) = each ( %{$indexes} ) ) {
+        if ( $index_hash->{TABLE_NAME} eq $table && $index_hash->{IS_PRIMARY} ) {
+            @table_pk_columns = @{$index_hash->{COLUMNS}};
+            last;
         }
+    }
 
-        $sql .= $column_info->{COLUMN_NAME}  . " " . $column_info->{DATA_TYPE};
+    if ( ! @table_pk_columns ) {
+        # If we didn't find a primary key, look for a unique index
+        while ( my ( $index_name , $index_hash ) = each ( %{$indexes} ) ) {
+            if ( $index_hash->{TABLE_NAME} eq $table && $index_hash->{IS_UNIQUE} ) {
+                @table_pk_columns = $index_name->{COLUMNS};
+                last;
+            }
+        }
+    }
+
+    my ( @update_cols , @key_cols , @insert_cols );
+
+    my ( @create_cols_strings , @lua_update_types , @lua_key_types , @lua_insert_types
+       , @insert_type_lengths , @update_type_lengths , @select_point_type_lengths );
+
+    foreach my $column_info ( @{$column_info_array} ) {
+
+        my ( $this_create_col_string , $lua_type , $type_length_str );
+
+        $this_create_col_string = $column_info->{COLUMN_NAME}  . " " . $column_info->{DATA_TYPE};
 
         if ( $column_info->{PRECISION} ) {
-            $sql .= $column_info->{PRECISION};
+            $this_create_col_string .= $column_info->{PRECISION};
         }
 
         if ( ! $column_info->{NULLABLE} ) {
-            $sql .= " not null";
+            $this_create_col_string .= " not null";
         }
 
         if ( defined $column_info->{COLUMN_DEFAULT} ) {
-            $sql .= "default " . $column_info->{COLUMN_DEFAULT};
+            $this_create_col_string .= "default " . $column_info->{COLUMN_DEFAULT};
         }
-
-        $sql .= "\n    ";
 
         if ( $column_info->{DATA_TYPE} =~ /char/i ) {
             my $length;
             if ( $column_info->{PRECISION} =~ /\(([\d]*)\)/ ) {
                 $length = $1;
             }
-            $sql .= "/*{{ rand.regex('[a-zA-Z ]{" . $length . "}') }}*/";
+            $this_create_col_string .= "/*{{ rand.regex('[a-zA-Z ]{" . $length . "}') }}*/";
+            $lua_type = "'%s'";
+            $type_length_str = "s" . $length;
         } elsif ( $column_info->{SERIAL} ) {
-            $sql .= "/*{{ rownum }}*/";
+            $this_create_col_string .= "/*{{ rownum }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i9223372036854775807"; # bigint
         } elsif ( $column_info->{DATA_TYPE} =~ /decimal|numeric/i ) {
             my ( $precision , $scale );
-            if ( $column_info->{PRECISION} =~ /\(([\d]*)\.([\d]*)\)/ ) {
+            if ( $column_info->{PRECISION} =~ /\(([\d]*)\,([\d]*)\)/ ) {
                 ( $precision , $scale ) = ( $1 , $2 );
             }
             my $l1 = $precision - $scale;
-            $sql .= "/*{{ rand.regex('[0-9]{" . $l1 . "}') || '.' || rand.regex('[0-9]{" . $scale . "}') }}*/";
-        } elsif ( $column_info->{DATA_TYPE} =~ /bigint/ ) {
-            $sql .= "/*{{ rand.regex('[0-9]{16}') }}*/"
+            $this_create_col_string .= "/*{{ rand.regex('[0-9]{" . $l1 . "}') || '.' || rand.regex('[0-9]{" . $scale . "}') }}*/";
+            $lua_type = "'%s'";
+            $type_length_str = "d" . $l1 . "," . $scale;
+        } elsif ( $column_info->{DATA_TYPE} =~ /bigint/i ) {
+            $this_create_col_string .= "/*{{ rand.range(0,9223372036854775807) }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i9223372036854775807";
+        } elsif ( $column_info->{DATA_TYPE} =~ /mediumint/i ) {
+            $this_create_col_string .= "/*{{ rand.range(0,8388607) }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i8388607";
+        } elsif ( $column_info->{DATA_TYPE} =~ /smallint/i ) {
+            $this_create_col_string .= "/*{{ rand.range(0,32767) }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i32767";
+        } elsif ( $column_info->{DATA_TYPE} =~ /tinyint/i ) {
+            $this_create_col_string .= "/*{{ rand.range(0,127) }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i127";
         } elsif ( $column_info->{DATA_TYPE} =~ /int/ ) {
-            $sql .= "/*{{ rand.regex('[0-9]{9}') }}*/"
-        } elsif ( $column_info->{DATA_TYPE} =~ /text/ ) {
-            $sql .= "/*{{ rand.regex('[a-zA-Z ]{1000}') }}*/";
-        } elsif ( $column_info->{DATA_TYPE} =~ /double/ ) {
-            $sql .= "/*{{ rand.regex('[0-9]{6}') || '.' || rand.regex('[0-9]{6}') }}*/";
+            $this_create_col_string .= "/*{{ rand.range(0,2147483647) }}*/";
+            $lua_type = "%d";
+            $type_length_str = "i2147483647";
+        } elsif ( $column_info->{DATA_TYPE} =~ /text/i ) {
+            $this_create_col_string .= "/*{{ rand.regex('[a-zA-Z ]{1000}') }}*/";
+            $lua_type = "'%s'";
+            $type_length_str = "s1000";
+        } elsif ( $column_info->{DATA_TYPE} =~ /double/i ) {
+            $this_create_col_string .= "/*{{ rand.regex('[0-9]{6}') || '.' || rand.regex('[0-9]{6}') }}*/";
+            $lua_type = "'%s'";
+            $type_length_str = "d6,6";
         } elsif ( $column_info->{DATA_TYPE} =~ /datetime|timestamp/ ) {
-            $sql .= "/*{{ TIMESTAMP WITH TIME ZONE '1000-01-01 00:00:00 UTC' + INTERVAL rand.range(0, 284012524800) SECOND }}*/";
+            $this_create_col_string .= "/*{{ TIMESTAMP WITH TIME ZONE '1000-01-01 00:00:00 UTC' + INTERVAL rand.range(0, 284012524800) SECOND }}*/";
+            $lua_type = "'%s'";
+            $type_length_str = "t";
         } else {
-            $sql .= "/* UNSUPPORTED */";
+            $this_create_col_string .= "/* UNSUPPORTED */";
+            $lua_type = "UNSUPPORTED";
         }
 
-        $counter ++;
+        push @create_cols_strings , $this_create_col_string;
+        $type_length_str = '"' . $type_length_str . '"';
+
+        if ( grep /^$column_info->{COLUMN_NAME}$/ , @table_pk_columns ) {
+            push @key_cols , $column_info->{COLUMN_NAME};
+            push @lua_key_types , $lua_type;
+            push @select_point_type_lengths , $type_length_str;
+        } else {
+            push @update_cols , $column_info->{COLUMN_NAME};
+            push @lua_update_types , $lua_type;
+            push @update_type_lengths , $type_length_str;
+        }
+
+        if ( ! $column_info->{SERIAL} ) {
+            push @insert_cols , $column_info->{COLUMN_NAME};
+            push @lua_insert_types , $lua_type;
+            push @insert_type_lengths , $type_length_str
+        }
 
     }
 
-    $sql .= "\n)";
+    my $create_sql = "create table $table (\n    " . join( "\n  , " , @create_cols_strings ) . "\n)";
 
-    $self->set_widget_value( 'dbgen_table_ddl' , $sql );
+    my $select_sql = "select\n            " . join( "\n          , " , @update_cols )
+      . "\n        from $table\n"
+      . "            where\n                "; # The filter is the same as for the update SQL.
 
-    $self->{dbgen_ddl_path} = $self->get_widget_value( 'output_path' ) . "/" . $table . ".sql";
+    my $delete_sql = "delete from $table\n            where\n                "; # The filter is the same as for the update SQL.
+
+    my $insert_sql = "insert into $table (\n            " . join( "\n          , " , @insert_cols ) . "\n) values (\n        "
+                   . join( " , " , @lua_insert_types ) . "\n)";
+
+    my $update_sql = "update $table set\n            ";
+
+    my @update_col_strings;
+
+    for my $i ( 0 .. @update_cols - 1 ) {
+        push @update_col_strings , $update_cols[ $i ] . " = " . $lua_update_types[ $i ];
+    }
+
+    $update_sql .= join( "\n          , " , @update_col_strings ) . "\n            where\n    ";
+
+    my @filter_strings;
+
+    for my $i ( 0 .. @key_cols - 1 ) {
+        push @filter_strings , $key_cols[ $i ] . " = " . $lua_key_types[ $i ];
+    }
+
+    $update_sql .= join( "\nand " , @filter_strings );
+    $select_sql .= join( "\nand " , @filter_strings );
+    $delete_sql .= join( "\nand " , @filter_strings );
+
+    my $select_lua_fragment = "local selects = {\n\n    {\n\n         [[ " . $select_sql . " ]]\n\n\n"
+        . "   , { " . join( " , " , @select_point_type_lengths ) . " }\n\n    }\n\n}\n";
+
+    my $delete_lua_fragment = "local deletes = {\n\n    {\n\n         [[ " . $delete_sql . " ]]\n\n\n"
+        . "   , { " . join( " , " , @select_point_type_lengths ) . " }\n\n    }\n\n}\n";
+
+    my $insert_lua_fragment = "local inserts = {\n\n    {\n\n         [[ " . $insert_sql . " ]]\n\n\n"
+        . "   , { " . join( " , " , @insert_type_lengths ) . " }\n\n    }\n\n}\n";
+
+    my $update_lua_fragment = "local updates = {\n\n    {\n\n         [[ " . $update_sql . " ]]\n\n\n"
+        . "   , { " . join( " , " , @update_type_lengths , @select_point_type_lengths ) . " }\n\n    }\n\n}\n";
+
+    $self->set_widget_value( 'dbgen_table_ddl' , $create_sql );
+    $self->set_widget_value( 'sysbench_select' , $select_lua_fragment );
+    $self->set_widget_value( 'sysbench_insert' , $insert_lua_fragment );
+    $self->set_widget_value( 'sysbench_update' , $update_lua_fragment );
+    $self->set_widget_value( 'sysbench_delete' , $delete_lua_fragment );
+
+}
+
+sub on_sysbench_template_path_browse_clicked {
+
+    my $self = shift;
+
+    my $sysbench_template_path = $self->{globals}->{config_manager}->simpleGet( 'data_loader:sysbench_template_path' );
+
+    my $folder = $self->file_chooser(
+        {
+            title   => "Please select the file to import ..."
+          , action  => 'folder'
+          , path    => $sysbench_template_path
+        }
+    ) || return;
+
+    $self->{builder}->get_object( "sysbench_template_path" )->set_text( $folder );
+
+    $self->{globals}->{config_manager}->simpleSet( 'data_loader:sysbench_template_path', $folder );
+
+}
+
+sub on_ExportSysbenchTemplate_clicked {
+
+    my $self = shift;
+
+    my $sysbench_template_path = $self->{globals}->{config_manager}->simpleGet( 'data_loader:sysbench_template_path' );
+
+    if ( ! $sysbench_template_path ) {
+        $self->dialog(
+            {
+                title   => "Select an export path first"
+              , type    => "info"
+              , text    => "You need to set a path to write template files to first"
+            }
+        );
+        return;
+    }
+
+    my $filename = $sysbench_template_path . "/" . $self->{table} . ".lua";
+
+    eval {
+
+        open my $OUTPUT_FH , ">$filename"
+            || die( "Error opening export file [$filename]:\n" . $! );
+
+        print $OUTPUT_FH
+            $self->get_widget_value( 'sysbench_select' )
+          . "\n"
+          . $self->get_widget_value( 'sysbench_insert' )
+          . "\n"
+          . $self->get_widget_value( 'sysbench_update' )
+          . "\n"
+          . $self->get_widget_value( 'sysbench_delete' )
+          . "\n"
+          . "return {\n"
+          . "    selects=selects\n"
+          . "  , inserts=inserts\n"
+          . "  , updates=updates\n"
+          . "  , deletes=deletes\n"
+          . "}\n";
+
+        close $OUTPUT_FH
+            || die( "Error closing export file [$filename]:\n" . $! );
+
+    };
+
+    my $err = $@;
+
+    if ( $err ) {
+        $self->dialog(
+            {
+                title   => "Error during export"
+              , type    => "warn"
+              , text    => "$err"
+            }
+        );
+    }
+
+}
+
+sub generate_dbgen_command {
+
+    my $self = shift;
+
+    $self->{dbgen_ddl_path} = $self->get_widget_value( 'output_path' ) . "/" . $self->{table} . ".sql";
 
     my @dbgen_cmd_args = (
         $self->get_widget_value( 'dbgen_path' )
@@ -509,449 +715,18 @@ sub on_Load_Generated_Data_clicked {
             $self->pulse( "$this_csv" , undef , $self->{load_progress_bar} );
             $self->{builder}->get_object( 'File' )->set_text( $this_csv );
             $self->on_Parse_clicked();
+            $self->{builder}->get_object( 'RemoteClient' )->set_active( TRUE );
             $self->on_GenerateExternalTableDDL_clicked();
             $self->on_ImportFromCSV_clicked();
         }
     };
 
+    my $err = $@;
+    print( $err );
+
     $self->{suppress_dialogs} = 0;
     delete $self->{parse_lines};
-
-}
-
-sub on_tables_list_select_old {
-
-    my $self = shift;
-
-    my $connection  = $self->{target_chooser}->get_db_connection();
-    my $database    = $self->{target_chooser}->get_database_name();
-    my $schema      = $self->{target_chooser}->get_schema_name();
-    my $table       = $self->{tables_list}->get_column_value( "table_name" );
-
-    my $dbh_column_info = $connection->fetch_dbi_column_info( $database , $schema , $table );
-
-    # Currently available output plugins for GenerateData:
-    # drwxrwxr-x 1 www-data root 122 Jul 24  2016 AlphaNumeric
-    # drwxrwxr-x 1 www-data root 126 Jul 24  2016 AutoIncrement
-    # drwxrwxr-x 1 www-data root  52 Jul 24  2016 CVV
-    # drwxrwxr-x 1 www-data root  54 Jul 24  2016 City
-    # drwxrwxr-x 1 www-data root  60 Jul 24  2016 Company
-    # drwxrwxr-x 1 www-data root 110 Jul 24  2016 Composite
-    # drwxrwxr-x 1 www-data root 106 Jul 24  2016 Constant
-    # drwxrwxr-x 1 www-data root 102 Jul 24  2016 Country
-    # drwxrwxr-x 1 www-data root 106 Jul 24  2016 Currency
-    # drwxrwxr-x 1 www-data root  90 Jul 24  2016 Date
-    # drwxrwxr-x 1 www-data root  56 Jul 24  2016 Email
-    # drwxrwxr-x 1 www-data root  54 Jul 24  2016 GUID
-    # drwxrwxr-x 1 www-data root  54 Jul 24  2016 IBAN
-    # drwxrwxr-x 1 www-data root  98 Jul 24  2016 LatLng
-    # drwxrwxr-x 1 www-data root  90 Jul 24  2016 List
-    # drwxrwxr-x 1 www-data root  94 Jul 24  2016 Names
-    # drwxrwxr-x 1 www-data root 126 Jul 24  2016 NamesRegional
-    # drwxrwxr-x 1 www-data root 146 Jul 24  2016 NormalDistribution
-    # drwxrwxr-x 1 www-data root 118 Jul 24  2016 NumberRange
-    # drwxrwxr-x 1 www-data root 124 Jul 24  2016 OrganisationNumber
-    # drwxrwxr-x 1 www-data root  86 Jul 24  2016 PAN
-    # drwxrwxr-x 1 www-data root  52 Jul 24  2016 PIN
-    # drwxrwxr-x 1 www-data root 108 Jul 24  2016 PersonalNumber
-    # drwxrwxr-x 1 www-data root  94 Jul 24  2016 Phone
-    # drwxrwxr-x 1 www-data root 160 Jul 24  2016 PhoneRegional
-    # drwxrwxr-x 1 www-data root 110 Jul 24  2016 PostalZip
-    # drwxrwxr-x 1 www-data root 118 Jul 24  2016 Region
-    # drwxrwxr-x 1 www-data root  64 Jul 24  2016 Rut
-    # drwxrwxr-x 1 www-data root  76 Jul 24  2016 SIRET
-    # drwxrwxr-x 1 www-data root  72 Jul 24  2016 StreetAddress
-    # drwxrwxr-x 1 www-data root 110 Jul 24  2016 TextFixed
-    # drwxrwxr-x 1 www-data root 114 Jul 24  2016 TextRandom
-    # drwxrwxr-x 1 www-data root  58 Jul 24  2016 Track1
-    # drwxrwxr-x 1 www-data root  58 Jul 24  2016 Track2
-    # drwxrwxr-x 1 www-data root  90 Jul 24  2016 Tree
-
-    my $dbi_to_generate_data_map = {
-        -11    => {                                                                           # SQL_GUID
-                        type     => "AutoIncrement"
-                      , settings => {
-                                        incrementStart => 1
-                                      , incrementValue => 1
-                                    }
-                  }
-      , -10    => {                                                                           # SQL_WLONGVARCHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 2
-                                      , maxWords         => 10
-                                    }
-                  }
-      ,  -9    => {                                                                           # SQL_WVARCHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 2
-                                      , maxWords         => 10
-                                    }
-                  }
-      ,  -8    => {                                                                           # SQL_WCHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 2
-                                      , maxWords         => 10
-                                    }
-                  }
-      ,  -5    => {                                                                           # SQL_BIGINT
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 1
-                                      , rangeMax         => Math::BigInt->new( $bigint_upper )
-                                    }
-                  }
-      ,  -7    => {                                                                           # SQL_BIT
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 1
-                                    }
-                  }
-      ,  -6    => {                                                                           # SQL_TINYINT
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 127
-                                    }
-                  }
-      ,  -4    => {                                                                           # SQL_LONGVARBINARY
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 50
-                                      , maxWords         => 1000
-                                    }
-                  }
-      ,  -3    => {                                                                           # SQL_VARBINARY
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 10
-                                      , maxWords         => 100
-                                    }
-                  }
-      ,  -2    => {                                                                            # SQL_BINARY
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 2
-                                      , maxWords         => 10
-
-                                    }
-                  }
-      ,  -1    => {                                                                            # SQL_LONGVARCHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 20
-                                      , maxWords         => 200
-                                    }
-                  }
-      ,   0    => {                                                                            # SQL_UNKNOWN_TYPE
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 1
-                                      , maxWords         => 4
-                                    }
-                  }
-      ,   1    => {                                                                            # SQL_CHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 1
-                                      , maxWords         => 1
-                                    }
-                  }
-      ,   2    => {                                                                            # SQL_NUMERIC
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "20000" )
-                                    }
-                  }
-      ,   3    => {                                                                            # SQL_DECIMAL
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "20000" )
-                                    }
-                  }
-      ,   4    => {                                                                            # SQL_INTEGER
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "2147483647" )
-                                    }
-                  }
-      ,   5    => {                                                                            # SQL_SMALLINT
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 32767
-                                    }
-                  }
-      ,   6    => {                                                                            # SQL_FLOAT
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "2147483647" )
-                                    }
-                  }
-      ,   7    => {                                                                            # SQL_REAL
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "2147483647" )
-                                    }
-                  }
-      ,   8    => {                                                                            # SQL_DOUBLE
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => Math::BigInt->new( "2147483647" )
-                                    }
-                  }
-      ,   9    => {                                                                            # SQL_DATETIME
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'Y-m-d H:i:s'
-                                    }
-                  }
-      ,   9    => {                                                                            # SQL_DATE
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'Y-m-d'
-                                    }
-                  }
-      ,  10    => {                                                                            # SQL_INTERVAL
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 100
-                                    }
-                  }
-      ,  10    => {                                                                            # SQL_TIME
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'H:i:s'
-                                    }
-                  }
-      ,  11    => {                                                                            # SQL_TIMESTAMP
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'H:i:s'
-                                    }
-                  }
-      ,  12    => {                                                                            # SQL_VARCHAR
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 1
-                                      , maxWords         => 2
-                                    }
-                  }
-      ,  16    => {                                                                            # SQL_BOOLEAN
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 1
-                                    }
-                  }
-      ,  17    => {                                                                            # SQL_UDT    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  18    => {                                                                            # SQL_UDT_LOCATOR    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  19    => {                                                                            # SQL_ROW    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  20    => {                                                                            # SQL_REF    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  30    => {                                                                            # SQL_BLOB
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 20
-                                      , maxWords         => 200
-                                    }
-                  }
-      ,  31    => {                                                                            # SQL_BLOB_LOCATOR    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  40    => {                                                                            # SQL_CLOB
-                        type     => "TextRandom"
-                      , settings => {
-                                        startsWithLipsum => false
-                                      , minWords         => 20
-                                      , maxWords         => 200
-                                    }
-                  }
-      ,  41    => {                                                                            # SQL_CLOB_LOCATOR    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  50    => {                                                                            # SQL_ARRAY    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  51    => {                                                                            # SQL_ARRAY_LOCATOR    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  55    => {                                                                            # SQL_MULTISET    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  56    => {                                                                            # SQL_MULTISET_LOCATOR    - this is not going to work, and i don't know what to do ...
-                  }
-      ,  91    => {                                                                            # SQL_TYPE_DATE
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'Y-m-d'
-                                    }
-                  }
-      ,  92    => {                                                                            # SQL_TYPE_TIME
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'H:i:s'
-                                    }
-                  }
-      ,  93    => {                                                                            # SQL_TYPE_TIMESTAMP
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'H:i:s'
-                                    }
-                  }
-      ,  94    => {                                                                            # SQL_TYPE_TIME_WITH_TIMEZONE
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'Y-m-d H:i:s T'
-                                    }
-                  }
-      ,  95    => {                                                                            # SQL_TYPE_TIMESTAMP_WITH_TIMEZONE
-                        type     => "Date"
-                      , settings => {
-                                        fromDate         => '01/01/2010' # php date format
-                                      , toDate           => '01/01/2020' # php date format
-                                      , placeholder      => 'Y-m-d H:i:s T'
-                                    }
-                  }
-      , 101    => {                                                                            # SQL_INTERVAL_YEAR
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 2020
-                                    }
-                  }
-      , 102    => {                                                                            # SQL_INTERVAL_MONTH
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 1
-                                      , rangeMax         => 12
-                                    }
-                  }
-      , 103    => {                                                                            # SQL_INTERVAL_DAY
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 1
-                                      , rangeMax         => 7
-                                    }
-                  }
-      , 104    => {                                                                            # SQL_INTERVAL_HOUR
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 23
-                                    }
-                  }
-      , 105    => {                                                                            # SQL_INTERVAL_MINUTE
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 59
-                                    }
-                  }
-      , 106    => {                                                                            # SQL_INTERVAL_SECOND
-                        type     => "NumberRange"
-                      , settings => {
-                                        rangeMin         => 0
-                                      , rangeMax         => 59
-                                    }
-                  }
-      , 107    => {                                                                            # SQL_INTERVAL_YEAR_TO_MONTH    - this is not going to work, and i don't know what to do ...
-                  }
-      , 108    => {                                                                            # SQL_INTERVAL_DAY_TO_HOUR    - this is not going to work, and i don't know what to do ...
-                  }
-      , 109    => {                                                                            # SQL_INTERVAL_DAY_TO_MINUTE    - this is not going to work, and i don't know what to do ...
-                  }
-      , 110    => {                                                                            # SQL_INTERVAL_DAY_TO_SECOND    - this is not going to work, and i don't know what to do ...
-                  }
-      , 111    => {                                                                            # SQL_INTERVAL_HOUR_TO_MINUTE    - this is not going to work, and i don't know what to do ...
-                  }
-      , 112    => {                                                                            # SQL_INTERVAL_HOUR_TO_SECOND    - this is not going to work, and i don't know what to do ...
-                  }
-      , 113    => {                                                                            # SQL_INTERVAL_MINUTE_TO_SECOND    - this is not going to work, and i don't know what to do ...
-                  }
-    };
-
-    my $rows_request;
-
-    foreach my $this_column_info ( @{$dbh_column_info} ) {
-
-        my $column_name = $this_column_info->{COLUMN_NAME};
-        my $type_code   = $this_column_info->{DATA_TYPE};
-
-        my $this_col_request = dclone $dbi_to_generate_data_map->{ $type_code }; # *copy* the hash, don't copy a *reference* to it ...
-
-        if ( $this_col_request->{type} eq 'TextRandom' ) {      # TODO - maybe replace with a match of all char types? Same effect though?
-            $this_col_request->{settings}->{maxChars} = $this_column_info->{COLUMN_SIZE};
-        }
-
-        if ( $type_code == &Database::Connection::SQL_NUMERIC
-          || $type_code == &Database::Connection::SQL_DECIMAL
-        ) {
-            my $precision = $this_column_info->{COLUMN_SIZE};    # total number of digits
-            my $scale     = $this_column_info->{DECIMAL_DIGITS}; # digits to the right of the decimal points
-            my $left_digits = $precision - $scale;
-            $this_col_request->{settings}->{rangeMax} = 0 + ( 9 x $left_digits );
-        }
-
-        $this_col_request->{title} = $column_name;
-        push @{$rows_request}, $this_col_request;
-
-    }
-
-    my $num_rows = $self->get_widget_value( 'RecordsToGenerate' );
-
-    my $gd_request = {
-        numRows    => 0 + $num_rows
-      , rows       => $rows_request
-      , export     => {
-                          type      => "CSV"
-                        , settings  => {
-                                            delimiter => ","
-                                          , eol       => "Unix"
-                          }
-        }
-    };
-
-    my $json = to_json( $gd_request , { pretty => 1 , allow_blessed => 1 } );
-
-    $self->set_widget_value( 'GD_Rows_Request' , $json );
-    $self->set_widget_value( 'target_table' , $table );
-
+    
 }
 
 sub on_Execute_dbgen_clicked {
@@ -1227,9 +1002,9 @@ sub on_Parse_clicked {
     
     # Create table for preview
     my ( @preview_col_defs, @placeholders );
-    
+
     my $counter = 1;
-    
+
     my $shadow_columns;
     
     foreach my $column ( @{$columns} ) {

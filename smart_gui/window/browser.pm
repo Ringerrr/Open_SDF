@@ -189,17 +189,7 @@ sub new {
     
     $self->{treeview} = $treeview;
     
-    # Create a hash of connection names to DB types. We use this to determine what class of connection
-    # object to construct, based on a connection name
-    my $sth = $self->{globals}->{local_db}->prepare(
-        "select ConnectionName, DatabaseType from connections"
-    );
-    
-    $sth->execute();
-    
-    $self->{connection_to_db_type_map} = $sth->fetchall_hashref( "ConnectionName" );
-    
-    $self->build_connections;
+    $self->build_connections();
     
     # The notebook that holds the SQL editors & results ...
     $self->{notebook} = Gtk3::Notebook->new();
@@ -978,7 +968,7 @@ sub get_db_connection {
             $auth_hash->{Database} = $database_name;
         }
         
-        $self->{connections}->{ $key } = Database::Connection::generate(
+        my $this_connection = Database::Connection::generate(
             $self->{globals}
           , $auth_hash
           , undef
@@ -988,6 +978,12 @@ sub get_db_connection {
                 dont_force_case    => 1
             }
         );
+        
+        if ( ! $this_connection || ! exists $this_connection->{connection} ) {
+            return;
+        }
+        
+        $self->{connections}->{ $key } = $this_connection;
         
         # Disable named placeholders - we don't use them here,
         # and they mess with things ...
@@ -1024,6 +1020,16 @@ sub remove_children {
 sub build_connections {
     
     my $self = shift;
+    
+    # Create a hash of connection names to DB types. We use this to determine what class of connection
+    # object to construct, based on a connection name
+    my $sth = $self->{globals}->{local_db}->prepare(
+        "select ConnectionName, DatabaseType from connections"
+    );
+    
+    $sth->execute();
+    
+    $self->{connection_to_db_type_map} = $sth->fetchall_hashref( "ConnectionName" );
     
     my $model = $self->{group_hierarchy_model} = Gtk3::TreeStore->new(
         qw' Glib::String Glib::String Glib::String Glib::String Glib::String Glib::String '
@@ -1095,7 +1101,7 @@ sub build_databases {
     my $connection = $self->get_db_connection(
         $connection_name
       , $root_database
-    ) || return;
+    ) || return 0;
     
     my @databases = $connection->fetch_database_list();
     
@@ -1114,7 +1120,9 @@ sub build_databases {
     my ( $model, $selected_path, $this_iter, $type, $object_name ) = $self->get_clicked_tree_object( $self->{treeview} );
     
     $self->{treeview}->expand_to_path( $selected_path );
-    
+
+    return scalar @databases;
+
 }
 
 sub build_all_database_objects {
@@ -1434,79 +1442,53 @@ sub handle_double_click {
     my ( $model, $selected_path, $iter, $type, $object_name ) = $self->get_clicked_tree_object( $widget );
     
     if ( $type eq CONNECTION_TYPE ) {
-        
-        $self->build_databases( $iter, $object_name );
+        my $database_count = $self->build_databases( $iter, $object_name );
+        if ( ! $database_count ) {
+            return;
+        }
         $self->set_current_page_active_connection;
-        
     } elsif ( $type eq DATABASE_TYPE ) {
-        
         $self->build_all_database_objects( $iter, $object_name );
         $self->{treeview}->expand_to_path( $selected_path );
         $self->set_current_page_active_database;
-        
     } elsif ( $type eq TABLE_TYPE || $type eq VIEW_TYPE || $type eq MVIEW_TYPE || $type eq COLUMN_TYPE ) {
-        
         my $database = $self->get_selected_by_object_type( DATABASE_TYPE );
         my $schema   = $self->get_selected_by_object_type( SCHEMA_TYPE );
-        
         my $page_index = $self->{notebook}->get_current_page;
-        
         my $buffer = $self->{pages}->[ $page_index ]->{sql_editor}->get_buffer;
-        
         my $text = $self->get_buffer_value( $self->{pages}->[ $page_index ]->{sql_editor} );
-        
         print "text: [$text]\n";
-        
         my $connection_name = $self->get_selected_by_object_type( CONNECTION_TYPE ) || return;
         my $connection      = $self->get_db_connection( $connection_name, $self->get_selected_by_object_type( DATABASE_TYPE ) );
-        
         if ( $type eq TABLE_TYPE || $type eq VIEW_TYPE || $type eq MVIEW_TYPE ) {
-            
             if ( $text ) {
-                
                 $buffer->insert_at_cursor( $connection->db_schema_table_string( $database, $schema, $object_name ) );
-                
             } else {
-                
                 my $sql;
-                
                 if ( $connection->can( 'build_entire_select_query_string' ) ) {
-                    
                     $sql = $connection->build_entire_select_query_string( $database, $schema, $object_name );
-                    
                 } else {
-                    
                     my $columns_results = $self->{mem_dbh}->select( "select column_name from browser_columns" );
-                    
                     my $alias = $self->get_object_alias(
                         $connection_name
                       , $database
                       , $schema
                       , $object_name
                     );
-                    
                     my @columns;
-
                     foreach my $column_result ( @{$columns_results} ) {
-
                         if ( $connection->can_alias ) {
-
                             push @columns, $alias
                                 . "."
                                 . $column_result->{column_name}
                                 . ( ' ' x ( COLUMN_EXPRESSION_LENGTH - length( $alias . "." . $column_result->{column_name} ) ) )
                                 . " as " . $column_result->{column_name};
-
                         } else {
-
                             push @columns, $alias
                                 . "."
                                 . $column_result->{column_name};
-
                         }
-
                     }
-                    
                     $sql = "select\n    "
                         . join( "\n  , ", @columns )
                         . "\nfrom\n"
@@ -1515,21 +1497,14 @@ sub handle_double_click {
                                      , $alias
                                    ) . "\n"
                         . $connection->limit_clause( 1000 );
-                    
                     #$self->{formatter}->query( $sql );
                     #$sql = $self->{formatter}->beautify;
-                    
                     $sql =~ s/\[\s/\[/g; # convert "[ " to "["
                     $sql =~ s/\s\]/\]/g; # convert " ]" to "]"
-                    
                 }
-                
                 $buffer->set_text( $sql );
-                
             }
-            
         }
-        
     }
     
 }

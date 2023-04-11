@@ -275,6 +275,9 @@
   , "perl/perl-Devel-ptkdb.json"
   , "perl/perl-HTTP-Cookies.json"
 
+  , "google-deps/perl-Net-Google-Storage.json"
+  , "google-deps/perl-LWP-MediaTypes.json"
+
   ,     {
             "name": "sdf",
             "no-autogen": true,

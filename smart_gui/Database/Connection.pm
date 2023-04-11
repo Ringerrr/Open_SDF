@@ -194,7 +194,7 @@ sub generate {
         
     }
 
-    if ( ! $dont_connect && ! $dont_cache ) {
+    if ( ! $dont_connect && ! $dont_cache && $connection_object ) {
         $globals->{user_connections}->{ $connection_key } = $connection_object;
     }
 
@@ -747,7 +747,7 @@ sub get_character_length {
     if ( $row ) {
         $return = $$row[0];
     } else {
-        $return = 65000;
+        $return = 64000;
     }
 
     if ( ! $return ) {

@@ -111,6 +111,10 @@ sub build_connection_string {
           . ";host="         . $auth_hash->{Host}
           . ";port="         . $auth_hash->{Port};
         
+        if ( $auth_hash->{Attribute_1} ) {
+            $string .= ";sslmode=" . $auth_hash->{Attribute_1};
+        }
+        
         print "Postgres.pm assembled connection string: $string\n";
         
     }
@@ -127,7 +131,7 @@ sub connection_label_map {
       , Host_IP         => "Host / IP"
       , Port            => "Port"
       , Database        => "Default Database"
-      , Attribute_1     => ""
+      , Attribute_1     => "SSL Mode"
       , Attribute_2     => ""
       , Attribute_3     => ""
       , Attribute_4     => ""
@@ -613,28 +617,28 @@ sub fetch_all_column_info {
 sub fetch_field_list {
 
     my ( $self, $database, $schema, $table, $options ) = @_;
-
+    
     print "fetch_field_list( $database , $schema , $table ) called ...\n";
-
+    
     my $connection = $self->_db_connection( $database );
-
+    
     my $sth = $connection->prepare(
         "select * from " . $connection->db_schema_table_string( $database, $schema, $table ) . " where 0=1" );
-
+    
     $connection->execute( $sth );
-
+    
     my $fields;
-
+    
     if ( $options->{dont_mangle_case} ) {
         $fields  =$sth->{NAME};
     } else {
         $fields = $sth->{NAME_uc};
     }
-
+    
     $sth->finish();
-
+    
     return $fields;
-
+    
 }
 
 sub fetch_all_indexes {
@@ -762,12 +766,14 @@ order by
 
         no warnings 'uninitialized';
 
-        $return->{ $row->{INDEX_NAME} }->{IS_PRIMARY} = $row->{IS_PRIMARY};
-        $return->{ $row->{INDEX_NAME} }->{IS_UNIQUE}  = $row->{IS_UNIQUE};
-        $return->{ $row->{INDEX_NAME} }->{TABLE_NAME} = $row->{TABLE_NAME};
+        # Changed below column names to lower-case, to fix fetching indexes from Postgres. Has this changed recently?
 
-        push @{ $return->{ $row->{INDEX_NAME} }->{COLUMNS} }
-            , $row->{COLUMN_NAME};
+        $return->{ $row->{index_name} }->{IS_PRIMARY} = $row->{is_primary};
+        $return->{ $row->{index_name} }->{IS_UNIQUE}  = $row->{is_unique};
+        $return->{ $row->{index_name} }->{TABLE_NAME} = $row->{table_name};
+
+        push @{ $return->{ $row->{index_name} }->{COLUMNS} }
+            , $row->{column_name};
 
     }
 
@@ -1645,6 +1651,24 @@ sub generate_harvest_job {
           , param_value => { }
         }
     );
+    
+}
+
+sub drop_db_schema_table_string {
+    
+    my ( $self, $database, $schema, $table, $cascade, $options ) = @_;
+    
+    use JSON;
+    
+    my $connection = $self->_db_connection( $database );
+    
+    my $sth = $connection->prepare( "select t.relname , * from pg_locks l join pg_class t on l.relation = t.oid where t.relkind = 'r'" );
+    $sth->execute();
+    my $results = $sth->fetchall_arrayref();
+    
+    my $drop_sql = $self->SUPER::drop_db_schema_table_string( $database, $schema, $table, $cascade, $options );
+    
+    return "/* Locks detected:\n" . ( to_json( $results , { pretty => 1 } ) ) . " */\n\n" . $drop_sql;
     
 }
 

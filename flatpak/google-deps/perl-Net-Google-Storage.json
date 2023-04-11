@@ -1,0 +1,23 @@
+{
+    "name": "perl-Net-Google-Storage",
+    "cleanup": ["/bin"],
+    "no-autogen": true,
+    "buildsystem": "simple",
+    "sources": [
+        {
+            "type": "archive",
+            "url": "https://cpan.metacpan.org/authors/id/C/CE/CEBJYRE/Net-Google-Storage-0.2.0.tar.gz",
+            "sha256": "cf3a65c17224a175e0a27686ffdf96621d7829a484c7cef842a5560f5c76231d"
+        },
+	{
+            "type": "file",
+            "path": "perl-MakefilePL-Makefile",
+            "dest-filename": "Makefile"
+        }
+    ],
+    "build-commands": [
+        "perl Makefile.PL"
+      , "make"
+      , "make install"
+    ]
+}

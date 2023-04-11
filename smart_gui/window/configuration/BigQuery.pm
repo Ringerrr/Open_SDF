@@ -29,7 +29,7 @@ sub do_installation {
 
     my $old_path = cwd;
 
-    my ( $version , $tarball_name );
+    my ( $version , $tarball_name , $driver_tarball_found , $ini_file_found , $did_file_found );
 
     eval {
 
@@ -46,8 +46,6 @@ sub do_installation {
         my $bq_path = $driver_target_path . "/bigquery";
         rmtree( $bq_path );
         mkdir( $bq_path );
-        
-        my ( $driver_tarball_found , $ini_file_found );
         
         for my $entry ( @{ $arch->list_all() } ) {
             my ( $tar_path , $real_path ) = @$entry;
@@ -77,9 +75,27 @@ sub do_installation {
                 my $sed_cmd_output = `$sed_cmd`;
                 say( $sed_cmd_output );
             }
+            if ( $tar_path =~ /GoogleBigQueryODBC\.did/ ) {
+                $did_file_found = 1;
+                my $move_output = `mv $real_path $bq_path/lib/`;
+                say( $move_output );
+            }
         }
         
     };
+    
+    
+    if ( ! $driver_tarball_found ) {
+        warn( "No driver tarball found for BigQuery!" );
+    }
+    
+    if ( ! $ini_file_found ) {
+        warn( "No ini file found for BigQuery!" );
+    }
+    
+    if ( ! $did_file_found ) {
+        warn( "No did file found for BigQuery!" );
+    }
     
     chdir( $old_path );
     
@@ -96,7 +112,7 @@ sub do_installation {
     }
     
     return {
-        Driver  => $ENV{'HOME'} . "/SDF_persisted/.drivers/simba/bigquery/lib/libgooglebigqueryodbc_sb64.so"
+        Driver  => $ENV{'HOME'} . "/SDF_persisted/.drivers/bigquery/lib/libgooglebigqueryodbc_sb64.so"
     };
     
 }

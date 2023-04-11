@@ -624,7 +624,7 @@ sub generate_db_load_command {
     }
     
     if ( $options->{skip_rows} ) {
-        $load_command .= "ignore " . $options->{skip_rows} . " rows\n";
+        $load_command .= "ignore " . $options->{skip_rows} . " lines\n";
     }
     
     return $load_command;
@@ -728,7 +728,7 @@ sub generate_session_kill_sql {
 
 sub _map_identity_column {
 
-    my ( $self , $this_column_info , $source_column_type , $mapping_metadata ) = @_;
+    my ( $self , $this_column_info , $source_column_type , $mapping_metadata , $wizard_target_connection_helper ) = @_;
 
     my $warnings = "";
     my $target_column_type = $mapping_metadata->{$source_column_type}->{target_column_type} . " primary key auto_increment";

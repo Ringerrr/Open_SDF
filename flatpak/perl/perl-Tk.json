@@ -5,8 +5,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://cpan.metacpan.org/authors/id/S/SR/SREZIC/Tk-804.034.tar.gz",
-            "sha256": "fea6b144c723528a2206c8cd9175844032ee9c14ee37791f0f151e5e5b293fe2"
+            "url": "https://cpan.metacpan.org/authors/id/S/SR/SREZIC/Tk-804.036.tar.gz",
+            "sha256": "32aa7271a6bdfedc3330119b3825daddd0aa4b5c936f84ad74eabb932a200a5e"
         },
         {
             "type": "file",
