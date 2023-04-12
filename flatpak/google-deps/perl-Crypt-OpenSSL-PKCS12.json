@@ -5,8 +5,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://cpan.metacpan.org/authors/id/J/JO/JONASBN/Crypt-OpenSSL-PKCS12-1.2.tar.gz",
-            "sha256": "4169ee7e002f130bfeec006bd167d56c9ed898b67e650c82d65923a275670eb2"
+            "url": "https://cpan.metacpan.org/authors/id/J/JO/JONASBN/Crypt-OpenSSL-PKCS12-1.9.tar.gz",
+            "sha256": "d747be450165cc1f8d807f62dcb3c47f9a28bb8f75aba07fd8addf8a278e8c9f"
         },
         {
             "type": "file",

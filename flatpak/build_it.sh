@@ -4,7 +4,7 @@
 # build:
 flatpak-builder appdir biz.smartassociates.open.sdf.json \
  --force-clean \
- --default-branch=1.0 \
+ --default-branch=1.1 \
  --gpg-sign=E75127F2027B84FF84A09C64A5B82001B9FB41CB \
  --gpg-homedir=../gpg \
  --disable-updates
@@ -15,7 +15,7 @@ flatpak-builder appdir biz.smartassociates.open.sdf.json \
 #flatpak-builder appdir biz.smartassociates.open.sdf.json --force-clean
 
 # create repo from build:
-flatpak build-export SmartDataFramework appdir 1.0
+flatpak build-export SmartDataFramework appdir 1.1
 
 # sign repo:
 flatpak build-sign SmartDataFramework \
@@ -34,4 +34,4 @@ rsync -av SmartDataFramework dankasak@tesla.duckdns.org:/var/www/html/
 #rsync -av -e "ssh -i ~/.ssh/arch.pem" SmartDataFramework arch@ec2-3-85-105-136.compute-1.amazonaws.com:~
 
 # pull from raptor into flatpak
-flatpak update biz.smartassociates.open.sdf/x86_64/1.0
+flatpak update biz.smartassociates.open.sdf/x86_64/1.1

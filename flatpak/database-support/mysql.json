@@ -9,8 +9,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.27.tar.gz",
-            "sha256": "4a7e72f899e6f24bcd479d378edd2f32f583e687f93a26291774815d5a549b97"
+            "url": "https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-boost-8.0.31.tar.gz",
+            "sha256": "7867f3fd8ca423d283a6162c819c766863ecffbf9b59b4756dc7bb81184c1d6a"
         },
         {
             "type": "file",
@@ -18,8 +18,8 @@
         }
     ],
     "build-commands": [
-        "cmake -DFORCE_INSOURCE_BUILD=1 -DWITHOUT_SERVER=ON -DDOWNLOAD_BOOST=1 -DWITH_BOOST=boost -DCMAKE_INSTALL_PREFIX=/app/mysql",
-        "make",
+        "cmake -DFORCE_INSOURCE_BUILD=1 -DWITHOUT_SERVER:BOOL=ON  -DWITH_BOOST=boost -DCMAKE_INSTALL_PREFIX=/app/mysql",
+        "make -j 16",
         "make install",
         "cp mysql_config /app/bin"
     ]
