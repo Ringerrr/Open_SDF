@@ -1,0 +1,23 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "sha256" : "5bc22cf536ebfd2564c5bdaf42f0d8a4cee3d1930fc8b44b7d4a42038622add1",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Class-Load-XS-0.10.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "name" : "perl-Class-Load-XS",
+   "no-autogen" : true,
+    "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/Class/Load/XS/XS.so"
+   ]
+
+}

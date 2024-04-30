@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DB/DBOOK/Net-Amazon-Signature-V4-0.21.tar.gz",
+         "sha256" : "599cb766c055f6c48d362597e7535c902cd6674e4d6ad1ce4cb08e8d06777fd1"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Net-Amazon-Signature-V4"
+}

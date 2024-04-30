@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Dist-CheckConflicts",
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/D/DO/DOY/Dist-CheckConflicts-0.11.tar.gz",
+         "type" : "archive",
+         "sha256" : "ea844b9686c94d666d9d444321d764490b2cde2f985c4165b4c2c77665caedc4"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

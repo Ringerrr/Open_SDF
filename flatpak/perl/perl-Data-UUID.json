@@ -15,6 +15,6 @@
         }
     ],
     "post-install": [
-        "chmod 755 /app/lib/perl5/site_perl/5.36.0/x86_64-linux/auto/Data/UUID/UUID.so"
+        "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/Data/UUID/UUID.so"
     ]
 }

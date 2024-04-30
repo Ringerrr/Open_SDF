@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
-  <id type="desktop">open.sdf.desktop</id>
-  <metadata_license>GPL3</metadata_license>
+<component type="desktop-application">
+  <id>biz.smart_associates.open.sdf</id>
+  
+  <name>SDF</name>
   <summary>Smart Associates Data Framework and Database Utilities</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>ADSL</project_license>
+  
   <description>
     <p>
-        SDF is a suite of database-centric utilities, tied together with
-        a generic template-based execution framework.
+      SDF is a suite of database-centric utilities, tied together with a generic template-based execution framework.
     </p>
   </description>
-  <url type="homepage">http://www.smart-associates.biz/</url>
-<!--
-  <screenshots>
-    <screenshot type="default">https://www.filepicker.io/api/file/zfCHFlCsR4OnStuPBwmQ</screenshot>
-    <screenshot>http://blog.kii.com/wp-content/uploads/2013/06/frozenbubble.jpg</screenshot>
-    <screenshot>https://www.filepicker.io/api/file/eqPdEWZMTtS1Un1LoRQ0</screenshot>
-  </screenshots>
--->
-  <updatecontact>Dan</updatecontact>
-</application>
+  
+  <launchable type="desktop-id">open.sdf.desktop</launchable>
+</component>

@@ -1,0 +1,22 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-Moose",
+   "sources" : [
+      {
+         "sha256" : "67972c4e2bc39fbda38518177af0e67bbbeb548562e4ec4b759a1a7a583e505b",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Moose-2.2206.tar.gz"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/Moose/Moose.so"
+   ]
+}

@@ -1,0 +1,22 @@
+{
+   "name" : "perl-URL-Encode-XS",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/C/CH/CHANSEN/URL-Encode-XS-0.03.tar.gz",
+         "sha256" : "d44f416bd3e58e3b3366ab420705da02c7118fc848a97ce089366ea0461fa823",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/URL/Encode/XS/XS.so"
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "94bebd500af55762e83ea2f2bc594d87af828072370c7110c60c238a800d15b2",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/H/HA/HAARG/Sub-Quote-2.006008.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-Sub-Quote"
+}

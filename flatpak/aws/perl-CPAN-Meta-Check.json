@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/L/LE/LEONT/CPAN-Meta-Check-0.018.tar.gz",
+         "sha256" : "f619d2df5ea0fd91c8cf83eb54acccb5e43d9e6ec1a3f727b3d0ac15d0cf378a"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "name" : "perl-CPAN-Meta-Check",
+   "cleanup" : [
+      "/bin"
+   ]
+}

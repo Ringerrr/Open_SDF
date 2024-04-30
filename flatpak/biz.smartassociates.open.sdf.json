@@ -2,21 +2,22 @@
 {
     "app-id": "biz.smartassociates.open.sdf",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "43",
+    "runtime-version": "45",
     "sdk": "org.gnome.Sdk",
     "command": "/app/launch_flatpak.sh",
     "rename-icon": "open.sdf",
     "rename-desktop-file": "open.sdf.desktop",
-    "rename-appdata-file": "open.sdf.appdata.xml",
+    "rename-appdata-file": "biz.smartassociates.open.sdf.metainfo.xml",
     "finish-args": [
         "--device=dri",
         "--filesystem=~/.ssh",
         "--persist=SDF_persisted",
         "--share=ipc",
         "--share=network",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
         "--socket=x11",
         "--socket=wayland",
-        "--socket=pulseaudio",
         "--env=JAVA_HOME=/app/opt/jdk"
     ],
     "add-extensions": {
@@ -37,7 +38,7 @@
     ],
     "modules": [
     "perl/perl.json"
-  , "perl/perl-module-build.json"
+  , "perl/perl-Module-Build.json"
   , "perl/perl-archive-extract.json"
   , "perl/perl-text-patch.json"
   , "perl/perl-tie-simple.json"
@@ -120,151 +121,11 @@
   , "perl/perl-Archive-Tar-Wrapper.json"
   , "perl/perl-Log-Log4perl.json"
 
-  , "aws-deps/perl-Params-Validate.json"
-  , "aws-deps/perl-AnyEvent.json"
-  , "aws-deps/perl-Carp-Clan.json"
-  , "aws-deps/perl-Mozilla-CA.json"
-  , "aws-deps/perl-Compress-Raw-Zlib.json"
-  , "aws-deps/perl-IO-Uncompress-Gunzip.json"
-  , "aws-deps/perl-Test-RequiresInternet.json"
-  , "aws-deps/perl-Net-HTTPS.json"
-  , "aws-deps/perl-IO-Socket-SSL.json"
-  , "aws-deps/perl-Module-Runtime.json"
-  , "aws-deps/perl-LWP-Protocol-https.json"
-  , "aws-deps/perl-Module-Implementation.json"
-  , "aws-deps/perl-Test-Fatal.json"
-  , "aws-deps/perl-Test-Requires.json"
-  , "aws-deps/perl-Dist-CheckConflicts.json"
-  , "aws-deps/perl-Package-Stash-XS.json"
-  , "aws-deps/perl-Package-Stash.json"
-  , "aws-deps/perl-Sub-Name.json"
-  , "aws-deps/perl-Package-DeprecationManager.json"
-  , "aws-deps/perl-Scalar-Util.json"
-  , "aws-deps/perl-Test-More.json"
-  , "aws-deps/perl-Test-Needs.json"
-  , "aws-deps/perl-Class-Load.json"
-  , "aws-deps/perl-Class-Load-XS.json"
-  , "aws-deps/perl-Sub-Exporter-Progressive.json"
-  , "aws-deps/perl-Devel-GlobalDestruction.json"
-  , "aws-deps/perl-MRO-Compat.json"
-  , "aws-deps/perl-Sub-Identify.json"
-  , "aws-deps/perl-Devel-OverloadInfo.json"
-  , "aws-deps/perl-Devel-StackTrace.json"
-  , "aws-deps/perl-Eval-Closure.json"
-  , "aws-deps/perl-Module-Runtime-Conflicts.json"
-  , "aws-deps/perl-parent.json"
-  , "aws-deps/perl-Test-Deep.json"
-  , "aws-deps/perl-CPAN-Meta-Check.json"
-  , "aws-deps/perl-File-pushd.json"
-  , "aws-deps/perl-Variable-Magic.json"
-  , "aws-deps/perl-B-Hooks-EndOfScope.json"
-  , "aws-deps/perl-namespace-clean.json"
-  , "aws-deps/perl-Test-CleanNamespaces.json"
-  , "aws-deps/perl-Moose.json"
-  , "aws-deps/perl-Path-Class.json"
-  , "aws-deps/perl-Data-Stream-Bulk-Callback.json"
-  , "aws-deps/perl-DateTime.json"
-  , "aws-deps/perl-DateTime-Format-HTTP.json"
-  , "aws-deps/perl-Digest-HMAC_SHA1.json"
-  , "aws-deps/perl-Digest-MD5-File.json"
-  , "aws-deps/perl-Exporter-Tiny.json"
-  , "aws-deps/perl-LWP-UserAgent-Determined.json"
-  , "aws-deps/perl-MIME-Type.json"
-  , "aws-deps/perl-ExtUtils-Config.json"
-  , "aws-deps/perl-ExtUtils-Helpers.json"
-  , "aws-deps/perl-ExtUtils-InstallPaths.json"
-  , "aws-deps/perl-aliased.json"
-  , "aws-deps/perl-Module-Build-Tiny.json"
-  , "aws-deps/perl-namespace-autoclean.json"
-  , "aws-deps/perl-MooseX-Role-WithOverloading.json"
-  , "aws-deps/perl-MooseX-Role-Parameterized.json"
-  , "aws-deps/perl-Net-Amazon-S3.json"
-  , "aws-deps/perl-MooseX-StrictConstructor.json"
-  , "aws-deps/perl-Date-Parse.json"
-  , "aws-deps/perl-Class-Inspector.json"
-  , "aws-deps/perl-File-ShareDir-Install.json"
-  , "aws-deps/perl-File-ShareDir.json"
-  , "aws-deps/perl-Class-Data-Inheritable.json"
-  , "aws-deps/perl-Exception-Class.json"
-  , "aws-deps/perl-Role-Tiny.json"
-  , "aws-deps/perl-Sub-Quote.json"
-  , "aws-deps/perl-Specio.json"
-  , "aws-deps/perl-Capture-Tiny.json"
-  , "aws-deps/perl-IPC-Run3.json"
-  , "aws-deps/perl-Importer.json"
-  , "aws-deps/perl-Module-Pluggable.json"
-  , "aws-deps/perl-Scope-Guard.json"
-  , "aws-deps/perl-Sub-Info.json"
-  , "aws-deps/perl-Term-Table.json"
-  , "aws-deps/perl-Test2-V0.json"
-  , "aws-deps/perl-Test2-Plugin-NoWarnings.json"
-  , "aws-deps/perl-Test-Without-Module.json"
-  , "aws-deps/perl-Params-ValidationCompiler.json"
-  , "aws-deps/perl-Class-Tiny.json"
-  , "aws-deps/perl-Path-Tiny.json"
-  , "aws-deps/perl-File-Remove.json"
-  , "aws-deps/perl-YAML-Tiny.json"
-  , "aws-deps/perl-Module-ScanDeps.json"
-  , "aws-deps/perl-inc-Module-Install.json"
-  , "aws-deps/perl-Test-utf8.json"
-  , "aws-deps/perl-Test-File.json"
-  , "aws-deps/perl-File-Copy-Recursive.json"
-  , "aws-deps/perl-Test-File-ShareDir-Dist.json"
-  , "aws-deps/perl-DateTime-Locale.json"
-  , "aws-deps/perl-Class-Singleton.json"
-  , "aws-deps/perl-DateTime-TimeZone.json"
-  , "aws-deps/perl-DateTime-Format-Strptime.json"
-  , "aws-deps/perl-DateTime-Format-Builder.json"
-  , "aws-deps/perl-List-MoreUtils-XS.json"
-  , "aws-deps/perl-List-MoreUtils.json"
-  , "aws-deps/perl-Sub-Uplevel.json"
-  , "aws-deps/perl-Test-Exception.json"
-  , "aws-deps/perl-Test-MockTime.json"
-  , "aws-deps/perl-Test-NoWarnings.json"
-  , "aws-deps/perl-DateTime-Format-Flexible.json"
-  , "aws-deps/perl-Set-Infinite.json"
-  , "aws-deps/perl-DateTime-Set.json"
-  , "aws-deps/perl-DateTime-Event-Recurrence.json"
-  , "aws-deps/perl-DateTime-Event-ICal.json"
-  , "aws-deps/perl-DateTime-Format-ICal.json"
-  , "aws-deps/perl-Clone.json"
-  , "aws-deps/perl-Module-Util.json"
-  , "aws-deps/perl-boolean.json"
-  , "aws-deps/perl-DateTime-Format-Natural.json"
-  , "aws-deps/perl-Algorithm-Diff.json"
-  , "aws-deps/perl-Text-Diff.json"
-  , "aws-deps/perl-Test-Differences.json"
-  , "aws-deps/perl-Test-Warn.json"
-  , "aws-deps/perl-Test-Most.json"
-  , "aws-deps/perl-DateTimeX-Easy.json"
-  , "aws-deps/perl-Sub-Exporter-ForMethods.json"
-  , "aws-deps/perl-MooseX-Types.json"
-  , "aws-deps/perl-MooseX-Types-DateTime.json"
-  , "aws-deps/perl-Exporter-Lite.json"
-  , "aws-deps/perl-Time-Duration.json"
-  , "aws-deps/perl-Time-Duration-Parse.json"
-  , "aws-deps/perl-MooseX-Types-DateTime-MoreCoercions.json"
-  , "aws-deps/perl-Regexp-Common.json"
-  , "aws-deps/perl-XML-SAX-Exception.json"
-  , "aws-deps/perl-XML-NamespaceSupport.json"
-  , "aws-deps/perl-XML-SAX.json"
-  , "aws-deps/perl-FFI-CheckLib.json"
-  , "aws-deps/perl-File-chdir.json"
-  , "aws-deps/perl-Alien-Build-MM.json"
-  , "aws-deps/perl-Alien-Libxml2.json"
-  , "aws-deps/perl-XML-LibXML.json"
-  , "aws-deps/perl-Ref-Util-XS.json"
-  , "aws-deps/perl-Ref-Util.json"
-  , "aws-deps/perl-Net-SSLeay.json"
-  , "aws-deps/perl-Net-Amazon-EC2.json"
+  , "aws/paws.json"
+
   , "other/binutils.json"
   , "other/alien.json"
   , "perl/perl-Term-ReadKey.json"
-  , "google-deps/perl-Crypt-OpenSSL-PKCS12.json"
-  , "google-deps/perl-JSON-WebToken.json"
-  , "google-deps/perl-Crypt-OpenSSL-Guess.json"
-  , "google-deps/perl-Crypt-OpenSSL-Random.json"
-  , "google-deps/perl-Crypt-OpenSSL-RSA.json"
   , "other/pigz.json"
 
   , "perl/perl-Class-Accessor.json"
@@ -275,8 +136,14 @@
   , "perl/perl-Devel-ptkdb.json"
   , "perl/perl-HTTP-Cookies.json"
 
-  , "google-deps/perl-Net-Google-Storage.json"
-  , "google-deps/perl-LWP-MediaTypes.json"
+    , "google-deps/perl-Pod-Coverage.json"
+    , "google-deps/perl-Test-Pod-Coverage.json"
+    , "google-deps/perl-Crypt-OpenSSL-PKCS12.json"
+    , "google-deps/perl-JSON-WebToken.json"
+    , "google-deps/perl-Crypt-OpenSSL-Guess.json"
+    , "google-deps/perl-Crypt-OpenSSL-Random.json"
+    , "google-deps/perl-Crypt-OpenSSL-RSA.json"
+    , "google-deps/perl-Net-Google-Storage.json"
 
   ,     {
             "name": "sdf",
@@ -292,9 +159,11 @@
                 "mkdir -p /app/share/icons/hicolor/16x16/apps",
                 "mkdir -p /app/share/icons/hicolor/32x32/apps",
                 "mkdir -p /app/share/icons/hicolor/48x48/apps",
+                "mkdir -p /app/share/icons/hicolor/64x64/apps",
                 "cp open.sdf.png /app/share/icons/hicolor/16x16/apps/open.sdf.png",
                 "cp open.sdf.png /app/share/icons/hicolor/32x32/apps/open.sdf.png",
-                "cp open.sdf.png /app/share/icons/hicolor/48x48/apps/open.sdf.png"
+                "cp open.sdf.png /app/share/icons/hicolor/48x48/apps/open.sdf.png",
+                "cp open.sdf.png /app/share/icons/hicolor/64x64/apps/open.sdf.png"
             ],
             "build-options": {
                 "no-debuginfo": true
@@ -310,7 +179,7 @@
                 }
               , {
                     "type": "file"
-                  , "path": "open.sdf.appdata.xml"
+                  , "path": "biz.smartassociates.open.sdf.metainfo.xml"
                 }
               , {
                     "type": "file"
@@ -331,40 +200,10 @@
             ],
             "post-install": [
                 "mkdir -p /app/share/appdata",
-                "cp open.sdf.appdata.xml /app/share/appdata",
+                "cp biz.smartassociates.open.sdf.metainfo.xml /app/share/appdata",
                 "mkdir -p /app/share/applications",
                 "cp open.sdf.desktop /app/share/applications",
                 "install -d /app/extensions"
-            ]
-        },
-        {
-            "name": "sdf-bash",
-            "no-autogen": true,
-            "buildsystem": "simple",
-            "build-commands": [
-                "mkdir -p /app/share/icons/hicolor/16x16/apps",
-                "mkdir -p /app/share/icons/hicolor/32x32/apps",
-                "mkdir -p /app/share/icons/hicolor/48x48/apps",
-                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/16x16/apps/biz.smartassociates.open.sdf-bash.png",
-                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/32x32/apps/biz.smartassociates.open.sdf-bash.png",
-                "cp biz.smartassociates.open.sdf-bash.png /app/share/icons/hicolor/48x48/apps/biz.smartassociates.open.sdf-bash.png"
-            ],
-            "build-options": {
-                "no-debuginfo": true
-            },
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "biz.smartassociates.open.sdf-bash.desktop"
-                },
-                {
-                    "type": "file",
-                    "path": "biz.smartassociates.open.sdf-bash.png"
-                }
-            ],
-            "post-install": [
-                "mkdir -p /app/share/applications",
-                "cp biz.smartassociates.open.sdf-bash.desktop /app/share/applications"
             ]
         }
     ]

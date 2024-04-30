@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Path-Tiny",
+   "sources" : [
+      {
+         "sha256" : "f6ea094ece845c952a02c2789332579354de8d410a707f9b7045bd241206487d",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/Path-Tiny-0.144.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

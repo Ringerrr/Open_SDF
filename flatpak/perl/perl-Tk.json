@@ -15,6 +15,6 @@
         }
     ],
     "post-install": [
-        "find /app/lib/perl5/site_perl/5.36.0/x86_64-linux/auto/Tk -type f -exec chmod u+w {} \\;"
+        "find /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/Tk -type f -exec chmod u+w {} \\;"
     ]
 }

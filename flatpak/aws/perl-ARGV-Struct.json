@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-ARGV-Struct",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/J/JL/JLMARTIN/ARGV-Struct-0.06.tar.gz",
+         "type" : "archive",
+         "sha256" : "a2ef174e35632c1b6ebffe8a9b6374c8a6d4adfda35d2afe1e730802444b5f69"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true
+}

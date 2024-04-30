@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "type" : "archive",
+         "sha256" : "d5a36487339888c3cd758e648160ee1d70eb4153cacbaff57846dbcefb344b0c",
+         "url" : "https://cpan.metacpan.org/authors/id/L/LE/LEONT/File-Slurper-0.014.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-File-Slurper",
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true
+}

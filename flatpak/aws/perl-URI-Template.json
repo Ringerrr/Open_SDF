@@ -1,0 +1,19 @@
+{
+   "name" : "perl-URI-Template",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/B/BR/BRICAS/URI-Template-0.24.tar.gz",
+         "sha256" : "68ae2d61b57e14dcad0f82afaffdc5ec05b507a1e9c8df5aa6138aaa2a5b11de",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

@@ -1,0 +1,19 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "4bcaaa376915014728d4f533a98c5b59d665051cd3cdbafc960e5a66fd131092",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/C/CR/CRENZ/Module-Find-0.16.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Module-Find"
+}

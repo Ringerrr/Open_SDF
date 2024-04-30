@@ -1,11 +1,17 @@
 {
     "name": "Postgres",
     "no-autogen": true,
+    "buildsystem": "simple",
     "sources": [
         {
             "type": "archive",
-            "url": "https://ftp.postgresql.org/pub/source/v11.1/postgresql-11.1.tar.bz2",
-            "sha256": "90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08"
+            "url": "https://ftp.postgresql.org/pub/source/v16.2/postgresql-16.2.tar.bz2",
+            "sha256": "446e88294dbc2c9085ab4b7061a646fa604b4bec03521d5ea671c2e5ad9b2952"
         }
+    ],
+    "build-commands": [
+        "./configure --with-openssl --prefix=/app/postgres",
+        "make -j 20",
+        "make install"
     ]
 }

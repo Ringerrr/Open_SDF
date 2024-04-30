@@ -1,0 +1,19 @@
+{
+   "name" : "perl-ExtUtils-ParseXS",
+   "sources" : [
+      {
+         "sha256" : "82431a57425d78682acefb3a2cc9287683d091c8d034b825c584d9805bed6535",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/L/LE/LEONT/ExtUtils-ParseXS-3.51.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true
+}

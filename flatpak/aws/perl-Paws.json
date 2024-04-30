@@ -1,0 +1,25 @@
+{
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/J/JL/JLMARTIN/Paws-0.44.tar.gz",
+         "sha256" : "83c952129ca0a1035fbd3ece6bdeddf5b39a547d3df3a725e41283f901841e64"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Paws",
+   "no-autogen" : true,
+    "buildsystem": "simple",
+    "build-commands": [
+        "perl Build.PL",
+        "./Build",
+        "./Build install"
+    ]
+ , "cleanup" : [
+      "/bin"
+   ]
+}

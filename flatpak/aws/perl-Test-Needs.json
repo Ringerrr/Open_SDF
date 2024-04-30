@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Test-Needs",
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "type" : "archive",
+         "sha256" : "923ffdc78fcba96609753e4bae26b0ba0186893de4a63cd5236e012c7c90e208",
+         "url" : "https://cpan.metacpan.org/authors/id/H/HA/HAARG/Test-Needs-0.002010.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "no-autogen" : true
+}

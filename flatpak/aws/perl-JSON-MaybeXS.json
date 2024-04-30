@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/JSON-MaybeXS-1.004005.tar.gz",
+         "sha256" : "f5b6bc19f579e66b7299f8748b8ac3e171936dc4e7fcb72a8a257a9bd482a331",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-JSON-MaybeXS",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

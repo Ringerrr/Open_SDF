@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-IO-Socket-SSL",
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/S/SU/SULLR/IO-Socket-SSL-2.084.tar.gz",
+         "sha256" : "a60d1e04e192363155329560498abd3412c3044295dae092d27fb6e445c71ce1"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

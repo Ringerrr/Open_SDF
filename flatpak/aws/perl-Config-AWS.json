@@ -1,0 +1,20 @@
+{
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "name" : "perl-Config-AWS",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/J/JJ/JJATRIA/Config-AWS-0.12.tar.gz",
+         "type" : "archive",
+         "sha256" : "1509d1bf38bf7291eea2e5c48fcdc6bd25904bc87ab6cb6ffea6403647b06b5a"
+      }
+   ],
+    "buildsystem": "simple",
+    "build-commands": [
+        "perl Build.PL",
+        "./Build",
+        "./Build install"
+    ]
+}

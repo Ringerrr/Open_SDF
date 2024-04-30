@@ -2,6 +2,7 @@
     "name": "perl-DBD-Postgres",
     "cleanup": ["/bin"],
     "no-autogen": true,
+    "buildsystem": "simple",
     "sources": [
         {
             "type": "git",
@@ -13,7 +14,12 @@
             "dest-filename": "Makefile"
         }
     ],
+    "build-commands": [
+        "POSTGRES_LIB='/app/postgres/lib -lssl -lcrypto' POSTGRES_HOME=/app/postgres perl Makefile.PL"
+      , "make"
+      , "make install"
+    ],
     "post-install": [
-        "chmod 755 /app/lib/perl5/site_perl/5.36.0/x86_64-linux/auto/DBD/Pg/Pg.so"
+        "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/DBD/Pg/Pg.so"
     ]
 }

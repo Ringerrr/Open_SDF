@@ -1,0 +1,65 @@
+{
+    "name" : "paws",
+    "modules": [
+      "moose.json"
+
+    , "perl-MooseX-ClassAttribute.json"
+    , "perl-MooseX-Getopt.json"
+    , "perl-File-Slurper.json"
+    , "perl-Net-Amazon-Signature-V4.json"
+    , "perl-JSON-MaybeXS.json"
+    , "perl-YAML-Tiny.json"
+    , "perl-File-Remove.json"
+    , "perl-Module-Install.json"
+    , "perl-URL-Encode.json"
+    , "perl-URL-Encode-XS.json"
+    , "perl-URI-Template.json"
+    , "perl-ARGV-Struct.json"
+    , "perl-File-HomeDir.json"
+    , "perl-IO-Socket-SSL.json"
+    , "perl-Path-Tiny.json"
+    , "perl-String-CRC32.json"
+    , "perl-Module-Find.json"
+    , "perl-Data-Compare.json"
+    , "perl-DataStruct-Flat.json"
+    , "perl-Role-Tiny.json"
+    , "perl-ExtUtils-Config.json"
+    , "perl-ExtUtils-CBuilder.json"
+    , "perl-ExtUtils-Helpers.json"
+    , "perl-ExtUtils-Install.json"
+    , "perl-ExtUtils-InstallPaths.json"
+    , "perl-ExtUtils-ParseXS.json"
+    , "perl-TAP-Harness-Env.json"
+
+    , "perl-Module-Build-Tiny.json"
+
+    , "perl-Ref-Util.json"
+    , "perl-Exporter-Tiny.json"
+    , "perl-Config-AWS.json"
+    , "perl-Paws.json"
+
+    , "perl-Specio.json"
+    , "perl-Params-ValidationCompiler.json"
+    , "perl-DateTime.json"
+    , "perl-DateTime-Format-ISO8601.json"
+
+    , "perl-Class-Data-Inheritable.json"
+    , "perl-Exception-Class.json"
+
+    , "perl-File-ShareDir.json"
+    , "perl-File-ShareDir-Install.json"
+    , "perl-DateTime-Locale.json"
+    , "perl-DateTime-TimeZone.json"
+    , "perl-Class-Inspector.json"
+    , "perl-Class-Singleton.json"
+    , "perl-DateTime-Format-Builder.json"
+    , "perl-DateTime-Format-Strptime.json"
+
+    , "perl-Params-Validate.json"
+    , "perl-XSLoader.json"
+
+    , "perl-Sub-Identify.json"
+    , "perl-Net-SSLeay.json"
+
+  ]
+}

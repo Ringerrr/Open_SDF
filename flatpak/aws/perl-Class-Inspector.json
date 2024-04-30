@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Class-Inspector",
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "type" : "archive",
+         "sha256" : "cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e",
+         "url" : "https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

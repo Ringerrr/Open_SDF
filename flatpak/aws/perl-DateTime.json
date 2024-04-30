@@ -1,0 +1,22 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-DateTime",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/DateTime-1.65.tar.gz",
+         "type" : "archive",
+         "sha256" : "0bfda7ff0253fb3d88cf4bdb5a14afb8cea24d147975d5bdf3c88b40e7ab140e"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/DateTime/DateTime.so"
+   ]
+}

@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "sources" : [
+      {
+         "sha256" : "6f64e2c6f475e6d0ac6a177af069a0e5285f5111de59650abf9331d22a9c0bbb",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/J/JL/JLMARTIN/DataStruct-Flat-0.01.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "name" : "perl-DataStruct-Flat",
+   "cleanup" : [
+      "/bin"
+   ]
+}

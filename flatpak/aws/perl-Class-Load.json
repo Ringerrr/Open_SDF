@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "sha256" : "2a48fa779b5297e56156380e8b32637c6c58decb4f4a7f3c7350523e11275f8f",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Class-Load-0.25.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "name" : "perl-Class-Load"
+}

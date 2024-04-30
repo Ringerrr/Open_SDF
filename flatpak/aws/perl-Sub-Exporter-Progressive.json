@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Sub-Exporter-Progressive",
+   "sources" : [
+      {
+         "sha256" : "d535b7954d64da1ac1305b1fadf98202769e3599376854b2ced90c382beac056",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/F/FR/FREW/Sub-Exporter-Progressive-0.001013.tar.gz"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

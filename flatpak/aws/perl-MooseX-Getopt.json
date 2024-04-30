@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-MooseX-Getopt",
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/MooseX-Getopt-0.75.tar.gz",
+         "sha256" : "63f3be5bb2bc381e9e48b5b95c0330f21718b6656e8ffb19c99d2ee0ac14ebc8"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ]
+}

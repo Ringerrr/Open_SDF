@@ -2,7 +2,7 @@
     "name": "perl",
     "cleanup": [
         "*.pod",
-        "/bin/perl5.36.0",
+        "/bin/perl5.38.2",
         "/bin/c2ph",
         "/bin/corelist",
         "/bin/cpan",
@@ -29,8 +29,8 @@
     "sources": [
         {
             "type": "archive",
-            "url": "https://www.cpan.org/src/5.0/perl-5.36.0.tar.gz",
-            "sha256": "e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a"
+            "url": "https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz",
+            "sha256": "a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e"
         },
         {
             "type": "script",

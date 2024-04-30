@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Package-DeprecationManager",
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Package-DeprecationManager-0.18.tar.gz",
+         "type" : "archive",
+         "sha256" : "b68d3f0ced55b7615fddbb6029b89f92a34fe0dd8c6fd6bceffc157d56834fe8"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true
+}

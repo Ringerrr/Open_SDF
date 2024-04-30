@@ -1,0 +1,22 @@
+{
+   "name" : "perl-Package-Stash-XS",
+   "sources" : [
+      {
+         "sha256" : "26bad65c1959c57379b3e139dc776fbec5f702906617ef27cdc293ddf1239231",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Package-Stash-XS-0.30.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true,
+   "post-install": [
+       "chmod 755 /app/lib/perl5/site_perl/5.38.2/x86_64-linux/auto/Package/Stash/XS/XS.so"
+   ]
+}

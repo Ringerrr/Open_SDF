@@ -1,0 +1,30 @@
+{
+    "name" : "moose",
+    "modules": [
+      "perl-Class-Load.json"
+    , "perl-Class-Load-XS.json"
+    , "perl-CPAN-Meta-Check.json"
+    , "perl-Devel-GlobalDestruction.json"
+    , "perl-Devel-OverloadInfo.json"
+    , "perl-Devel-StackTrace.json"
+    , "perl-Dist-CheckConflicts.json"
+    , "perl-Eval-Closure.json"
+    , "perl-MRO-Compat.json"
+    , "perl-Module-Runtime.json"
+    , "perl-Module-Runtime-Conflicts.json"
+    , "perl-Package-DeprecationManager.json"
+    , "perl-Package-Stash.json"
+    , "perl-Package-Stash-XS.json"
+    , "perl-Sub-Exporter-Progressive.json"
+    , "perl-Sub-Util.json"
+    , "perl-Module-Implementation.json"
+    , "perl-B-Hooks-EndOfScope.json"
+    , "perl-namespace-clean.json"
+    , "perl-namespace-autoclean.json"
+    , "perl-Sub-Quote.json"
+    , "perl-Test-CleanNamespaces.json"
+    , "perl-Test-Fatal.json"
+    , "perl-Test-Needs.json"
+    , "perl-Moose.json"
+  ]
+}

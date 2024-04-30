@@ -1,0 +1,19 @@
+{
+   "no-autogen" : true,
+   "name" : "perl-DateTime-Format-ISO8601",
+   "sources" : [
+      {
+         "sha256" : "582847f6e029065334a00564f20cd7c28f4e5cd4ec21513d0f692531ed3b56e1",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/DateTime-Format-ISO8601-0.16.tar.gz"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ]
+}

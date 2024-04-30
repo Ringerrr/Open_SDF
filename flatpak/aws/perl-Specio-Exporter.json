@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Specio-Exporter",
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Specio-0.48.tar.gz",
+         "sha256" : "0c85793580f1274ef08173079131d101f77b22accea7afa8255202f0811682b2"
+      },
+      {
+         "type" : "file",
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

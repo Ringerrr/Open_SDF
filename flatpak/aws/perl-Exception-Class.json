@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Exception-Class",
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Exception-Class-1.45.tar.gz",
+         "type" : "archive",
+         "sha256" : "5482a77ef027ca1f9f39e1f48c558356e954936fc8fbbdee6c811c512701b249"
+      },
+      {
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "cleanup" : [
+      "/bin"
+   ],
+   "no-autogen" : true
+}

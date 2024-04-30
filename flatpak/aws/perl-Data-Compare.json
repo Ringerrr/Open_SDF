@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "sha256" : "53c9db3b93263c88aaa3c4072d819eaded024d7a36b38c0c37737d288d5afa8c",
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DC/DCANTRELL/Data-Compare-1.29.tar.gz"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "type" : "file",
+         "path" : "perl-MakefilePL-Makefile"
+      }
+   ],
+   "name" : "perl-Data-Compare",
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

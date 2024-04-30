@@ -1,0 +1,19 @@
+{
+   "name" : "perl-MooseX-ClassAttribute",
+   "sources" : [
+      {
+         "type" : "archive",
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/MooseX-ClassAttribute-0.29.tar.gz",
+         "sha256" : "6144c77c52770d4f831cadb6cada37125c80b3e4ffcb246da7ee9d55922ee725"
+      },
+      {
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file",
+         "dest-filename" : "Makefile"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ]
+}

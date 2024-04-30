@@ -1,0 +1,19 @@
+{
+   "sources" : [
+      {
+         "url" : "https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Params-ValidationCompiler-0.31.tar.gz",
+         "type" : "archive",
+         "sha256" : "7b6497173f1b6adb29f5d51d8cf9ec36d2f1219412b4b2410e9d77a901e84a6d"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "no-autogen" : true,
+   "cleanup" : [
+      "/bin"
+   ],
+   "name" : "perl-Params-ValidationCompiler"
+}

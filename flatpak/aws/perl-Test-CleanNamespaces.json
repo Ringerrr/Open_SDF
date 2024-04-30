@@ -1,0 +1,19 @@
+{
+   "name" : "perl-Test-CleanNamespaces",
+   "cleanup" : [
+      "/bin"
+   ],
+   "sources" : [
+      {
+         "sha256" : "338d5569e8e89a654935f843ec0bc84aaa486fe8dd1898fb9cab3eccecd5327a",
+         "url" : "https://cpan.metacpan.org/authors/id/E/ET/ETHER/Test-CleanNamespaces-0.24.tar.gz",
+         "type" : "archive"
+      },
+      {
+         "dest-filename" : "Makefile",
+         "path" : "perl-MakefilePL-Makefile",
+         "type" : "file"
+      }
+   ],
+   "no-autogen" : true
+}
