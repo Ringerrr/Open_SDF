@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 use Glib qw | TRUE FALSE |;
+use JSON qw(decode_json);
 
 use constant DB_TYPE => 'GoogleServiceAccount';
 
@@ -20,8 +21,8 @@ sub connection_label_map {
       , Host_IP         => ""
       , Port            => ""
       , Attribute_1     => ""
-      , Attribute_2     => "Service Account Email"
-      , Attribute_3     => "Private Key File Path"
+      , Attribute_2     => "Service Account JSON File Path"
+      , Attribute_3     => ""
       , Attribute_4     => ""
       , Attribute_5     => ""
       , ODBC_driver     => ""
@@ -39,28 +40,38 @@ sub connect_do {
         lib->import('/Users/dankasak/src/perl_gcs');
         require Google::Cloud::Storage::Bucket;
 
+        # Attribute_2 contains the path to the service account JSON file
+        my $json_file = $auth_hash->{Attribute_2};
+
+        unless ( $json_file ) {
+            die "Service Account JSON file path (Attribute_2) is required";
+        }
+
+        unless ( -e $json_file ) {
+            die "Service Account JSON file does not exist: $json_file";
+        }
+
+        # Read and parse the JSON file
+        open my $fh, '<', $json_file or die "Cannot open $json_file: $!";
+        my $json_text = do { local $/; <$fh> };
+        close $fh;
+
+        my $service_account_data = decode_json($json_text);
+
         # Validate required fields
-        unless ( $auth_hash->{Attribute_2} ) {
-            die "Service Account Email (Attribute_2) is required";
+        unless ( $service_account_data->{client_email} ) {
+            die "Service account JSON missing 'client_email' field";
         }
 
-        unless ( $auth_hash->{Attribute_3} ) {
-            die "Private Key File Path (Attribute_3) is required";
-        }
-
-        unless ( -e $auth_hash->{Attribute_3} ) {
-            die "Private key file does not exist: " . $auth_hash->{Attribute_3};
+        unless ( $service_account_data->{private_key} ) {
+            die "Service account JSON missing 'private_key' field";
         }
 
         # Store auth credentials for later bucket access
         $self->auth_config({
-            client_email        => $auth_hash->{Attribute_2},
-            private_key_file    => $auth_hash->{Attribute_3}
+            client_email => $service_account_data->{client_email},
+            private_key  => $service_account_data->{private_key}
         });
-
-        # Test connection by listing buckets (requires project-level permissions)
-        # Note: Google::Cloud::Storage::Bucket is bucket-scoped, so we can't easily
-        # test the connection without knowing a bucket name. We'll just store the config.
 
     };
 
