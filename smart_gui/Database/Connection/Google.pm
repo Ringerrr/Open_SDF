@@ -11,82 +11,64 @@ use Exporter qw ' import ';
 
 use constant DB_TYPE    => 'Google';
 
-sub connection_label_map {
+# Subclasses must override connection_label_map() and connect_do()
 
+sub auth_config {
     my $self = shift;
-
-    return {
-        Username        => "Client ID"
-      , Password        => "Refresh Token"
-      , Database        => ""
-      , Host_IP         => "Client Secret"
-      , Port            => ""
-      , Attribute_1     => "Project ID"
-      , Attribute_2     => ""
-      , Attribute_3     => ""
-      , Attribute_4     => ""
-      , Attribute_5     => ""
-      , ODBC_driver     => ""
-    };
-
+    if ( @_ ) {
+        $self->{auth_config} = shift;
+    }
+    return $self->{auth_config};
 }
 
-sub connect_do {
+sub bucket_cache {
+    my $self = shift;
+    if ( !defined $self->{bucket_cache} ) {
+        $self->{bucket_cache} = {};
+    }
+    return $self->{bucket_cache};
+}
 
-    my ( $self, $auth_hash, $options_hash ) = @_;
+sub _get_bucket_client {
 
-    eval {
+    my ( $self, $bucket_name ) = @_;
 
-        require Net::Google::Storage;
-        require Net::Google::Storage::Agent;
-
-        # Attempt connection to GCP and retrieve buckets
-        $self->{GoogleStorage} = Net::Google::Storage->new(
-            projectId        => $auth_hash->{Attribute_1}
-          , refresh_token    => $auth_hash->{Password}
-          , client_id        => $auth_hash->{Username}
-          , client_secret    => $auth_hash->{Host}
-        );
-
-        my @response = $self->fetch_database_list();
-        foreach my $bucket ( @response ) {
-            print( $bucket . "\n" );
-        }
-
-    };
-
-    my $err = $@;
-
-    if ( $err ) {
-        $self->dialog(
-            {
-                title   => "Failed to list GCS buckets"
-              , type    => "error"
-              , text    => $err
-            }
-        );
-        return undef;
+    # Return cached bucket client if available
+    my $cache = $self->bucket_cache();
+    if ( exists $cache->{ $bucket_name } ) {
+        return $cache->{ $bucket_name };
     }
 
+    my $auth_config = $self->auth_config();
 
-    return 1;
+    require lib;
+    lib->import('/Users/dankasak/src/perl_gcs');
+    require Google::Cloud::Storage::Bucket;
+
+    my $params = {
+        bucket_name => $bucket_name,
+        %{$auth_config}
+    };
+
+    my $bucket = Google::Cloud::Storage::Bucket->new( $params );
+
+    # Cache the bucket client
+    $cache->{ $bucket_name } = $bucket;
+
+    return $bucket;
 
 }
 
 sub fetch_database_list {
-    
+
     my $self = shift;
-    
-    my $response = $self->{GoogleStorage}->list_buckets();
-    
-    my @return;
-    
-    foreach my $bucket_obj ( @{$response} ) {
-        push @return, $bucket_obj->id();
-    }
-    
-    return sort( @return );
-    
+
+    # Google Cloud Storage is bucket-scoped, not project-scoped
+    # We cannot easily list buckets without project-level API access
+    # This would require a different API endpoint
+
+    return ();
+
 }
 
 sub can_execute_ddl {
