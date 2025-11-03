@@ -3,7 +3,6 @@ package SmartAssociates::Database::Connection::Google::OAuth2;
 use strict;
 use warnings;
 
-use lib '/Users/dankasak/src/perl_gcs';
 use Google::Cloud::Storage::Bucket;
 
 use base 'SmartAssociates::Database::Connection::Google';

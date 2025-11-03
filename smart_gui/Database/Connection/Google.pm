@@ -5,6 +5,8 @@ use parent 'Database::Connection';
 use strict;
 use warnings;
 
+use Google::Cloud::Storage::Bucket;
+
 use Glib qw | TRUE FALSE |;
 
 use Exporter qw ' import ';
@@ -41,9 +43,8 @@ sub _get_bucket_client {
 
     my $auth_config = $self->auth_config();
 
-    require lib;
-    lib->import('/Users/dankasak/src/perl_gcs');
-    require Google::Cloud::Storage::Bucket;
+#    require lib;
+#    lib->import('/Users/dankasak/src/perl_gcs');
 
     my $params = {
         bucket_name => $bucket_name,
