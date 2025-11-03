@@ -1,0 +1,27 @@
+  Key Components for GCS Access via ODBC:
+
+  1. Configure GCS Access (one-time per connection)
+
+  # Parse service account JSON and execute these SQL statements:
+  $dbh->do("SET fs.gs.auth.service.account.enable = true");
+  $dbh->do("SET fs.gs.project.id = '$project_id'");
+  $dbh->do("SET fs.gs.auth.service.account.email = '$client_email'");
+  $dbh->do("SET fs.gs.auth.service.account.private.key.id = '$private_key_id'");
+  $dbh->do("SET fs.gs.auth.service.account.private.key = '$private_key'");
+
+  Important: Escape single quotes in the private key: $private_key =~ s/'/\\'/g;
+
+  2. COPY INTO Syntax
+
+  COPY INTO target_table
+  FROM 'gs://bucket-name/path/to/files'
+  FILEFORMAT = CSV
+  FORMAT_OPTIONS ('header' = 'true')
+
+  No CREDENTIALS clause needed - authentication is handled by the Spark config set above.
+
+  3. Path Format
+
+  - S3: s3://bucket/path
+  - GCS: gs://bucket/path
+

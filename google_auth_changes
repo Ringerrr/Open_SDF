@@ -1,0 +1,63 @@
+⏺ Perfect! I've successfully implemented dual authentication support for Google Cloud Storage. Here's what was done:
+
+  Summary of Changes
+
+  1. Enhanced Google::Cloud::Storage::Bucket (/Users/dankasak/src/perl_gcs/)
+
+  Modified to support both authentication methods:
+  - Auto-detects auth method based on provided credentials
+  - OAuth2: Uses client_id, client_secret, refresh_token
+  - Service Account: Uses client_email, private_key_file
+  - Updated documentation in both the POD and README.md
+
+  2. Created 3-Class Structure for smart_etl
+
+  Base Class (SmartAssociates/Database/Connection/Google.pm):
+  - Contains all functional methods: GET, PUT, DELETE, ITERATOR
+  - Provides auth_config() and bucket_cache() helpers
+  - Subclasses override connect_do() and _get_bucket_client()
+
+  OAuth2 Subclass (SmartAssociates/Database/Connection/Google/OAuth2.pm):
+  - DB_TYPE: GoogleOAuth2
+  - Uses Username (Client ID), Password (Refresh Token), Host (Client Secret)
+
+  Service Account Subclass (SmartAssociates/Database/Connection/Google/ServiceAccount.pm):
+  - DB_TYPE: GoogleServiceAccount
+  - Uses Attribute_2 (Service Account Email), Attribute_3 (Private Key File Path)
+
+  3. Created 3-Class Structure for smart_gui
+
+  Same structure as smart_etl:
+  - Database/Connection/Google.pm (base)
+  - Database/Connection/Google/OAuth2.pm
+  - Database/Connection/Google/ServiceAccount.pm
+
+  Includes connection_label_map() for GUI field labels.
+
+  Usage
+
+  OAuth2 Configuration:
+
+  {
+      Username => 'client_id',
+      Password => 'refresh_token',
+      Host     => 'client_secret'
+  }
+
+  Service Account Configuration:
+
+  {
+      Attribute_2 => 'service-account@project.iam.gserviceaccount.com',
+      Attribute_3 => '/path/to/private-key.json'
+  }
+
+  Next Steps
+
+  1. Install dependencies (if not already present):
+    - JSON::WebToken (for Service Account JWT signing)
+    - LWP::UserAgent
+    - JSON
+  2. Test both authentication methods with actual credentials
+  3. Update GUI configurations to expose the new GoogleOAuth2 and GoogleServiceAccount connection types
+
+  The implementation maintains backward compatibility while adding the new Service Account support you requested!
